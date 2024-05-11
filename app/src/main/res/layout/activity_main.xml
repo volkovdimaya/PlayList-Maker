@@ -19,7 +19,7 @@
 
     <Button
         android:layout_marginTop="@dimen/main_side_margins"
-        android:id="@+id/btn_serch"
+        android:id="@+id/btn_search"
         android:textSize="@dimen/text_size"
         app:icon="@drawable/ic_search"
         app:iconTint="@color/dark"
@@ -34,7 +34,7 @@
 
     <Button
         app:cornerRadius="@dimen/corner_radius_btn"
-        android:id="@+id/btn_media"
+        android:id="@+id/btn_media_library"
         app:icon="@drawable/ic_media"
         app:iconTint="@color/dark"
         app:iconGravity="textStart"
