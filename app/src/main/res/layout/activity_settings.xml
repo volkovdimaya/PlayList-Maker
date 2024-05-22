@@ -7,17 +7,27 @@
 
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/Setting"
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:paddingStart="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="4dp"
-        android:gravity="center|start"
-        android:text="@string/Setting"
-        android:textColor="@color/color_title"
-        android:textSize="@dimen/text_size"
-        app:drawableStartCompat="@drawable/ic_btn_back"
-        app:drawableTint="@color/color_title" />
+        android:tint="@color/color_title"
+        app:navigationIcon="@drawable/ic_btn_back"
+
+        >
+        <TextView
+            android:id="@+id/Setting"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center|start"
+            android:text="@string/Setting"
+            android:textColor="@color/color_title"
+            android:textSize="@dimen/text_size"/>
+    </androidx.appcompat.widget.Toolbar>
+
+
 
 
     <FrameLayout

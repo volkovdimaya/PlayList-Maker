@@ -1,10 +1,10 @@
 package com.practicum.playlistmaker
 
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.ImageView
-import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+
 
 class SettingsActivity : AppCompatActivity()
 {
@@ -13,11 +13,24 @@ class SettingsActivity : AppCompatActivity()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
+
+
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
+
+        toolbar.setNavigationOnClickListener {
+            finish()
+        }
+
+
+
+        /*
         val btnback = findViewById<TextView>(R.id.Setting)
 
         btnback.setOnClickListener {
             finish()
         }
+
+        */
 
 
     }
