@@ -21,18 +21,6 @@ class SettingsActivity : AppCompatActivity()
             finish()
         }
 
-
-
-        /*
-        val btnback = findViewById<TextView>(R.id.Setting)
-
-        btnback.setOnClickListener {
-            finish()
-        }
-
-        */
-
-
     }
 
 }
