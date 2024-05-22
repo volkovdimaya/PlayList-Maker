@@ -15,7 +15,7 @@ class SettingsActivity : AppCompatActivity()
 
 
 
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
+        val toolbar: Toolbar = findViewById(R.id.toolbar_setting)
 
         toolbar.setNavigationOnClickListener {
             finish()
