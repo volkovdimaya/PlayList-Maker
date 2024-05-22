@@ -4,7 +4,7 @@
     <string name="description_btn_back">Кнопка назад</string>
     <string name="Media">Медиатека</string>
     <string name="Setting">Настройки</string>
-    <string name="Dark_theme">Темная тема</string>
+    <string name="dark_theme">Темная тема</string>
     <string name="Share_app">Поделиться приложением</string>
     <string name="support">Написать в поддержку</string>
     <string name="user_agreement">Пользовательское соглашение</string>

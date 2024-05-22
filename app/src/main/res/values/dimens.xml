@@ -3,6 +3,7 @@
     <dimen name= "main_side_margins">14dp</dimen>
     <dimen name= "corner_radius_btn">16dp</dimen>
     <dimen name= "setting_side_margins">16dp</dimen>
-    <dimen name= "setting_vertical_margin">21dp</dimen>
+    <dimen name= "setting_vertical_margin">24dp</dimen>
     <dimen name= "text_size">22sp</dimen>
+    <dimen name= "text_size_setting">16sp</dimen>
 </resources>

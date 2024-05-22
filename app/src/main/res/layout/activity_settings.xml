@@ -7,33 +7,18 @@
 
     android:orientation="vertical">
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/Setting"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_marginVertical="4dp"
+        android:gravity="center|start"
+        android:text="@string/Setting"
+        android:textColor="@color/color_title"
+        android:textSize="@dimen/text_size"
+        app:drawableStartCompat="@drawable/ic_btn_back"
+        app:drawableTint="@color/color_title" />
 
-        <ImageView
-            android:id="@+id/btn_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="4dp"
-            android:layout_marginStart="4dp"
-            android:layout_weight="1"
-            android:contentDescription="@string/description_btn_back"
-            app:srcCompat="@drawable/ic_btn_back"
-            app:tint="@color/color_title" />
-
-        <TextView
-            android:id="@+id/Setting"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_marginVertical="4dp"
-            android:layout_weight="90"
-            android:gravity="center|start"
-            android:text="@string/Setting"
-            android:textColor="@color/color_title"
-            android:textSize="@dimen/text_size" />
-    </LinearLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -43,7 +28,7 @@
         android:layout_marginEnd="6dp">
 
         <ImageView
-            android:id="@+id/imageView5"
+            android:id="@+id/img_switch_theme"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center|end"
@@ -55,9 +40,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:layout_marginVertical="@dimen/setting_vertical_margin"
-            android:text="@string/Dark_theme"
+            android:text="@string/dark_theme"
             android:textColor="@color/color_item"
-            android:textSize="16sp" />
+            android:textSize="@dimen/text_size_setting" />
 
 
     </FrameLayout>
@@ -69,17 +54,17 @@
         android:layout_marginEnd="12dp">
 
         <TextView
-            android:id="@+id/Share_app"
+            android:id="@+id/share_app"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:layout_marginVertical="@dimen/setting_vertical_margin"
             android:text="@string/Share_app"
             android:textColor="@color/color_item"
-            android:textSize="16sp" />
+            android:textSize="@dimen/text_size_setting" />
 
         <ImageView
-            android:id="@+id/imageView"
+            android:id="@+id/img_share_app"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center|end"
@@ -102,10 +87,10 @@
             android:layout_marginVertical="@dimen/setting_vertical_margin"
             android:text="@string/support"
             android:textColor="@color/color_item"
-            android:textSize="16sp" />
+            android:textSize="@dimen/text_size_setting" />
 
         <ImageView
-            android:id="@+id/imageView2"
+            android:id="@+id/img_support"
             app:tint="@color/item_setting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -128,10 +113,10 @@
             android:layout_marginVertical="@dimen/setting_vertical_margin"
             android:text="@string/user_agreement"
             android:textColor="@color/color_item"
-            android:textSize="16sp" />
+            android:textSize="@dimen/text_size_setting" />
 
         <ImageView
-            android:id="@+id/imageView3"
+            android:id="@+id/img_agreement"
             app:tint="@color/item_setting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

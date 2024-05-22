@@ -4,8 +4,6 @@
     <color name="background_setting">#1A1B22</color>
     <color name="color_title">#FFFFFF</color>
     <color name="color_item">#FFFFFF</color>
-
-    <color name="dark">#1A1B22</color>
     <color name="item_setting">#FFFFFF</color>
 
 </resources>

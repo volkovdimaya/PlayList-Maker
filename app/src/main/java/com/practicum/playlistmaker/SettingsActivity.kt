@@ -4,6 +4,7 @@ package com.practicum.playlistmaker
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
+import android.widget.TextView
 
 class SettingsActivity : AppCompatActivity()
 {
@@ -12,7 +13,7 @@ class SettingsActivity : AppCompatActivity()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-        val btnback = findViewById<ImageView>(R.id.btn_back)
+        val btnback = findViewById<TextView>(R.id.Setting)
 
         btnback.setOnClickListener {
             finish()
