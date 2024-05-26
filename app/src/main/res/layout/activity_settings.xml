@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_setting"
+
+    android:orientation="vertical">
+
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_setting"
+        android:paddingStart="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:tint="@color/color_title"
+        app:navigationIcon="@drawable/ic_btn_back"
+
+        >
+        <TextView
+            android:id="@+id/Setting"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center|start"
+            android:text="@string/Setting"
+            android:textColor="@color/color_title"
+            android:textSize="@dimen/text_size"/>
+    </androidx.appcompat.widget.Toolbar>
+
+
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/setting_side_margins"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="6dp">
+
+        <ImageView
+            android:id="@+id/img_switch_theme"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|end"
+            app:srcCompat="@drawable/ic_switch" />
+
+        <TextView
+            android:id="@+id/Dark_theme"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginVertical="@dimen/setting_vertical_margin"
+            android:text="@string/dark_theme"
+            android:textColor="@color/color_item"
+            android:textSize="@dimen/text_size_setting" />
+
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/setting_side_margins"
+        android:layout_marginEnd="12dp">
+
+        <TextView
+            android:id="@+id/share_app"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginVertical="@dimen/setting_vertical_margin"
+            android:text="@string/Share_app"
+            android:textColor="@color/color_item"
+            android:textSize="@dimen/text_size_setting" />
+
+        <ImageView
+            android:id="@+id/img_share_app"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|end"
+            app:tint="@color/item_setting"
+            app:srcCompat="@drawable/ic_share" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/setting_side_margins"
+        android:layout_marginEnd="12dp">
+
+        <TextView
+            android:id="@+id/support"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginVertical="@dimen/setting_vertical_margin"
+            android:text="@string/support"
+            android:textColor="@color/color_item"
+            android:textSize="@dimen/text_size_setting" />
+
+        <ImageView
+            android:id="@+id/img_support"
+            app:tint="@color/item_setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|end"
+            app:srcCompat="@drawable/ic_support" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/setting_side_margins"
+        android:layout_marginEnd="12dp">
+
+        <TextView
+            android:id="@+id/user_agreement"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginVertical="@dimen/setting_vertical_margin"
+            android:text="@string/user_agreement"
+            android:textColor="@color/color_item"
+            android:textSize="@dimen/text_size_setting" />
+
+        <ImageView
+            android:id="@+id/img_agreement"
+            app:tint="@color/item_setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|end"
+            app:srcCompat="@drawable/ic_forward" />
+
+    </FrameLayout>
+
+
+</LinearLayout>
