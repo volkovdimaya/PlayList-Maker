@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="ButtonMainStyle" parent="Widget.MaterialComponents.Button">
+        <item name="android:layout_marginTop">@dimen/main_btn_margin</item>
+        <item name="android:textSize">@dimen/text_size</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:backgroundTint">@color/white</item>
+        <item name="android:textColor">@color/main_btn_content</item>
+        <item name="cornerRadius">@dimen/corner_radius_btn</item>
+        <item name="iconTint">@color/main_btn_content</item>
+        <item name="iconGravity">textStart</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:elevation">0dp</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+    </style>
+
+    <style name="SettingItem">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">@dimen/setting_side_margins</item>
+        <item name="android:layout_marginEnd">6dp</item>
+    </style>
+
+    <style name="SettingItemIcon">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center|end</item>
+        <item name="tint">@color/item_setting</item>
+    </style>
+
+    <style name="SettingItemText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">start</item>
+        <item name="android:layout_marginVertical">@dimen/setting_vertical_margin</item>
+        <item name="android:textColor">@color/color_item</item>
+        <item name="android:textSize">@dimen/text_size_setting</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+    </style>
+</resources>
