@@ -1,7 +1,6 @@
 package com.practicum.playlistmaker
 
 
-
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -14,7 +13,7 @@ class MainActivity : AppCompatActivity() {
 
         val btnSearch = findViewById<Button>(R.id.btn_search)
 
-        btnSearch.setOnClickListener{
+        btnSearch.setOnClickListener {
             val displaySearch = Intent(this, SearchActivity::class.java)
             startActivity(displaySearch)
         }
