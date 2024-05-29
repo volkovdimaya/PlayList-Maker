@@ -20,7 +20,7 @@
     <style name="SettingItem">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginStart">@dimen/setting_side_margins</item>
+        <item name="android:layout_marginStart">@dimen/side_margins</item>
         <item name="android:layout_marginEnd">6dp</item>
     </style>
 
