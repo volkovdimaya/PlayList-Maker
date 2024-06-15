@@ -21,16 +21,16 @@ class SettingsActivity : AppCompatActivity() {
             finish()
         }
 
-        val share_app: FrameLayout = findViewById(R.id.share_app)
-        share_app.setOnClickListener {
+        val shareApp: FrameLayout = findViewById(R.id.share_app)
+        shareApp.setOnClickListener {
             val sendIntent = Intent(Intent.ACTION_SEND)
             sendIntent.type = "text/plain"
             sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.link_course))
             startActivity(sendIntent)
         }
 
-        val send_support: FrameLayout = findViewById(R.id.send_support)
-        send_support.setOnClickListener {
+        val sendSupport: FrameLayout = findViewById(R.id.send_support)
+        sendSupport.setOnClickListener {
             val shareIntent = Intent(Intent.ACTION_SENDTO)
             shareIntent.data = Uri.parse("mailto:")
             shareIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.email_developer)))
@@ -42,8 +42,8 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(shareIntent)
         }
 
-        val user_agreement: FrameLayout = findViewById(R.id.user_agreement)
-        user_agreement.setOnClickListener {
+        val userAgreement: FrameLayout = findViewById(R.id.user_agreement)
+        userAgreement.setOnClickListener {
             val view = Intent(Intent.ACTION_VIEW)
             view.data = Uri.parse(getString(R.string.link_user_agreement))
             startActivity(view)
