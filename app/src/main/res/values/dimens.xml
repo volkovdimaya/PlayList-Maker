@@ -8,4 +8,6 @@
     <dimen name= "text_size">22sp</dimen>
     <dimen name= "text_size_setting">16sp</dimen>
     <dimen name= "main_btn_margin">16dp</dimen>
+    <dimen name= "search_layout_horizontal">8dp</dimen>
+    <dimen name= "search_layout_vertical">10dp</dimen>
 </resources>
