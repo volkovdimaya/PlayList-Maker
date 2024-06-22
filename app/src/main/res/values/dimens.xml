@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name= "main_side_margins">14dp</dimen>
+    <dimen name= "size_icon">14dp</dimen>
     <dimen name= "corner_radius_btn">16dp</dimen>
     <dimen name= "side_margins">16dp</dimen>
     <dimen name= "setting_vertical_margin">24dp</dimen>
