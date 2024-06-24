@@ -35,6 +35,4 @@
         app:icon="@drawable/ic_setting"
         android:text="@string/Setting"
         android:layout_marginBottom="@dimen/main_side_margins"/>
-
-
 </LinearLayout>

@@ -23,28 +23,28 @@
             android:textColor="@color/color_title"
             android:textSize="@dimen/text_size"/>
     </androidx.appcompat.widget.Toolbar>
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="36dp"
-        android:orientation="horizontal"
         android:layout_marginHorizontal="@dimen/side_margins"
         android:background="@drawable/background_line_search"
         app:cornerRadius="8dp"
         >
         <ImageView
-            android:layout_width="@dimen/size_icon"
-            android:layout_height="@dimen/size_icon"
+            android:layout_gravity="start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:src="@drawable/search_icon"
             android:layout_marginVertical="@dimen/search_layout_vertical"
             android:layout_marginStart="@dimen/search_layout_horizontal"
             />
 
         <EditText
+            android:paddingHorizontal="@dimen/search_padding_horizontal"
+            android:layout_gravity="center"
             android:id="@+id/search"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/search_layout_horizontal"
-            android:layout_weight="1"
             android:background="@android:color/transparent"
             android:fontFamily="@font/ys_display_regular"
             android:hint="@string/search"
@@ -57,6 +57,7 @@
             tools:ignore="TouchTargetSizeCheck" />
 
         <ImageView
+            android:layout_gravity="end"
             android:id="@+id/clearIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -65,6 +66,6 @@
             android:src="@drawable/clearsearch"
             android:visibility="gone" />
 
-    </LinearLayout>
+    </FrameLayout>
 
 </LinearLayout>
