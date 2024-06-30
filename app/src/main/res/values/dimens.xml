@@ -2,8 +2,12 @@
 <resources>
     <dimen name= "main_side_margins">14dp</dimen>
     <dimen name= "corner_radius_btn">16dp</dimen>
-    <dimen name= "setting_side_margins">16dp</dimen>
+    <dimen name= "side_margins">16dp</dimen>
     <dimen name= "setting_vertical_margin">24dp</dimen>
     <dimen name= "text_size">22sp</dimen>
     <dimen name= "text_size_setting">16sp</dimen>
+    <dimen name= "main_btn_margin">16dp</dimen>
+    <dimen name= "search_layout_horizontal">12dp</dimen>
+    <dimen name= "search_layout_vertical">10dp</dimen>
+    <dimen name= "search_padding_horizontal">36dp</dimen>
 </resources>
