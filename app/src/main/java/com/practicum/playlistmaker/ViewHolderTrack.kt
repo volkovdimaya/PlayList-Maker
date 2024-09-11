@@ -55,9 +55,7 @@ class ViewHolderTrack(itemView: View) : RecyclerView.ViewHolder(itemView) {
             .placeholder(R.drawable.play_ic)
             .into(artworkUrl100)
 
-        //не понял как лучше сделать
-        //в случии изменении текста установливаю вес для артиста
-        //Обратите внимание, что не только название трека может не помещаться на экране, но и имя артиста/группы.
+
         artistName.viewTreeObserver.addOnGlobalLayoutListener(object :
             ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
