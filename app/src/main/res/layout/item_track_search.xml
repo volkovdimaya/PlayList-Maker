@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingTop="@dimen/standard_margins"
+    android:paddingBottom="@dimen/standard_margins"
+    android:paddingStart="13dp"
+    android:paddingEnd="12dp"
+    >
+
+    <ImageView
+        android:id="@+id/icon_track"
+        android:layout_width="@dimen/item_track_search_image_track"
+        android:layout_height="@dimen/item_track_search_image_track"
+        android:layout_gravity="start"
+        android:src="@android:drawable/ic_input_add" />
+    <LinearLayout
+        android:paddingHorizontal="@dimen/standard_margins"
+        android:paddingTop="6dp"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+
+        <TextView
+            android:id="@+id/track_name"
+            style="@style/ItemTrackTitleText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="13dp"
+            android:paddingTop="1dp"
+            android:orientation="horizontal"
+            >
+            <TextView
+                android:id="@+id/artist_name"
+                style="@style/ItemTrackDescriptionText"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                />
+
+            <ImageView
+                android:layout_width="@dimen/item_track_search_image_point"
+                android:layout_height="@dimen/item_track_search_image_point"
+                app:srcCompat="@drawable/point_ic"
+                android:layout_gravity="center"
+                />
+
+            <TextView
+                android:id="@+id/track_time"
+                style="@style/ItemTrackDescriptionText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+
+
+
+    </LinearLayout>
+
+    <ImageView
+        style="@style/SettingItemIcon"
+        android:layout_width="@dimen/item_track_search_image_setting"
+        android:layout_height="@dimen/item_track_search_image_setting"
+        android:src="@drawable/btn_next"
+        android:layout_gravity="center"/>
+
+</LinearLayout>

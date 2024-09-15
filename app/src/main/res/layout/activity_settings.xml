@@ -9,7 +9,7 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_setting"
-        android:paddingStart="8dp"
+        android:paddingStart="@dimen/standard_margins"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:tint="@color/color_title"
