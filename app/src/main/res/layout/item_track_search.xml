@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:paddingTop="8dp"
-    android:paddingBottom="8dp"
+    android:paddingTop="@dimen/standard_margins"
+    android:paddingBottom="@dimen/standard_margins"
     android:paddingStart="13dp"
     android:paddingEnd="12dp"
     >
@@ -18,7 +18,7 @@
         android:layout_gravity="start"
         android:src="@android:drawable/ic_input_add" />
     <LinearLayout
-        android:paddingHorizontal="8dp"
+        android:paddingHorizontal="@dimen/standard_margins"
         android:paddingTop="6dp"
         android:layout_weight="1"
         android:layout_width="0dp"

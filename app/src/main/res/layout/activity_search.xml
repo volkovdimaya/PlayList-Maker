@@ -27,9 +27,9 @@
         android:layout_width="match_parent"
         android:layout_height="36dp"
         android:layout_marginHorizontal="@dimen/side_margins"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="@dimen/standard_margins"
         android:background="@drawable/background_line_search"
-        app:cornerRadius="8dp"
+        app:cornerRadius="@dimen/standard_margins"
         >
         <ImageView
             android:layout_gravity="start|center_vertical"
