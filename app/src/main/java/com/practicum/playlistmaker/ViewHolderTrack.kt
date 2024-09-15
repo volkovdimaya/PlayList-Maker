@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import java.lang.Exception
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class ViewHolderTrack(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
@@ -46,7 +48,7 @@ class ViewHolderTrack(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
 
 
-        trackTime.setText(model.trackTime)
+        trackTime.setText(getTime(model.trackTimeMillis))
         Glide.with(itemView)
             .load(model.artworkUrl100)
             .override(widthInPx, heightInPx)
@@ -70,8 +72,12 @@ class ViewHolderTrack(itemView: View) : RecyclerView.ViewHolder(itemView) {
             }
         })
     }
+    fun getTime(time : Long) : String
+    {
+      return  SimpleDateFormat("mm:ss", Locale.getDefault()).format(time)
+    }
 
-    //открыть фигму посмотреть размеры
+
     fun dpToPx(dp: Float, context: Context): Int {
         return TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,

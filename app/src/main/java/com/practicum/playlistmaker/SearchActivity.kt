@@ -5,38 +5,47 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlin.random.Random
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class SearchActivity : AppCompatActivity() {
 
     private var textSearch: String = ""
     private lateinit var search: EditText
+
+    private val service = ApiRetrofit.getClient().create(SearchTrackApi::class.java)
+    private lateinit var noContentPlaceHolder: LinearLayout
+    private lateinit var noInternetPlaceHolder: LinearLayout
+    private lateinit var recyclerViewTrak: RecyclerView
+    private lateinit var trakAdapter: AdapterTrack
+
+    lateinit var songs: List<Track>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        val songs = listOf<Track>(
-            Track("Smells Like Teen Spirit","Nirvana","5:01","https://is5-ssl.mzstatic.com/image/thumb/Music115/v4/7b/58/c2/7b58c21a-2b51-2bb2-e59a-9bb9b96ad8c3/00602567924166.rgb.jpg/100x100bb.jpg"),
-            Track("Billie Jean","Michael Jackson","4:35","https://is5-ssl.mzstatic.com/image/thumb/Music125/v4/3d/9d/38/3d9d3811-71f0-3a0e-1ada-3004e56ff852/827969428726.jpg/100x100bb.jpg"),
-            Track("Stayin' Alive","Bee Gees","4:10","https://is4-ssl.mzstatic.com/image/thumb/Music115/v4/1f/80/1f/1f801fc1-8c0f-ea3e-d3e5-387c6619619e/16UMGIM86640.rgb.jpg/100x100bb.jpg"),
-            Track("Stayin' Alive","Beыыыыыыыыыыыыыыыыыыыыыыыыыыыыыыыыdssse Gees","4:10","https://is4-ssl.mzstatic.com/image/thumb/Music115/v4/1f/80/1f/1f801fc1-8c0f-ea3e-d3e5-387c6619619e/16UMGIM86640.rgb.jpg/100x100bb.jpg"),
-            Track("Whole Lotta Love","Led Zeppelin","5:33","https://is2-ssl.mzstatic.com/image/thumb/Music62/v4/7e/17/e3/7e17e33f-2efa-2a36-e916-7f808576cf6b/mzm.fyigqcbs.jpg/100x100bb.jpg"),
-            Track("Sweet Child O'Mine", "Guns N' Roses", "5:03", "https://is5-ssl.mzstatic.com/image/thumb/Music125/v4/a0/4d/c4/a04dc484-03cc-02aa-fa82-5334fcb4bc16/18UMGIM24878.rgb.jpg/100x100bb.jpg")
-            )
-        val recyclerViewTrak = findViewById<RecyclerView>(R.id.recycler_track)
+        val updateBtn = findViewById<Button>(R.id.btn_search_update)
+        noContentPlaceHolder = findViewById(R.id.error_no_content)
+        noInternetPlaceHolder = findViewById(R.id.error_internet)
+
+
+        recyclerViewTrak = findViewById(R.id.recycler_track)
         recyclerViewTrak.layoutManager = LinearLayoutManager(this)
 
-
-
-        val trakAdapter = AdapterTrack(songs)
+        trakAdapter = AdapterTrack(emptyList())
         recyclerViewTrak.adapter = trakAdapter
+
 
         search = findViewById(R.id.search)
         val toolbar: Toolbar = findViewById(R.id.toolbar_search)
@@ -69,6 +78,21 @@ class SearchActivity : AppCompatActivity() {
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(it.windowToken, 0)
 
+
+
+            trakAdapter.updateData(emptyList())
+
+        }
+
+        search.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                loadTrack(search.text.toString())
+                true
+            }
+            false
+        }
+        updateBtn.setOnClickListener {
+            loadTrack(search.text.toString())
         }
 
     }
@@ -97,4 +121,47 @@ class SearchActivity : AppCompatActivity() {
     companion object {
         const val FIELD_SEARCH = "FIELD_SEARCH"
     }
+
+
+    fun loadTrack(text: String) {
+        service.search(text)
+            .enqueue(object : Callback<SearchTrackResponse> {
+                override fun onResponse(
+                    call: Call<SearchTrackResponse>,
+                    response: Response<SearchTrackResponse>
+                ) {
+                    val results = response.body()?.results
+                    if (results.isNullOrEmpty()) {
+
+                        noInternetPlaceHolder.visibility = View.GONE
+                        recyclerViewTrak.visibility = View.GONE
+                        noContentPlaceHolder.visibility = View.VISIBLE
+                    } else {
+                        noInternetPlaceHolder.visibility = View.GONE
+                        noContentPlaceHolder.visibility = View.GONE
+                        recyclerViewTrak.visibility = View.VISIBLE
+
+                        val songs = results.map { track ->
+                            Track(
+                                trackName = track.trackName ?: getString(R.string.unknown),
+                                artistName = track.artistName ?: getString(R.string.unknown),
+                                trackTimeMillis = track.trackTimeMillis ?: 0L,
+                                artworkUrl100 = track.artworkUrl100 ?: ""
+                            )
+                        }
+                        trakAdapter.updateData(songs)
+                    }
+
+
+                }
+
+                override fun onFailure(call: Call<SearchTrackResponse>, t: Throwable) {
+                    noInternetPlaceHolder.visibility = View.VISIBLE
+                    noContentPlaceHolder.visibility = View.GONE
+                    recyclerViewTrak.visibility = View.GONE
+                }
+
+            })
+    }
 }
+
