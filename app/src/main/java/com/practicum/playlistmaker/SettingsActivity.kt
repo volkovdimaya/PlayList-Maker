@@ -51,20 +51,7 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(view)
         }
 
-        val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
 
-
-        val sharedPrefs = getSharedPreferences(PLAYLIST_MAKER, MODE_PRIVATE)
-        var darkTheme = sharedPrefs.getBoolean(MODE_THEME, false)
-
-        themeSwitcher.setChecked(darkTheme)
-
-        themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
-            (applicationContext as App).switchTheme(checked)
-            sharedPrefs.edit()
-                .putBoolean(MODE_THEME, checked)
-                .apply()
-        }
     }
 
 }
