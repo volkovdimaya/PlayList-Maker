@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import java.lang.Exception
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class ViewHolderTrack(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
@@ -38,6 +40,9 @@ class ViewHolderTrack(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
 
     fun bind(model: Track) {
+
+        if (model == null)
+            return
         val widthInPx = dpToPx(45f, itemView.context)
         val heightInPx = dpToPx(45f, itemView.context)
 
@@ -46,7 +51,7 @@ class ViewHolderTrack(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
 
 
-        trackTime.setText(model.trackTime)
+        trackTime.setText(getTime(model.trackTimeMillis))
         Glide.with(itemView)
             .load(model.artworkUrl100)
             .override(widthInPx, heightInPx)
@@ -56,22 +61,14 @@ class ViewHolderTrack(itemView: View) : RecyclerView.ViewHolder(itemView) {
             .into(artworkUrl100)
 
 
-        artistName.viewTreeObserver.addOnGlobalLayoutListener(object :
-            ViewTreeObserver.OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
-                artistName.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                val visibleText = artistName.layout.text
-                if (!visibleText.equals(model.artistName)) {
-                    val layoutParams = artistName.layoutParams as LinearLayout.LayoutParams
-                    layoutParams.width = 0
-                    layoutParams.weight = 1f
-                    artistName.layoutParams = layoutParams
-                }
-            }
-        })
+
+    }
+    fun getTime(time : Long) : String
+    {
+      return  SimpleDateFormat("mm:ss", Locale.getDefault()).format(time)
     }
 
-    //открыть фигму посмотреть размеры
+
     fun dpToPx(dp: Float, context: Context): Int {
         return TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,

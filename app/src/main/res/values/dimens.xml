@@ -7,9 +7,12 @@
     <dimen name= "text_size">22sp</dimen>
     <dimen name= "text_size_setting">16sp</dimen>
     <dimen name= "main_btn_margin">16dp</dimen>
+
     <dimen name= "search_layout_horizontal">12dp</dimen>
     <dimen name= "search_layout_vertical">10dp</dimen>
     <dimen name= "search_padding_horizontal">36dp</dimen>
+    <dimen name= "search_place_holder_resolution">120dp</dimen>
+    <dimen name= "search_place_holder_padding_top">102dp</dimen>
 
     <dimen name= "standard_margins">8dp</dimen>
 

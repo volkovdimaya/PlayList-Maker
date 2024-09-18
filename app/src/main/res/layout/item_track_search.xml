@@ -33,33 +33,39 @@
             android:layout_height="wrap_content"
             />
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="13dp"
             android:paddingTop="1dp"
-            android:orientation="horizontal"
-            >
+            android:layout_height="13dp">
+
             <TextView
                 android:id="@+id/artist_name"
                 style="@style/ItemTrackDescriptionText"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
+                android:id="@+id/imageView"
                 android:layout_width="@dimen/item_track_search_image_point"
                 android:layout_height="@dimen/item_track_search_image_point"
-                app:srcCompat="@drawable/point_ic"
-                android:layout_gravity="center"
-                />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/artist_name"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/point_ic" />
 
             <TextView
                 android:id="@+id/track_time"
                 style="@style/ItemTrackDescriptionText"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-        </LinearLayout>
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/imageView"
+                app:layout_constraintTop_toTopOf="parent" />
 
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 

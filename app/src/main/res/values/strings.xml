@@ -13,4 +13,8 @@
     <string name="email_developer">volkov.dimaya@yandex.ru</string>
     <string name="send_developer_theme">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
     <string name="send_developer_body">Спасибо разработчикам и разработчицам за крутое приложение!</string>
+    <string name="error_no_content">Ничего не нашлось</string>
+    <string name="error_no_internet">Проблемы со связью \n\nЗагрузка не удалась. Проверьте \n подключение к интернету</string>
+    <string name="btn_update">Обновить</string>
+    <string name="unknown">Неизвестно</string>
 </resources>

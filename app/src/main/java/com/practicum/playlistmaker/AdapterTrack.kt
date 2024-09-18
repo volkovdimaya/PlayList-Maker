@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
-class AdapterTrack(private val tracks: List<Track>) : RecyclerView.Adapter<ViewHolderTrack>() {
+class AdapterTrack(private var tracks: List<Track>) : RecyclerView.Adapter<ViewHolderTrack>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderTrack {
         return ViewHolderTrack(parent)
     }
@@ -15,6 +15,11 @@ class AdapterTrack(private val tracks: List<Track>) : RecyclerView.Adapter<ViewH
 
     override fun onBindViewHolder(holder: ViewHolderTrack, position: Int) {
         holder.bind(tracks[position])
+    }
+
+    fun updateData(newSongs: List<Track>) {
+        tracks = newSongs
+        notifyDataSetChanged()
     }
 }
 

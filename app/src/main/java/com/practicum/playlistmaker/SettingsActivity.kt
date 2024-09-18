@@ -7,8 +7,10 @@ import android.os.Bundle
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import com.google.android.material.switchmaterial.SwitchMaterial
 
-
+const val PLAYLIST_MAKER = "PLAYLIST_MAKER"
+const val MODE_THEME = "MODE_THEME"
 class SettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,6 +50,8 @@ class SettingsActivity : AppCompatActivity() {
             view.data = Uri.parse(getString(R.string.link_user_agreement))
             startActivity(view)
         }
+
+
     }
 
 }
