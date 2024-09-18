@@ -79,7 +79,6 @@ class SearchActivity : AppCompatActivity() {
             inputMethodManager?.hideSoftInputFromWindow(it.windowToken, 0)
 
 
-
             trakAdapter.updateData(emptyList())
 
         }

@@ -26,8 +26,7 @@ interface SearchTrackApi {
     @GET("search")
     fun search(
         @Query("term") searchText: String,
-        @Query("entity") entity: String = "song",
-        @Query("limit") limit: Int = 5
+        @Query("entity") entity: String = "song"
     )
             : Call<SearchTrackResponse>
 }

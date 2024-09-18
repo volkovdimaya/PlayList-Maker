@@ -40,6 +40,9 @@ class ViewHolderTrack(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
 
     fun bind(model: Track) {
+
+        if (model == null)
+            return
         val widthInPx = dpToPx(45f, itemView.context)
         val heightInPx = dpToPx(45f, itemView.context)
 
@@ -58,19 +61,7 @@ class ViewHolderTrack(itemView: View) : RecyclerView.ViewHolder(itemView) {
             .into(artworkUrl100)
 
 
-        artistName.viewTreeObserver.addOnGlobalLayoutListener(object :
-            ViewTreeObserver.OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
-                artistName.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                val visibleText = artistName.layout.text
-                if (!visibleText.equals(model.artistName)) {
-                    val layoutParams = artistName.layoutParams as LinearLayout.LayoutParams
-                    layoutParams.width = 0
-                    layoutParams.weight = 1f
-                    artistName.layoutParams = layoutParams
-                }
-            }
-        })
+
     }
     fun getTime(time : Long) : String
     {
