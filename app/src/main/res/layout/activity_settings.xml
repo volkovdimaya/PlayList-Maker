@@ -29,16 +29,16 @@
     <FrameLayout
         style="@style/SettingItem"
         android:id="@+id/theme_night_mode">
-        <ImageView
-            android:id="@+id/img_switch_theme"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center|end"
-            app:srcCompat="@drawable/ic_switch" />
-        <TextView
-            android:text="@string/dark_theme"
-            style="@style/SettingItemText" />
+
+
     </FrameLayout>
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/themeSwitcher"
+        android:text="Темная тема"
+        style="@style/SettingItem"
+        android:layout_gravity="start"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
     <FrameLayout
         style="@style/SettingItem"
