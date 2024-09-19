@@ -34,7 +34,7 @@
     </FrameLayout>
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/themeSwitcher"
-        android:text="Темная тема"
+        android:text="@string/mode_theme"
         style="@style/SettingItem"
         android:layout_gravity="start"
         android:layout_width="match_parent"

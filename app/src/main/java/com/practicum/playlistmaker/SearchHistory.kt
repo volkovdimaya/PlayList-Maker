@@ -41,7 +41,7 @@ class SearchHistory(val sharedPrefs : SharedPreferences,
     fun update(model: Track)
     {
 
-        val trackIndex = songs.indexOfFirst { it.trackId.equals( model.trackId) }
+        val trackIndex = songs.indexOfFirst { it.trackId.equals(model.trackId) }
 
         if (trackIndex != -1) {
             val mutableTracks = songs.toMutableList()
@@ -49,6 +49,7 @@ class SearchHistory(val sharedPrefs : SharedPreferences,
             mutableTracks.add(track)
             songs = mutableTracks.toList()
             hasHistory = songs.isNotEmpty()
+            return
         }
         val size = songs.size
         val mutableTracks = songs.toMutableList()

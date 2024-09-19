@@ -63,18 +63,14 @@ class ViewHolderTrack(itemView: View) : RecyclerView.ViewHolder(itemView) {
         itemView.setOnClickListener {
             val sharedPrefs = itemView.context.getSharedPreferences(PLAYLIST_MAKER, MODE_PRIVATE)
 
-            val searchHistory = SearchHistory(sharedPrefs)
+           val searchHistory = SearchHistory(sharedPrefs)
             searchHistory.read()
             searchHistory.update(model)
             searchHistory.write()
 
-            //var tracks = read(sharedPrefs)
+
             Log.d("ViewHolderTrack", "Response: ${searchHistory.songs.toString()}")
-            //tracks = moveTrackToLast(tracks, model)
 
-
-
-            //write(sharedPrefs, tracks)
 
         }
 
