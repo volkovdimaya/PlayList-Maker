@@ -21,6 +21,10 @@ class AdapterTrack(private var tracks: List<Track>) : RecyclerView.Adapter<ViewH
         tracks = newSongs
         notifyDataSetChanged()
     }
+    fun updateDataHistory(newSongs: List<Track>) {
+        tracks = newSongs.reversed()
+        notifyItemInserted(0)
+    }
 }
 
 
