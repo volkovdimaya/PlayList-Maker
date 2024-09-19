@@ -14,6 +14,9 @@
     <dimen name= "search_place_holder_resolution">120dp</dimen>
     <dimen name= "search_place_holder_padding_top">102dp</dimen>
 
+    <dimen name= "search_history_margin_top">24dp</dimen>
+
+
     <dimen name= "standard_margins">8dp</dimen>
 
     <dimen name= "item_track_search_image_setting">24dp</dimen>
