@@ -66,12 +66,7 @@ class ViewHolderTrack(itemView: View) : RecyclerView.ViewHolder(itemView) {
            val searchHistory = SearchHistory(sharedPrefs)
             searchHistory.read()
             searchHistory.update(model)
-            searchHistory.write()
-
-
-            Log.d("ViewHolderTrack", "Response: ${searchHistory.songs.toString()}")
-
-
+            //searchHistory.write()
         }
 
     }
@@ -87,39 +82,6 @@ class ViewHolderTrack(itemView: View) : RecyclerView.ViewHolder(itemView) {
             dp,
             context.resources.displayMetrics
         ).toInt()
-    }
-
-
-    fun read(sharedPreferences: SharedPreferences): Array<Track> {
-        val json = sharedPreferences.getString(HISTORY_LIST_TRACK, null) ?: return emptyArray()
-        return Gson().fromJson(json, Array<Track>::class.java)
-    }
-
-
-    fun write(sharedPreferences: SharedPreferences, track: Array<Track>) {
-        val json = Gson().toJson(track)
-        sharedPreferences.edit()
-            .putString(HISTORY_LIST_TRACK, json)
-            .apply()
-    }
-
-    fun moveTrackToLast(tracks: Array<Track>, model: Track): Array<Track> {
-
-        val trackIndex = tracks.indexOfFirst { it.trackId.equals( model.trackId) }
-
-        if (trackIndex != -1) {
-            val mutableTracks = tracks.toMutableList()
-            val track = mutableTracks.removeAt(trackIndex)
-            mutableTracks.add(track)
-            return mutableTracks.toTypedArray()
-        }
-        val size = tracks.size
-        val mutableTracks = tracks.toMutableList()
-        if(size < 10)
-            mutableTracks.add(model)
-        else
-            mutableTracks[9] = model
-        return mutableTracks.toTypedArray()
     }
 }
 

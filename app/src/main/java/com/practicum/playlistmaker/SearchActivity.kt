@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -20,6 +21,7 @@ import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+
 
 class SearchActivity : AppCompatActivity() {
 
@@ -39,6 +41,8 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var listener: SharedPreferences.OnSharedPreferenceChangeListener
 
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
@@ -52,7 +56,7 @@ class SearchActivity : AppCompatActivity() {
         recyclerViewHistoryTrack = findViewById(R.id.recycler_history_track)
 
         recyclerViewHistoryTrack.layoutManager = LinearLayoutManager(this)
-        historyTrackAdapter = AdapterTrack(searchHistory.songs.reversed())
+        historyTrackAdapter = AdapterTrack(searchHistory.getSong().reversed())
         recyclerViewHistoryTrack.adapter = historyTrackAdapter
         linearLayoutHistory.visibility = if (searchHistory.hasHistory) View.VISIBLE else View.GONE
 
@@ -60,7 +64,7 @@ class SearchActivity : AppCompatActivity() {
             if (key == HISTORY_LIST_TRACK) {
                 searchHistory.read()
                 if (searchHistory.hasHistory) {
-                    historyTrackAdapter.updateDataHistory(searchHistory.songs)
+                    historyTrackAdapter.updateDataHistory(searchHistory.getSong())
                     recyclerViewHistoryTrack.scrollToPosition(0)
 
                 }
@@ -160,7 +164,8 @@ class SearchActivity : AppCompatActivity() {
         val btnClearHistory = findViewById<Button>(R.id.btn_clear_history)
         btnClearHistory.setOnClickListener {
             searchHistory.clear()
-            trakAdapter.updateData(searchHistory.songs)
+           // historyTrackAdapter.updateData(searchHistory.songs)
+            historyTrackAdapter.updateData(emptyList())
             linearLayoutHistory.visibility = View.GONE
         }
 
