@@ -9,8 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.google.android.material.switchmaterial.SwitchMaterial
 
-const val PLAYLIST_MAKER = "PLAYLIST_MAKER"
-const val MODE_THEME = "MODE_THEME"
+
 class SettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,7 +50,20 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(view)
         }
 
+        val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
 
+
+        val sharedPrefs = getSharedPreferences(PLAYLIST_MAKER, MODE_PRIVATE)
+        var darkTheme = sharedPrefs.getBoolean(MODE_THEME, false)
+
+        themeSwitcher.setChecked(darkTheme)
+
+        themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
+            (applicationContext as App).switchTheme(checked)
+            sharedPrefs.edit()
+                .putBoolean(MODE_THEME, checked)
+                .apply()
+        }
     }
 
 }
