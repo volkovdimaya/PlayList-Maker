@@ -36,7 +36,7 @@ class AudioPlayerActivity : AppCompatActivity() {
         val countryTextView = findViewById<TextView>(R.id.country)
         val groupAlbum = findViewById<Group>(R.id.group_album)
 
-        val track = intent.getSerializableExtra("track") as? Track
+        val track = intent.getSerializableExtra(TRACK_DETAILS) as? Track
         if (track != null) {
             trackNameTextView.text = track.trackName
             artistNameTextView.text = track.artistName
@@ -49,14 +49,17 @@ class AudioPlayerActivity : AppCompatActivity() {
             countryTextView.text = track.country
 
             Glide.with(this)
-                .load(track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg"))
+                .load(
+                    track.artworkUrl100.replaceAfterLast(
+                        '/',
+                        getString(R.string.image_resolution)
+                    )
+                )
                 .centerCrop()
                 .transform(RoundedCorners(8))
-                .placeholder(R.drawable.play_ic)
+                .placeholder(R.drawable.place_holder_cover)
                 .into(coverImageView)
-        }
-        else
-        {
+        } else {
             Toast.makeText(this, "Ошибка", Toast.LENGTH_SHORT).show()
             finish()
         }

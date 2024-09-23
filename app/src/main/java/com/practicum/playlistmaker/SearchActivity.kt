@@ -6,7 +6,6 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -18,11 +17,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+const val TRACK_DETAILS = "TRACK_DETAILS"
 
 class SearchActivity : AppCompatActivity() {
 
@@ -33,15 +32,13 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var noContentPlaceHolder: LinearLayout
     private lateinit var noInternetPlaceHolder: LinearLayout
     private lateinit var recyclerViewTrak: RecyclerView
-    private lateinit var trakAdapter: AdapterTrack
+    private lateinit var trakAdapter: TrackAdapter
 
-    private lateinit var sharedPrefs : SharedPreferences
-    private lateinit var searchHistory : SearchHistory
+    private lateinit var sharedPrefs: SharedPreferences
+    private lateinit var searchHistory: SearchHistory
     private lateinit var recyclerViewHistoryTrack: RecyclerView
-    private lateinit var historyTrackAdapter: AdapterTrack
+    private lateinit var historyTrackAdapter: TrackAdapter
     private lateinit var listener: SharedPreferences.OnSharedPreferenceChangeListener
-
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,12 +54,14 @@ class SearchActivity : AppCompatActivity() {
         recyclerViewHistoryTrack = findViewById(R.id.recycler_history_track)
 
         recyclerViewHistoryTrack.layoutManager = LinearLayoutManager(this)
-        historyTrackAdapter = AdapterTrack(searchHistory.getSong().reversed(), object : AdapterTrack.OnItemClickListener {
-            override fun onItemClick(track: Track) {
-                clickOnTrack(track)
+        historyTrackAdapter = TrackAdapter(
+            searchHistory.getSong().reversed(),
+            object : TrackAdapter.OnItemClickListener {
+                override fun onItemClick(track: Track) {
+                    clickOnTrack(track)
 
-            }
-        })
+                }
+            })
         recyclerViewHistoryTrack.adapter = historyTrackAdapter
         linearLayoutHistory.visibility = if (searchHistory.hasHistory) View.VISIBLE else View.GONE
 
@@ -87,7 +86,7 @@ class SearchActivity : AppCompatActivity() {
         recyclerViewTrak = findViewById(R.id.recycler_track)
         recyclerViewTrak.layoutManager = LinearLayoutManager(this)
 
-        trakAdapter = AdapterTrack(emptyList(), object : AdapterTrack.OnItemClickListener {
+        trakAdapter = TrackAdapter(emptyList(), object : TrackAdapter.OnItemClickListener {
             override fun onItemClick(track: Track) {
                 clickOnTrack(track)
             }
@@ -112,20 +111,18 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearButton.visibility = clearButtonVisibility(s)
 
-                if (search.hasFocus() && s?.isEmpty() == true)
-                {
+                if (search.hasFocus() && s?.isEmpty() == true) {
                     noContentPlaceHolder.visibility = View.GONE
                     noInternetPlaceHolder.visibility = View.GONE
 
-                    linearLayoutHistory.visibility =  View.VISIBLE
+                    linearLayoutHistory.visibility = View.VISIBLE
                     trakAdapter.updateData(emptyList())
-                }
-                else
-                {
+                } else {
                     linearLayoutHistory.visibility = View.GONE
                 }
 
             }
+
             override fun afterTextChanged(s: Editable?) {
                 textSearch = search.getText().toString()
             }
@@ -136,12 +133,9 @@ class SearchActivity : AppCompatActivity() {
 
 
         search.setOnFocusChangeListener { view, hasFocus ->
-            if (hasFocus && search.text.isEmpty() && searchHistory.hasHistory)
-            {
+            if (hasFocus && search.text.isEmpty() && searchHistory.hasHistory) {
                 linearLayoutHistory.visibility = View.VISIBLE
-            }
-            else
-            {
+            } else {
                 linearLayoutHistory.visibility = View.GONE
             }
 
@@ -205,15 +199,15 @@ class SearchActivity : AppCompatActivity() {
         const val FIELD_SEARCH = "FIELD_SEARCH"
     }
 
-    private fun clickOnTrack(track: Track)
-    {
+    private fun clickOnTrack(track: Track) {
         val searchHistory = SearchHistory(sharedPrefs)
         searchHistory.read()
         searchHistory.update(track)
         val intent = Intent(this, AudioPlayerActivity::class.java)
-        intent.putExtra("track", track)
+        intent.putExtra(TRACK_DETAILS, track)
         startActivity(intent)
     }
+
     fun loadTrack(text: String) {
         service.search(text)
             .enqueue(object : Callback<SearchTrackResponse> {
@@ -244,7 +238,7 @@ class SearchActivity : AppCompatActivity() {
                                 collectionName = track.collectionName ?: "",
                                 country = track.country ?: "",
 
-                            )
+                                )
                         }
 
                         trakAdapter.updateData(songs)
