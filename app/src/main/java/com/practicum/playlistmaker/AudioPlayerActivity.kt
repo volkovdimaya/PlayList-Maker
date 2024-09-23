@@ -60,7 +60,7 @@ class AudioPlayerActivity : AppCompatActivity() {
                 .placeholder(R.drawable.place_holder_cover)
                 .into(coverImageView)
         } else {
-            Toast.makeText(this, "Ошибка", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.toast_error), Toast.LENGTH_SHORT).show()
             finish()
         }
     }

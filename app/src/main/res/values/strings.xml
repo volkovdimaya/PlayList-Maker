@@ -27,4 +27,5 @@
     <string name="text_album">Альбом</string>
     <string name="text_duration">Длительность</string>
     <string name="image_resolution">512x512bb.jpg</string>
+    <string name="toast_error">Ошибка</string>
 </resources>
