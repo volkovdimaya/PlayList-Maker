@@ -4,8 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -13,6 +16,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,9 +25,34 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-const val TRACK_DETAILS = "TRACK_DETAILS"
 
+const val TRACK_DETAILS = "TRACK_DETAILS"
 class SearchActivity : AppCompatActivity() {
+
+    private var isClickAllowed = true
+    private val handler = Handler(Looper.getMainLooper())
+    private var searchRunnable = Runnable { searchDebounce() }
+
+    private lateinit var progressBar : ProgressBar
+
+    private fun searchDebounce()
+    {
+        handler.removeCallbacks(searchRunnable)
+        handler.postDelayed(searchRunnable, SEARCH_TRACK_DEBOUNCE_DELAY)
+        Log.d("121212", "запроссс 2222")
+        loadTrack(search.text.toString())
+    }
+
+    private fun clickDebonce() : Boolean
+    {
+        val current = isClickAllowed
+        if (isClickAllowed)
+        {
+            isClickAllowed = false
+            handler.postDelayed({isClickAllowed = true}, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
+    }
 
     private var textSearch: String = ""
     private lateinit var search: EditText
@@ -44,6 +73,8 @@ class SearchActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
+
+        progressBar = findViewById(R.id.progressBar)
 
         val linearLayoutHistory = findViewById<LinearLayout>(R.id.linear_layout_history)
 
@@ -117,8 +148,11 @@ class SearchActivity : AppCompatActivity() {
 
                     linearLayoutHistory.visibility = View.VISIBLE
                     trakAdapter.updateData(emptyList())
+                    handler.removeCallbacks(searchRunnable)
                 } else {
                     linearLayoutHistory.visibility = View.GONE
+                    searchDebounce()
+                    Log.d("121212", "запроссс")
                 }
 
             }
@@ -197,24 +231,35 @@ class SearchActivity : AppCompatActivity() {
 
     companion object {
         const val FIELD_SEARCH = "FIELD_SEARCH"
+
+        private const val SEARCH_TRACK_DEBOUNCE_DELAY = 2000L
+        private  const val CLICK_DEBOUNCE_DELAY = 2000L
     }
 
     private fun clickOnTrack(track: Track) {
         val searchHistory = SearchHistory(sharedPrefs)
         searchHistory.read()
         searchHistory.update(track)
-        val intent = Intent(this, AudioPlayerActivity::class.java)
-        intent.putExtra(TRACK_DETAILS, track)
-        startActivity(intent)
+        if (clickDebonce())
+        {
+            val intent = Intent(this, AudioPlayerActivity::class.java)
+            intent.putExtra(TRACK_DETAILS, track)
+            startActivity(intent)
+        }
     }
 
     fun loadTrack(text: String) {
+        progressBar.visibility = View.VISIBLE
+        recyclerViewTrak.visibility = View.GONE
+        handler.removeCallbacks(searchRunnable)
         service.search(text)
             .enqueue(object : Callback<SearchTrackResponse> {
                 override fun onResponse(
                     call: Call<SearchTrackResponse>,
                     response: Response<SearchTrackResponse>
                 ) {
+                    progressBar.visibility = View.GONE
+                    recyclerViewTrak.visibility = View.VISIBLE
                     val results = response.body()?.results
                     if (results.isNullOrEmpty()) {
 
@@ -227,6 +272,7 @@ class SearchActivity : AppCompatActivity() {
                         recyclerViewTrak.visibility = View.VISIBLE
 
                         val songs = results.map { track ->
+                            Log.d("1111111","55 ${track.previewUrl}")
                             Track(
                                 trackName = track.trackName ?: getString(R.string.unknown),
                                 artistName = track.artistName ?: getString(R.string.unknown),
@@ -237,7 +283,7 @@ class SearchActivity : AppCompatActivity() {
                                 primaryGenreName = track.primaryGenreName ?: "",
                                 collectionName = track.collectionName ?: "",
                                 country = track.country ?: "",
-
+                                previewUrl = track.previewUrl ?: "",
                                 )
                         }
 
@@ -251,6 +297,7 @@ class SearchActivity : AppCompatActivity() {
                     noInternetPlaceHolder.visibility = View.VISIBLE
                     noContentPlaceHolder.visibility = View.GONE
                     recyclerViewTrak.visibility = View.GONE
+                    progressBar.visibility = View.GONE
                 }
 
             })
