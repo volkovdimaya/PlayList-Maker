@@ -26,27 +26,28 @@ class AudioPlayerActivity : AppCompatActivity() {
     private lateinit var playbackTime: TextView
     private var mediaPlayer = MediaPlayer()
 
-    private var secondsCount : Long = 0
+    private var secondsCount: Long = 0
     private val handler = Handler(Looper.getMainLooper())
     private var countingDownRunnable = Runnable {
         countingDownDebounce()
         secondsCount--
         playbackTime.text = String.format("%d:%02d", secondsCount / 60, secondsCount % 60)
-        if(secondsCount == 0L)
-        {
+        if (secondsCount == 0L) {
+            pausePlayer()
             removeCountingDownDebounce()
+            secondsCount = 30
+            playbackTime.text = String.format("%d:%02d", secondsCount / 60, secondsCount % 60)
         }
-        Log.d("qqqqqqqq", "secondsCount = $secondsCount")
+
 
     }
-    private var  track : Track? = null
+    private var track: Track? = null
 
-    private fun countingDownDebounce()
-    {
+    private fun countingDownDebounce() {
         handler.postDelayed(countingDownRunnable, SECOND)
     }
-    private fun removeCountingDownDebounce()
-    {
+
+    private fun removeCountingDownDebounce() {
         handler.removeCallbacks(countingDownRunnable)
     }
 
@@ -128,10 +129,8 @@ class AudioPlayerActivity : AppCompatActivity() {
     }
 
     private fun preparePlayer() {
-        if (track != null)
-        {
-            mediaPlayer.setDataSource("https://rus.hitmotop.com/get/music/20240830/CHajj_Burito_-_Est_eshhjo_zdes_khot_kto-to_krome_menya_78182322.mp3")
-            //mediaPlayer.setDataSource(track?.previewUrl)
+        if (track != null) {
+            mediaPlayer.setDataSource(track?.previewUrl)
             mediaPlayer.prepareAsync()
             mediaPlayer.setOnPreparedListener {
                 playerState = STATE_PREPARED
@@ -140,11 +139,13 @@ class AudioPlayerActivity : AppCompatActivity() {
         }
 
     }
+
     private fun playbackControl() {
-        when(playerState) {
+        when (playerState) {
             STATE_PLAYING -> {
                 pausePlayer()
             }
+
             STATE_PREPARED, STATE_PAUSED -> {
                 startPlayer()
             }
@@ -157,27 +158,23 @@ class AudioPlayerActivity : AppCompatActivity() {
         val minutes = parts[0].toLong()
         val seconds = parts[1].toLong()
         secondsCount = minutes * 60 + seconds
-        if(secondsCount > 0)
-        {
+        if (secondsCount > 0) {
             countingDownDebounce()
 
         }
-
-
-        Log.d("qqqqqqqq","secondsCount = $secondsCount")
-        Log.d("qqqqqqqq","startPlayer")
         mediaPlayer.start()
         btnActive.setImageResource(R.drawable.btn_pause_audio_player)
 
         playerState = STATE_PLAYING
     }
+
     private fun pausePlayer() {
-        Log.d("qqqqqqqq","pausePlayer")
         handler.removeCallbacks(countingDownRunnable)
         mediaPlayer.pause()
         btnActive.setImageResource(R.drawable.btn_play_audio_player)
         playerState = STATE_PAUSED
     }
+
     override fun onPause() {
         super.onPause()
         pausePlayer()

@@ -39,7 +39,6 @@ class SearchActivity : AppCompatActivity() {
     {
         handler.removeCallbacks(searchRunnable)
         handler.postDelayed(searchRunnable, SEARCH_TRACK_DEBOUNCE_DELAY)
-        Log.d("121212", "запроссс 2222")
         loadTrack(search.text.toString())
     }
 
@@ -152,7 +151,7 @@ class SearchActivity : AppCompatActivity() {
                 } else {
                     linearLayoutHistory.visibility = View.GONE
                     searchDebounce()
-                    Log.d("121212", "запроссс")
+
                 }
 
             }
@@ -223,7 +222,7 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    //onSaveInstanceState и onRestoreInstanceState не вызывается но данные сохраняются при полвороте экрана
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(FIELD_SEARCH, textSearch)
@@ -249,9 +248,15 @@ class SearchActivity : AppCompatActivity() {
     }
 
     fun loadTrack(text: String) {
-        progressBar.visibility = View.VISIBLE
         recyclerViewTrak.visibility = View.GONE
+        progressBar.visibility = View.VISIBLE
+
         handler.removeCallbacks(searchRunnable)
+
+
+        noInternetPlaceHolder.visibility = View.GONE
+        noContentPlaceHolder.visibility = View.GONE
+
         service.search(text)
             .enqueue(object : Callback<SearchTrackResponse> {
                 override fun onResponse(
@@ -272,7 +277,6 @@ class SearchActivity : AppCompatActivity() {
                         recyclerViewTrak.visibility = View.VISIBLE
 
                         val songs = results.map { track ->
-                            Log.d("1111111","55 ${track.previewUrl}")
                             Track(
                                 trackName = track.trackName ?: getString(R.string.unknown),
                                 artistName = track.artistName ?: getString(R.string.unknown),
