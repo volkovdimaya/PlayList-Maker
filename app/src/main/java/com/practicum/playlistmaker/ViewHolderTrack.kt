@@ -60,14 +60,6 @@ class ViewHolderTrack(itemView: View) : RecyclerView.ViewHolder(itemView) {
             .placeholder(R.drawable.play_ic)
             .into(artworkUrl100)
 
-        itemView.setOnClickListener {
-            val sharedPrefs = itemView.context.getSharedPreferences(PLAYLIST_MAKER, MODE_PRIVATE)
-
-           val searchHistory = SearchHistory(sharedPrefs)
-            searchHistory.read()
-            searchHistory.update(model)
-            //searchHistory.write()
-        }
 
     }
 

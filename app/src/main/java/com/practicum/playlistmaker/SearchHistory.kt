@@ -10,9 +10,10 @@ const val HISTORY_LIST_TRACK = "HISTORY_LIST_TRACK"
 const val MODE_THEME = "MODE_THEME"
 const val PLAYLIST_MAKER = "PLAYLIST_MAKER"
 
+
 class SearchHistory(
     val sharedPrefs: SharedPreferences
-    ) {
+) {
 
     private var songs: List<Track> = emptyList()
     private val gson = Gson()

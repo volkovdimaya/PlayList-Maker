@@ -123,7 +123,14 @@
             android:text="@string/btn_update" />
     </LinearLayout>
 
-
+    <ProgressBar android:id="@+id/progressBar"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="140dp"
+        android:indeterminateTint="#3772E7"
+        android:visibility="gone"
+        />
     <LinearLayout
         android:id="@+id/linear_layout_history"
         android:layout_width="match_parent"
