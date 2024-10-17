@@ -8,7 +8,6 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -27,28 +26,28 @@ import retrofit2.Response
 
 
 const val TRACK_DETAILS = "TRACK_DETAILS"
+
 class SearchActivity : AppCompatActivity() {
 
     private var isClickAllowed = true
     private val handler = Handler(Looper.getMainLooper())
-    private var searchRunnable = Runnable { searchDebounce() }
-
-    private lateinit var progressBar : ProgressBar
-
-    private fun searchDebounce()
-    {
-        handler.removeCallbacks(searchRunnable)
-        handler.postDelayed(searchRunnable, SEARCH_TRACK_DEBOUNCE_DELAY)
+    private var searchRunnable = Runnable {
         loadTrack(search.text.toString())
     }
 
-    private fun clickDebonce() : Boolean
-    {
+    private lateinit var progressBar: ProgressBar
+
+    private fun searchDebounce() {
+        handler.removeCallbacks(searchRunnable)
+        handler.postDelayed(searchRunnable, SEARCH_TRACK_DEBOUNCE_DELAY)
+
+    }
+
+    private fun clickDebonce(): Boolean {
         val current = isClickAllowed
-        if (isClickAllowed)
-        {
+        if (isClickAllowed) {
             isClickAllowed = false
-            handler.postDelayed({isClickAllowed = true}, CLICK_DEBOUNCE_DELAY)
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
         }
         return current
     }
@@ -68,6 +67,13 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var historyTrackAdapter: TrackAdapter
     private lateinit var listener: SharedPreferences.OnSharedPreferenceChangeListener
 
+    private lateinit var linearLayoutHistory: LinearLayout
+
+    private fun showHistory() {
+        linearLayoutHistory.visibility = if (searchHistory.hasHistory) View.VISIBLE else View.GONE
+
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,9 +81,9 @@ class SearchActivity : AppCompatActivity() {
 
         progressBar = findViewById(R.id.progressBar)
 
-        val linearLayoutHistory = findViewById<LinearLayout>(R.id.linear_layout_history)
+        linearLayoutHistory = findViewById(R.id.linear_layout_history)
 
-        sharedPrefs = getSharedPreferences(com.practicum.playlistmaker.PLAYLIST_MAKER, MODE_PRIVATE)
+        sharedPrefs = getSharedPreferences(PLAYLIST_MAKER, MODE_PRIVATE)
         searchHistory = SearchHistory(sharedPrefs)
         searchHistory.read()
 
@@ -93,9 +99,10 @@ class SearchActivity : AppCompatActivity() {
                 }
             })
         recyclerViewHistoryTrack.adapter = historyTrackAdapter
-        linearLayoutHistory.visibility = if (searchHistory.hasHistory) View.VISIBLE else View.GONE
+        showHistory()
 
         listener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
+
             if (key == HISTORY_LIST_TRACK) {
                 searchHistory.read()
                 if (searchHistory.hasHistory) {
@@ -105,7 +112,7 @@ class SearchActivity : AppCompatActivity() {
                 }
             }
         }
-        sharedPrefs.registerOnSharedPreferenceChangeListener(listener)
+        //
 
         val updateBtn = findViewById<Button>(R.id.btn_search_update)
         noContentPlaceHolder = findViewById(R.id.error_no_content)
@@ -145,7 +152,8 @@ class SearchActivity : AppCompatActivity() {
                     noContentPlaceHolder.visibility = View.GONE
                     noInternetPlaceHolder.visibility = View.GONE
 
-                    linearLayoutHistory.visibility = View.VISIBLE
+                    showHistory()
+
                     trakAdapter.updateData(emptyList())
                     handler.removeCallbacks(searchRunnable)
                 } else {
@@ -232,15 +240,14 @@ class SearchActivity : AppCompatActivity() {
         const val FIELD_SEARCH = "FIELD_SEARCH"
 
         private const val SEARCH_TRACK_DEBOUNCE_DELAY = 2000L
-        private  const val CLICK_DEBOUNCE_DELAY = 2000L
+        private const val CLICK_DEBOUNCE_DELAY = 2000L
     }
 
     private fun clickOnTrack(track: Track) {
         val searchHistory = SearchHistory(sharedPrefs)
         searchHistory.read()
         searchHistory.update(track)
-        if (clickDebonce())
-        {
+        if (clickDebonce()) {
             val intent = Intent(this, AudioPlayerActivity::class.java)
             intent.putExtra(TRACK_DETAILS, track)
             startActivity(intent)
@@ -288,7 +295,7 @@ class SearchActivity : AppCompatActivity() {
                                 collectionName = track.collectionName ?: "",
                                 country = track.country ?: "",
                                 previewUrl = track.previewUrl ?: "",
-                                )
+                            )
                         }
 
                         trakAdapter.updateData(songs)
@@ -310,6 +317,11 @@ class SearchActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         sharedPrefs.unregisterOnSharedPreferenceChangeListener(listener)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        sharedPrefs.registerOnSharedPreferenceChangeListener(listener)
     }
 }
 

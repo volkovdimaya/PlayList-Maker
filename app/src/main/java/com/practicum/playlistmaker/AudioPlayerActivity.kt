@@ -27,18 +27,13 @@ class AudioPlayerActivity : AppCompatActivity() {
     private var mediaPlayer = MediaPlayer()
 
     private var secondsCount: Long = 0
+    private var durationTrack : Long = 0
     private val handler = Handler(Looper.getMainLooper())
     private var countingDownRunnable = Runnable {
         countingDownDebounce()
-        secondsCount--
-        playbackTime.text = String.format("%d:%02d", secondsCount / 60, secondsCount % 60)
-        if (secondsCount == 0L) {
-            pausePlayer()
-            removeCountingDownDebounce()
-            secondsCount = 30
-            playbackTime.text = String.format("%d:%02d", secondsCount / 60, secondsCount % 60)
-        }
 
+        secondsCount = (mediaPlayer.currentPosition/1000).toLong()
+        playbackTime.text = String.format("%d:%02d", secondsCount / 60, secondsCount % 60)
 
     }
     private var track: Track? = null
@@ -74,7 +69,6 @@ class AudioPlayerActivity : AppCompatActivity() {
         val coverImageView = findViewById<ImageView>(R.id.cover)
         val trackNameTextView = findViewById<TextView>(R.id.track_name)
         val artistNameTextView = findViewById<TextView>(R.id.artist_name)
-        val durationTextView = findViewById<TextView>(R.id.duration)
         val albumTextView = findViewById<TextView>(R.id.album)
         val yearTextView = findViewById<TextView>(R.id.year)
         val genreTextView = findViewById<TextView>(R.id.genre)
@@ -88,9 +82,8 @@ class AudioPlayerActivity : AppCompatActivity() {
             preparePlayer()
             trackNameTextView.text = it.trackName
             artistNameTextView.text = it.artistName
-            durationTextView.text = getTime(it.trackTimeMillis)
             albumTextView.text = it.collectionName
-            if (it.collectionName.equals(""))
+            if (it.collectionName.isEmpty())
                 groupAlbum.visibility = View.GONE
             yearTextView.text = it.releaseDate.substring(0, 4) // берем только год
             genreTextView.text = it.primaryGenreName
@@ -112,6 +105,13 @@ class AudioPlayerActivity : AppCompatActivity() {
         if (track == null) {
             Toast.makeText(this, getString(R.string.toast_error), Toast.LENGTH_SHORT).show()
             finish()
+        }
+
+        mediaPlayer.setOnCompletionListener {
+            pausePlayer()
+            removeCountingDownDebounce()
+            secondsCount = 0
+            playbackTime.text = String.format("%d:%02d", secondsCount / 60, secondsCount % 60)
         }
     }
 
@@ -153,17 +153,11 @@ class AudioPlayerActivity : AppCompatActivity() {
     }
 
     private fun startPlayer() {
-        val timeString = playbackTime?.text?.toString()?.takeIf { it.isNotBlank() } ?: "0:00"
-        val parts = timeString.split(":")
-        val minutes = parts[0].toLong()
-        val seconds = parts[1].toLong()
-        secondsCount = minutes * 60 + seconds
-        if (secondsCount > 0) {
-            countingDownDebounce()
 
-        }
+        durationTrack = (mediaPlayer.duration/1000).toLong()
         mediaPlayer.start()
-        btnActive.setImageResource(R.drawable.btn_pause_audio_player)
+        countingDownDebounce()
+        btnActive.setImageResource(R.drawable.btn_pause)
 
         playerState = STATE_PLAYING
     }
@@ -171,7 +165,7 @@ class AudioPlayerActivity : AppCompatActivity() {
     private fun pausePlayer() {
         handler.removeCallbacks(countingDownRunnable)
         mediaPlayer.pause()
-        btnActive.setImageResource(R.drawable.btn_play_audio_player)
+        btnActive.setImageResource(R.drawable.btn_play)
         playerState = STATE_PAUSED
     }
 
