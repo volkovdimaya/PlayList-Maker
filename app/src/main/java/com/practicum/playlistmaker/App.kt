@@ -4,6 +4,8 @@ package com.practicum.playlistmaker
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
+import com.practicum.playlistmaker.data.repository.MODE_THEME
+import com.practicum.playlistmaker.data.repository.PLAYLIST_MAKER
 
 
 class App : Application() {

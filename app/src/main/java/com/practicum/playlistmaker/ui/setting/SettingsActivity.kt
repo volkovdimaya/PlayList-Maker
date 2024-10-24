@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.ui.setting
 
 
 import android.content.Intent
@@ -8,6 +8,10 @@ import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.google.android.material.switchmaterial.SwitchMaterial
+import com.practicum.playlistmaker.App
+import com.practicum.playlistmaker.data.repository.MODE_THEME
+import com.practicum.playlistmaker.data.repository.PLAYLIST_MAKER
+import com.practicum.playlistmaker.R
 
 
 class SettingsActivity : AppCompatActivity() {

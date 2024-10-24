@@ -1,10 +1,7 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.ui.search
 
 
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
-import android.content.SharedPreferences
-import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +11,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.google.gson.Gson
+import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.domain.models.Track
+import com.practicum.playlistmaker.presentation.models.InfoTrackShort
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -39,7 +38,7 @@ class ViewHolderTrack(itemView: View) : RecyclerView.ViewHolder(itemView) {
     )
 
 
-    fun bind(model: Track) {
+    fun bind(model: InfoTrackShort) {
 
         if (model == null)
             return
@@ -51,7 +50,7 @@ class ViewHolderTrack(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
 
 
-        trackTime.setText(getTime(model.trackTimeMillis))
+        trackTime.setText(model.trackTime)
         Glide.with(itemView)
             .load(model.artworkUrl100)
             .override(widthInPx, heightInPx)

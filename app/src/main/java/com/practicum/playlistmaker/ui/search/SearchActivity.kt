@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.ui.search
 
 import android.content.Context
 import android.content.Intent
@@ -8,6 +8,7 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -20,6 +21,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.practicum.playlistmaker.ui.audioplayer.AudioPlayerActivity
+import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.creator.Creator
+import com.practicum.playlistmaker.data.repository.HISTORY_LIST_TRACK
+import com.practicum.playlistmaker.domain.api.TrackInteractor
+import com.practicum.playlistmaker.domain.impl.TracksInteractorImpl
+import com.practicum.playlistmaker.domain.interactor.InteractorSearchHistory
+import com.practicum.playlistmaker.domain.models.Track
+import com.practicum.playlistmaker.presentation.mapper.TrackMapper
+import com.practicum.playlistmaker.presentation.models.InfoTrackShort
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -55,22 +66,27 @@ class SearchActivity : AppCompatActivity() {
     private var textSearch: String = ""
     private lateinit var search: EditText
 
-    private val service = ApiRetrofit.getClient().create(SearchTrackApi::class.java)
+    //private val service = ApiRetrofit.getClient().create(SearchTrackApi::class.java)
     private lateinit var noContentPlaceHolder: LinearLayout
     private lateinit var noInternetPlaceHolder: LinearLayout
     private lateinit var recyclerViewTrak: RecyclerView
     private lateinit var trakAdapter: TrackAdapter
 
-    private lateinit var sharedPrefs: SharedPreferences
-    private lateinit var searchHistory: SearchHistory
+    //private lateinit var sharedPrefs: SharedPreferences
+    private lateinit var interactorSearchHistory : InteractorSearchHistory
+
+
+    //private lateinit var searchHistory: SearchHistory
     private lateinit var recyclerViewHistoryTrack: RecyclerView
     private lateinit var historyTrackAdapter: TrackAdapter
     private lateinit var listener: SharedPreferences.OnSharedPreferenceChangeListener
 
     private lateinit var linearLayoutHistory: LinearLayout
 
+    private lateinit var trackInteractor : TrackInteractor
+
     private fun showHistory() {
-        linearLayoutHistory.visibility = if (searchHistory.hasHistory) View.VISIBLE else View.GONE
+        linearLayoutHistory.visibility = if (interactorSearchHistory.hasHistory()) View.VISIBLE else View.GONE
 
     }
 
@@ -83,15 +99,21 @@ class SearchActivity : AppCompatActivity() {
 
         linearLayoutHistory = findViewById(R.id.linear_layout_history)
 
-        sharedPrefs = getSharedPreferences(PLAYLIST_MAKER, MODE_PRIVATE)
-        searchHistory = SearchHistory(sharedPrefs)
-        searchHistory.read()
+        interactorSearchHistory = InteractorSearchHistory(Creator().provideInteractorSearchHistory(this))
+
+        trackInteractor = Creator().provideTracksInteractor()
+
+
+
+        //sharedPrefs = getSharedPreferences(PLAYLIST_MAKER, MODE_PRIVATE)
+        //searchHistory = SearchHistory(sharedPrefs)
+        //searchHistory.read() //в принципе должна делаться когда хотим обратиться к истории
 
         recyclerViewHistoryTrack = findViewById(R.id.recycler_history_track)
 
         recyclerViewHistoryTrack.layoutManager = LinearLayoutManager(this)
         historyTrackAdapter = TrackAdapter(
-            searchHistory.getSong().reversed(),
+            interactorSearchHistory.getSong().reversed(),
             object : TrackAdapter.OnItemClickListener {
                 override fun onItemClick(track: Track) {
                     clickOnTrack(track)
@@ -104,9 +126,9 @@ class SearchActivity : AppCompatActivity() {
         listener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
 
             if (key == HISTORY_LIST_TRACK) {
-                searchHistory.read()
-                if (searchHistory.hasHistory) {
-                    historyTrackAdapter.updateDataHistory(searchHistory.getSong())
+                //searchHistory.read()
+                if (interactorSearchHistory.hasHistory()) {
+                    historyTrackAdapter.updateDataHistory(interactorSearchHistory.getSong())
                     recyclerViewHistoryTrack.scrollToPosition(0)
 
                 }
@@ -174,7 +196,7 @@ class SearchActivity : AppCompatActivity() {
 
 
         search.setOnFocusChangeListener { view, hasFocus ->
-            if (hasFocus && search.text.isEmpty() && searchHistory.hasHistory) {
+            if (hasFocus && search.text.isEmpty() && interactorSearchHistory.hasHistory()) {
                 linearLayoutHistory.visibility = View.VISIBLE
             } else {
                 linearLayoutHistory.visibility = View.GONE
@@ -208,7 +230,7 @@ class SearchActivity : AppCompatActivity() {
         }
         val btnClearHistory = findViewById<Button>(R.id.btn_clear_history)
         btnClearHistory.setOnClickListener {
-            searchHistory.clear()
+            interactorSearchHistory.clear()
             historyTrackAdapter.updateData(emptyList())
             linearLayoutHistory.visibility = View.GONE
         }
@@ -244,9 +266,9 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun clickOnTrack(track: Track) {
-        val searchHistory = SearchHistory(sharedPrefs)
-        searchHistory.read()
-        searchHistory.update(track)
+        //val searchHistory = SearchHistory(sharedPrefs)
+        //searchHistory.read()
+        interactorSearchHistory.write(track)
         if (clickDebonce()) {
             val intent = Intent(this, AudioPlayerActivity::class.java)
             intent.putExtra(TRACK_DETAILS, track)
@@ -264,6 +286,18 @@ class SearchActivity : AppCompatActivity() {
         noInternetPlaceHolder.visibility = View.GONE
         noContentPlaceHolder.visibility = View.GONE
 
+        val tracksInteractor  = Creator().provideTracksInteractor()
+
+
+        trackInteractor.searchTracks(text,
+        object : TrackInteractor.TrackCunsumer{
+            override fun consume(foundTrack: List<Track>) {
+                Log.d("1212121212", "${foundTrack.toString()}");
+                Log.d("1212121212", "$text");
+            }
+
+        })
+        /*
         service.search(text)
             .enqueue(object : Callback<SearchTrackResponse> {
                 override fun onResponse(
@@ -283,19 +317,8 @@ class SearchActivity : AppCompatActivity() {
                         noContentPlaceHolder.visibility = View.GONE
                         recyclerViewTrak.visibility = View.VISIBLE
 
-                        val songs = results.map { track ->
-                            Track(
-                                trackName = track.trackName ?: getString(R.string.unknown),
-                                artistName = track.artistName ?: getString(R.string.unknown),
-                                trackTimeMillis = track.trackTimeMillis ?: 0L,
-                                artworkUrl100 = track.artworkUrl100 ?: "",
-                                trackId = track.trackId ?: "",
-                                releaseDate = track.releaseDate ?: "",
-                                primaryGenreName = track.primaryGenreName ?: "",
-                                collectionName = track.collectionName ?: "",
-                                country = track.country ?: "",
-                                previewUrl = track.previewUrl ?: "",
-                            )
+                        val songs = results.map { track : Track ->
+                            TrackMapper.map(track)
                         }
 
                         trakAdapter.updateData(songs)
@@ -312,16 +335,17 @@ class SearchActivity : AppCompatActivity() {
                 }
 
             })
+        */
     }
 
     override fun onStop() {
         super.onStop()
-        sharedPrefs.unregisterOnSharedPreferenceChangeListener(listener)
+        //sharedPrefs.unregisterOnSharedPreferenceChangeListener(listener)
     }
 
     override fun onResume() {
         super.onResume()
-        sharedPrefs.registerOnSharedPreferenceChangeListener(listener)
+        //sharedPrefs.registerOnSharedPreferenceChangeListener(listener)
     }
 }
 

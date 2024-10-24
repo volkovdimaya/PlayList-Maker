@@ -1,13 +1,11 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.ui.audioplayer
 
 import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.View
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -15,6 +13,9 @@ import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.Group
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.domain.models.Track
+import com.practicum.playlistmaker.ui.search.TRACK_DETAILS
 import java.text.SimpleDateFormat
 import java.util.Locale
 
