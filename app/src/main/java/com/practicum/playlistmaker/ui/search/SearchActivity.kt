@@ -8,7 +8,6 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -25,15 +24,11 @@ import com.practicum.playlistmaker.ui.audioplayer.AudioPlayerActivity
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.creator.Creator
 import com.practicum.playlistmaker.data.repository.HISTORY_LIST_TRACK
+import com.practicum.playlistmaker.domain.api.DataConsumer
+import com.practicum.playlistmaker.domain.api.TrackConsumer
 import com.practicum.playlistmaker.domain.api.TrackInteractor
-import com.practicum.playlistmaker.domain.impl.TracksInteractorImpl
 import com.practicum.playlistmaker.domain.interactor.InteractorSearchHistory
 import com.practicum.playlistmaker.domain.models.Track
-import com.practicum.playlistmaker.presentation.mapper.TrackMapper
-import com.practicum.playlistmaker.presentation.models.InfoTrackShort
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 
 const val TRACK_DETAILS = "TRACK_DETAILS"
@@ -276,27 +271,57 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
+    private fun ShowListTrack()
+    {
+        progressBar.visibility = View.GONE
+        recyclerViewTrak.visibility = View.VISIBLE
+    }
+
     fun loadTrack(text: String) {
         recyclerViewTrak.visibility = View.GONE
         progressBar.visibility = View.VISIBLE
 
         handler.removeCallbacks(searchRunnable)
 
-
         noInternetPlaceHolder.visibility = View.GONE
         noContentPlaceHolder.visibility = View.GONE
 
-        val tracksInteractor  = Creator().provideTracksInteractor()
+
+
 
 
         trackInteractor.searchTracks(text,
-        object : TrackInteractor.TrackCunsumer{
-            override fun consume(foundTrack: List<Track>) {
-                Log.d("1212121212", "${foundTrack.toString()}");
-                Log.d("1212121212", "$text");
+        object : TrackConsumer<List<Track>> {
+            override fun consume(data: DataConsumer<List<Track>>) {
+
+                runOnUiThread {
+                    when(data)
+                    {
+                        is DataConsumer.Success -> {
+                            progressBar.visibility = View.GONE
+                            recyclerViewTrak.visibility = View.VISIBLE
+                            trakAdapter.updateData(data.data)
+                        }
+                        is DataConsumer.ResponseFailure -> {
+                            noInternetPlaceHolder.visibility = View.VISIBLE
+                            noContentPlaceHolder.visibility = View.GONE
+                            recyclerViewTrak.visibility = View.GONE
+                            progressBar.visibility = View.GONE
+                        }
+
+                        is DataConsumer.ResponseNoContent -> {
+                            noInternetPlaceHolder.visibility = View.GONE
+                            recyclerViewTrak.visibility = View.GONE
+                            noContentPlaceHolder.visibility = View.VISIBLE
+                        }
+                    }
+
+                }
+
             }
 
         })
+
         /*
         service.search(text)
             .enqueue(object : Callback<SearchTrackResponse> {

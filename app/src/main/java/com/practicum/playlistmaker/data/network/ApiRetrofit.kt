@@ -7,7 +7,6 @@ object ApiRetrofit {
     private val translateBaseUrl = "https://itunes.apple.com/"
 
 
-
     fun getClient(): Retrofit {
         return Retrofit.Builder()
             .baseUrl(translateBaseUrl)

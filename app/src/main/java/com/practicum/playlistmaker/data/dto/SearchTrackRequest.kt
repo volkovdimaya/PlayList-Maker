@@ -1,7 +1,7 @@
 package com.practicum.playlistmaker.data.dto
 
+import retrofit2.http.Query
 
 
-data class SearchTrackRequest (val term: String,
-                               val entity: String = "song"
+data class SearchTrackRequest (val searchText: String
 )
