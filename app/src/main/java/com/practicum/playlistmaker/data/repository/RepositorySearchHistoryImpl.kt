@@ -30,7 +30,7 @@ class RepositorySearchHistoryImpl(
         songs = json?.let {
             gson.fromJson(it, object : TypeToken<List<TrackDto>>() {}.type)
         } ?: emptyList()
-        //hasHistory = songs.isNotEmpty()
+
     }
 
     override fun getSong(): List<Track> {

@@ -1,7 +1,7 @@
 package com.practicum.playlistmaker.domain.impl
 
-import com.practicum.playlistmaker.domain.api.DataConsumer
-import com.practicum.playlistmaker.domain.api.TrackConsumer
+import com.practicum.playlistmaker.domain.consumer.DataConsumer
+import com.practicum.playlistmaker.domain.consumer.TrackConsumer
 import com.practicum.playlistmaker.domain.api.TrackInteractor
 import com.practicum.playlistmaker.domain.api.TracksRepository
 import com.practicum.playlistmaker.domain.models.Resource
