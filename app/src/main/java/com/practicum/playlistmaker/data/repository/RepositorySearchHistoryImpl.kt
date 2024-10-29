@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.practicum.playlistmaker.data.dto.TrackDto
+import com.practicum.playlistmaker.data.mapper.TrackResponseMapper
 import com.practicum.playlistmaker.domain.models.Track
 import com.practicum.playlistmaker.domain.repository.RepositorySearchHistory
 
@@ -15,12 +16,11 @@ const val PLAYLIST_MAKER = "PLAYLIST_MAKER"
 
 class RepositorySearchHistoryImpl(
     val sharedPrefs: SharedPreferences
-) : RepositorySearchHistory{
+) : RepositorySearchHistory {
 
     private var songs: List<TrackDto> = emptyList()
     private val gson = Gson()
-    override fun hasHistory() : Boolean
-    {
+    override fun hasHistory(): Boolean {
         read()
         return songs.isNotEmpty()
     }
@@ -35,17 +35,10 @@ class RepositorySearchHistoryImpl(
 
     override fun getSong(): List<Track> {
         read()
-        return songs.map { Track(it.trackName,
-            it.artistName,
-            it.trackTimeMillis,
-            it.artworkUrl100,
-            it.trackId,
-            it.releaseDate,
-            it.primaryGenreName,
-            it.collectionName,
-            it.country,
-            it.previewUrl
-        ) }
+        return songs.map {
+            TrackResponseMapper.map(it)
+
+        }
     }
 
 
@@ -63,8 +56,9 @@ class RepositorySearchHistoryImpl(
             .apply()
     }
 
-    override fun update(track : Track) {
-        val model = TrackDto(track.trackName,
+    override fun update(track: Track) {
+        val model = TrackDto(
+            track.trackName,
             track.artistName,
             track.trackTimeMillis,
             track.artworkUrl100,
@@ -73,7 +67,8 @@ class RepositorySearchHistoryImpl(
             track.primaryGenreName,
             track.collectionName,
             track.country,
-            track.previewUrl)
+            track.previewUrl
+        )
 
         read()
         val trackIndex = songs.indexOfFirst { it.trackId.equals(model.trackId) }

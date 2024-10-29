@@ -1,10 +1,7 @@
 package com.practicum.playlistmaker.data.network
 
-import android.util.Log
-import com.practicum.playlistmaker.data.NetworkClient
 import com.practicum.playlistmaker.data.dto.Response
 import com.practicum.playlistmaker.data.dto.SearchTrackRequest
-import com.practicum.playlistmaker.data.dto.SearchTrackResponse
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.Exception

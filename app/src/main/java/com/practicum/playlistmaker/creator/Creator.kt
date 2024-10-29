@@ -3,14 +3,14 @@ package com.practicum.playlistmaker.creator
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
-import com.practicum.playlistmaker.App
+import com.practicum.playlistmaker.ui.setting.App
 import com.practicum.playlistmaker.data.TracksRepositoryImpl
 import com.practicum.playlistmaker.data.network.RetrofitNetworkClient
 import com.practicum.playlistmaker.data.repository.PLAYLIST_MAKER
 import com.practicum.playlistmaker.data.repository.RepositorySearchHistoryImpl
 import com.practicum.playlistmaker.data.repository.ThemeRepositoryImpl
 
-import com.practicum.playlistmaker.domain.api.TrackInteractor
+import com.practicum.playlistmaker.domain.api.TrackInteractorApi
 import com.practicum.playlistmaker.domain.api.TracksRepository
 import com.practicum.playlistmaker.domain.impl.TracksInteractorImpl
 import com.practicum.playlistmaker.domain.interactor.ThemeInteractor
@@ -24,7 +24,7 @@ class Creator {
         return TracksRepositoryImpl(RetrofitNetworkClient())
     }
 
-    fun provideTracksInteractor(): TrackInteractor {
+    fun provideTracksInteractor(): TrackInteractorApi {
         return TracksInteractorImpl(geTracksRepository())
     }
 

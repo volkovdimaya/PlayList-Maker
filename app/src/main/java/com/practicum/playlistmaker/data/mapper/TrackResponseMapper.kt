@@ -1,9 +1,9 @@
 package com.practicum.playlistmaker.data.mapper
 
-import com.practicum.playlistmaker.data.dto.SearchTrackResponse
+
 import com.practicum.playlistmaker.data.dto.TrackDto
 import com.practicum.playlistmaker.domain.models.Track
-import com.practicum.playlistmaker.presentation.models.InfoTrackShort
+
 
 object TrackResponseMapper {
     fun map(track : TrackDto) : Track

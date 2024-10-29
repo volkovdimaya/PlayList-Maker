@@ -2,7 +2,6 @@ package com.practicum.playlistmaker.ui.search
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -23,10 +22,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.ui.audioplayer.AudioPlayerActivity
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.creator.Creator
-import com.practicum.playlistmaker.data.repository.HISTORY_LIST_TRACK
 import com.practicum.playlistmaker.domain.consumer.DataConsumer
 import com.practicum.playlistmaker.domain.consumer.TrackConsumer
-import com.practicum.playlistmaker.domain.api.TrackInteractor
+import com.practicum.playlistmaker.domain.api.TrackInteractorApi
 import com.practicum.playlistmaker.domain.interactor.InteractorSearchHistory
 import com.practicum.playlistmaker.domain.models.Track
 
@@ -68,7 +66,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var recyclerViewHistoryTrack: RecyclerView
     private lateinit var historyTrackAdapter: TrackAdapter
     private lateinit var linearLayoutHistory: LinearLayout
-    private lateinit var trackInteractor: TrackInteractor
+    private lateinit var trackInteractor: TrackInteractorApi
 
     private fun showHistory() {
         linearLayoutHistory.visibility =
@@ -180,7 +178,6 @@ class SearchActivity : AppCompatActivity() {
         search.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 loadTrack(search.text.toString())
-                true
             }
             false
         }

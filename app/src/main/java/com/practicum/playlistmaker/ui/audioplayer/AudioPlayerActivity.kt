@@ -5,60 +5,42 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.View
+import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
-import androidx.constraintlayout.widget.Group
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.domain.interactor.MediaPlayerInteractor
 import com.practicum.playlistmaker.domain.models.Track
 import com.practicum.playlistmaker.ui.search.TRACK_DETAILS
-import java.text.SimpleDateFormat
-import java.util.Locale
+
 
 class AudioPlayerActivity : AppCompatActivity() {
 
-    private var playerState = STATE_DEFAULT
+    private lateinit var audioPlayerManager: MediaPlayerInteractor
 
     private lateinit var btnActive: ImageView
     private lateinit var playbackTime: TextView
-    private var mediaPlayer = MediaPlayer()
-
-    private var secondsCount: Long = 0
-    private var durationTrack : Long = 0
-    private val handler = Handler(Looper.getMainLooper())
-    private var countingDownRunnable = Runnable {
-        countingDownDebounce()
-
-        secondsCount = (mediaPlayer.currentPosition/1000).toLong()
-        playbackTime.text = String.format("%d:%02d", secondsCount / 60, secondsCount % 60)
-
-    }
     private var track: Track? = null
 
-    private fun countingDownDebounce() {
-        handler.postDelayed(countingDownRunnable, SECOND)
+    private var secondsCount: Long = 0
+    private val handler = Handler(Looper.getMainLooper())
+    private var countingDownRunnable = Runnable {
+        updatePlaybackTime()
     }
-
-    private fun removeCountingDownDebounce() {
-        handler.removeCallbacks(countingDownRunnable)
-    }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_audio_player)
 
+        audioPlayerManager = MediaPlayerInteractor()
+
         btnActive = findViewById(R.id.play)
 
         playbackTime = findViewById(R.id.playback_time)
-
-        btnActive.setOnClickListener {
-            playbackControl()
-        }
 
         val toolbar: Toolbar = findViewById(R.id.toolbar_audio_player)
 
@@ -66,119 +48,80 @@ class AudioPlayerActivity : AppCompatActivity() {
             finish()
         }
 
-
-        val coverImageView = findViewById<ImageView>(R.id.cover)
-        val trackNameTextView = findViewById<TextView>(R.id.track_name)
-        val artistNameTextView = findViewById<TextView>(R.id.artist_name)
-        val albumTextView = findViewById<TextView>(R.id.album)
-        val yearTextView = findViewById<TextView>(R.id.year)
-        val genreTextView = findViewById<TextView>(R.id.genre)
-        val countryTextView = findViewById<TextView>(R.id.country)
-        val groupAlbum = findViewById<Group>(R.id.group_album)
-
         track = intent.getSerializableExtra(TRACK_DETAILS) as? Track
 
         track?.let {
-
-            preparePlayer()
-            trackNameTextView.text = it.trackName
-            artistNameTextView.text = it.artistName
-            albumTextView.text = it.collectionName
-            if (it.collectionName.isEmpty())
-                groupAlbum.visibility = View.GONE
-            yearTextView.text = it.releaseDate.substring(0, 4) // берем только год
-            genreTextView.text = it.primaryGenreName
-            countryTextView.text = it.country
-
-            Glide.with(this)
-                .load(
-                    it.artworkUrl100.replaceAfterLast(
-                        '/',
-                        getString(R.string.image_resolution)
-                    )
-                )
-                .centerCrop()
-                .transform(RoundedCorners(8))
-                .placeholder(R.drawable.place_holder_cover)
-                .into(coverImageView)
-
+            displayTrackData(it)
+            audioPlayerManager.preparePlayer(it.previewUrl, onPrepared = {
+                btnActive.setImageResource(R.drawable.btn_play)
+            }, onCompletion = {
+                handler.removeCallbacks(countingDownRunnable)
+                btnActive.setImageResource(R.drawable.btn_play)
+                secondsCount = 0
+                playbackTime.text = String.format("%d:%02d", secondsCount / 60, secondsCount % 60)
+            })
         }
+
         if (track == null) {
             Toast.makeText(this, getString(R.string.toast_error), Toast.LENGTH_SHORT).show()
             finish()
         }
 
-        mediaPlayer.setOnCompletionListener {
-            pausePlayer()
-            removeCountingDownDebounce()
-            secondsCount = 0
-            playbackTime.text = String.format("%d:%02d", secondsCount / 60, secondsCount % 60)
+        btnActive.setOnClickListener {
+            audioPlayerManager.togglePlayback(
+                onPlay = {
+                    btnActive.setImageResource(R.drawable.btn_pause)
+                    handler.postDelayed(countingDownRunnable, SECOND)
+                },
+                onPause = {
+                    btnActive.setImageResource(R.drawable.btn_play)
+                    handler.removeCallbacks(countingDownRunnable)
+                }
+            )
         }
     }
 
-    fun getTime(time: Long): String {
-        return SimpleDateFormat("mm:ss", Locale.getDefault()).format(time)
-    }
+    private fun pausePlayback() {
+        audioPlayerManager.pausePlayer {
+            handler.removeCallbacks(countingDownRunnable)
+            btnActive.setImageResource(R.drawable.btn_play)
 
-    companion object {
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
-
-        private const val SECOND = 1000L
-    }
-
-    private fun preparePlayer() {
-        if (track != null) {
-            mediaPlayer.setDataSource(track?.previewUrl)
-            mediaPlayer.prepareAsync()
-            mediaPlayer.setOnPreparedListener {
-                playerState = STATE_PREPARED
-
-            }
-        }
-
-    }
-
-    private fun playbackControl() {
-        when (playerState) {
-            STATE_PLAYING -> {
-                pausePlayer()
-            }
-
-            STATE_PREPARED, STATE_PAUSED -> {
-                startPlayer()
-            }
         }
     }
 
-    private fun startPlayer() {
-
-        durationTrack = (mediaPlayer.duration/1000).toLong()
-        mediaPlayer.start()
-        countingDownDebounce()
-        btnActive.setImageResource(R.drawable.btn_pause)
-
-        playerState = STATE_PLAYING
-    }
-
-    private fun pausePlayer() {
-        handler.removeCallbacks(countingDownRunnable)
-        mediaPlayer.pause()
-        btnActive.setImageResource(R.drawable.btn_play)
-        playerState = STATE_PAUSED
+    private fun updatePlaybackTime() {
+        secondsCount = audioPlayerManager.getCurrentPosition() / 1000L
+        playbackTime.text = String.format("%d:%02d", secondsCount / 60, secondsCount % 60)
+        handler.postDelayed(countingDownRunnable, SECOND)
     }
 
     override fun onPause() {
         super.onPause()
-        pausePlayer()
-        handler.removeCallbacks(countingDownRunnable)
+        pausePlayback()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mediaPlayer.release()
-        handler.removeCallbacks(countingDownRunnable)
+        audioPlayerManager.release()
+    }
+
+    private fun displayTrackData(track: Track) {
+        findViewById<TextView>(R.id.track_name).text = track.trackName
+        findViewById<TextView>(R.id.artist_name).text = track.artistName
+        findViewById<TextView>(R.id.album).text = track.collectionName
+        findViewById<TextView>(R.id.year).text = track.releaseDate.take(4)
+        findViewById<TextView>(R.id.genre).text = track.primaryGenreName
+        findViewById<TextView>(R.id.country).text = track.country
+
+        Glide.with(this)
+            .load(track.artworkUrl100.replaceAfterLast('/', getString(R.string.image_resolution)))
+            .centerCrop()
+            .transform(RoundedCorners(8))
+            .placeholder(R.drawable.place_holder_cover)
+            .into(findViewById(R.id.cover))
+    }
+
+    companion object {
+        private const val SECOND = 1000L
     }
 }

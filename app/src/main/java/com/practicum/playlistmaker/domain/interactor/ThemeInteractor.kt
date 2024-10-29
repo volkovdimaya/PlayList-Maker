@@ -1,6 +1,6 @@
 package com.practicum.playlistmaker.domain.interactor
 
-import com.practicum.playlistmaker.App
+import com.practicum.playlistmaker.ui.setting.App
 import com.practicum.playlistmaker.domain.repository.ThemeRepository
 
 class ThemeInteractor(private val repository : ThemeRepository, private val app: App) {
