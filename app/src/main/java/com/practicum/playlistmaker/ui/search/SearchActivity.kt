@@ -76,10 +76,7 @@ class SearchActivity : AppCompatActivity() {
         historyTrackAdapter = TrackAdapter(
             interactorSearchHistory.getSong().reversed(), ::clickOnTrack
         )
-
         recyclerViewHistoryTrack.adapter = historyTrackAdapter
-
-
     }
 
 
