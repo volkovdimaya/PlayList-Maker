@@ -1,13 +1,11 @@
 package com.practicum.playlistmaker.data.mapper
 
-
 import com.practicum.playlistmaker.data.dto.TrackDto
 import com.practicum.playlistmaker.domain.models.Track
 
-
-object TrackResponseMapper {
-    fun map(track: TrackDto): Track {
-        return Track(
+object TrackDtoResponseMapper {
+    fun map(track: Track): TrackDto {
+        return TrackDto(
             track.trackName,
             track.artistName,
             track.trackTimeMillis,

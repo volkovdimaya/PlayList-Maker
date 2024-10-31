@@ -5,8 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -17,6 +15,8 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.isVisible
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.ui.audioplayer.AudioPlayerActivity
@@ -69,18 +69,13 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var trackInteractor: TrackInteractorApi
 
     private fun showHistory() {
-        linearLayoutHistory.visibility =
-            if (interactorSearchHistory.hasHistory()) View.VISIBLE else View.GONE }
+        linearLayoutHistory.isVisible = interactorSearchHistory.hasHistory()
+    }
 
     private fun getHisory() {
         historyTrackAdapter = TrackAdapter(
-            interactorSearchHistory.getSong().reversed(),
-            object : TrackAdapter.OnItemClickListener {
-                override fun onItemClick(track: Track) {
-                    clickOnTrack(track)
-
-                }
-            })
+            interactorSearchHistory.getSong().reversed(), ::clickOnTrack
+        )
 
         recyclerViewHistoryTrack.adapter = historyTrackAdapter
 
@@ -104,26 +99,21 @@ class SearchActivity : AppCompatActivity() {
         val clearButton: ImageView = findViewById(R.id.clearIcon)
 
         interactorSearchHistory =
-            InteractorSearchHistory(Creator().provideInteractorSearchHistory(this))
+            InteractorSearchHistory(Creator.provideInteractorSearchHistory())
 
-        trackInteractor = Creator().provideTracksInteractor()
+        trackInteractor = Creator.provideTracksInteractor()
 
         recyclerViewHistoryTrack.layoutManager = LinearLayoutManager(this)
 
         getHisory()
         showHistory()
 
-
         val updateBtn = findViewById<Button>(R.id.btn_search_update)
 
 
         recyclerViewTrak.layoutManager = LinearLayoutManager(this)
 
-        trakAdapter = TrackAdapter(emptyList(), object : TrackAdapter.OnItemClickListener {
-            override fun onItemClick(track: Track) {
-                clickOnTrack(track)
-            }
-        })
+        trakAdapter = TrackAdapter(emptyList(), ::clickOnTrack)
         recyclerViewTrak.adapter = trakAdapter
 
 
@@ -132,37 +122,31 @@ class SearchActivity : AppCompatActivity() {
         }
 
 
-        val textWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                clearButton.visibility = clearButtonVisibility(s)
+        search.addTextChangedListener(onTextChanged = { s, _, _, _ ->
+            clearButton.isVisible = (!s.isNullOrEmpty())
 
-                if (search.hasFocus() && s?.isEmpty() == true) {
-                    noContentPlaceHolder.visibility = View.GONE
-                    noInternetPlaceHolder.visibility = View.GONE
+            if (search.hasFocus() && s?.isEmpty() == true) {
+                progressBar.visibility = View.GONE
+                noContentPlaceHolder.visibility = View.GONE
+                noInternetPlaceHolder.visibility = View.GONE
 
-                    showHistory()
+                showHistory()
 
-                    trakAdapter.updateData(emptyList())
-                    handler.removeCallbacks(searchRunnable)
-                } else {
-                    linearLayoutHistory.visibility = View.GONE
-                    searchDebounce()
-                }
-            }
-            override fun afterTextChanged(s: Editable?) {
-                textSearch = search.getText().toString()
-            }
-        }
-        search.addTextChangedListener(textWatcher)
-        search.setOnFocusChangeListener { view, hasFocus ->
-            if (hasFocus && search.text.isEmpty() && interactorSearchHistory.hasHistory()) {
-                linearLayoutHistory.visibility = View.VISIBLE
+                trakAdapter.updateData(emptyList())
+                handler.removeCallbacks(searchRunnable)
             } else {
                 linearLayoutHistory.visibility = View.GONE
+                searchDebounce()
             }
+        },
+            afterTextChanged = {
+                textSearch = search.getText().toString()
+            }
+        )
 
+        search.setOnFocusChangeListener { view, hasFocus ->
+            linearLayoutHistory.isVisible =
+                (hasFocus && search.text.isEmpty() && interactorSearchHistory.hasHistory())
         }
         clearButton.setOnClickListener {
             search.setText("")
@@ -192,19 +176,13 @@ class SearchActivity : AppCompatActivity() {
         }
 
     }
+
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         textSearch = savedInstanceState.getString(FIELD_SEARCH).toString()
         search.setText(textSearch)
     }
 
-    private fun clearButtonVisibility(s: CharSequence?): Int {
-        return if (s.isNullOrEmpty()) {
-            View.GONE
-        } else {
-            View.VISIBLE
-        }
-    }
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(FIELD_SEARCH, textSearch)
@@ -220,35 +198,35 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    private fun ShowProgressBar() {
+    private fun showProgressBar() {
         recyclerViewTrak.visibility = View.GONE
         progressBar.visibility = View.VISIBLE
         noInternetPlaceHolder.visibility = View.GONE
         noContentPlaceHolder.visibility = View.GONE
     }
 
-    private fun ShowNoInternet() {
+    private fun showNoInternet() {
         noInternetPlaceHolder.visibility = View.VISIBLE
         noContentPlaceHolder.visibility = View.GONE
         recyclerViewTrak.visibility = View.GONE
         progressBar.visibility = View.GONE
     }
 
-    private fun ShowNoContent() {
+    private fun showNoContent() {
         noInternetPlaceHolder.visibility = View.GONE
         recyclerViewTrak.visibility = View.GONE
         noContentPlaceHolder.visibility = View.VISIBLE
+        progressBar.visibility = View.GONE
     }
 
     fun loadTrack(text: String) {
 
-        ShowProgressBar()
+        showProgressBar()
         handler.removeCallbacks(searchRunnable)
 
         trackInteractor.searchTracks(text,
             object : TrackConsumer<List<Track>> {
                 override fun consume(data: DataConsumer<List<Track>>) {
-
                     runOnUiThread {
                         when (data) {
                             is DataConsumer.Success -> {
@@ -258,16 +236,14 @@ class SearchActivity : AppCompatActivity() {
                             }
 
                             is DataConsumer.ResponseFailure -> {
-                                ShowNoInternet()
+                                showNoInternet()
                             }
 
                             is DataConsumer.ResponseNoContent -> {
-                                ShowNoContent()
+                                showNoContent()
                             }
                         }
-
                     }
-
                 }
 
             })

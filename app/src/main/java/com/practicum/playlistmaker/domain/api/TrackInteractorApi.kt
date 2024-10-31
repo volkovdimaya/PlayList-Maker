@@ -5,12 +5,4 @@ import com.practicum.playlistmaker.domain.models.Track
 
 interface TrackInteractorApi {
     fun searchTracks(term: String, consumer: TrackConsumer<List<Track>>)
-
-
-
-
-
-
-
-
 }

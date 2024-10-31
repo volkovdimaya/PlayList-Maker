@@ -11,7 +11,6 @@ import java.util.concurrent.Executors
 class TracksInteractorImpl(private val repository: TracksRepository) : TrackInteractorApi {
 
     private val executor = Executors.newCachedThreadPool()
-
     override fun searchTracks(term: String, consumer: TrackConsumer<List<Track>>) {
         executor.execute {
             val respons = repository.searchTracks(term)

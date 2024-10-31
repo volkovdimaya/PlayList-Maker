@@ -36,7 +36,7 @@ class AudioPlayerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_audio_player)
 
-        audioPlayerManager = MediaPlayerInteractor()
+        audioPlayerManager = MediaPlayerInteractor(MediaPlayer())
 
         btnActive = findViewById(R.id.play)
 

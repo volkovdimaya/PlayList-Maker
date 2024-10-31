@@ -11,8 +11,7 @@ class TrackAdapter(
     private var tracks: List<Track>,//вопрос не лучше хранить тут в InfoTrackShort? если да то обработка нажатий как лучше сделать
     private val itemClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<ViewHolderTrack>() {
-
-    interface OnItemClickListener {
+    fun interface OnItemClickListener {
         fun onItemClick(track: Track)
     }
 
@@ -33,15 +32,8 @@ class TrackAdapter(
     }
 
     fun updateData(newSongs: List<Track>) {
-
         tracks = newSongs
         notifyDataSetChanged()
-    }
-
-    fun updateDataHistory(newSongs: List<Track>) {
-        tracks = newSongs.reversed()
-        notifyDataSetChanged()
-
     }
 }
 

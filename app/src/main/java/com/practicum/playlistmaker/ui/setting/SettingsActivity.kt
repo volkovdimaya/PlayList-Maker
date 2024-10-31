@@ -1,6 +1,7 @@
 package com.practicum.playlistmaker.ui.setting
 
 
+import android.app.Application
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -55,8 +56,7 @@ class SettingsActivity : AppCompatActivity() {
 
         val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
 
-
-        val interactorTheme = Creator().provideInteractorTheme(this)
+        val interactorTheme = Creator.provideInteractorTheme()
 
 
         themeSwitcher.setChecked(interactorTheme.isDarkTheme())

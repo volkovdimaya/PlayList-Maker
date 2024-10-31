@@ -7,6 +7,8 @@ import com.practicum.playlistmaker.data.dto.TrackDto
 import com.practicum.playlistmaker.data.mapper.TrackResponseMapper
 import com.practicum.playlistmaker.domain.models.Track
 import com.practicum.playlistmaker.domain.repository.RepositorySearchHistory
+import androidx.core.content.edit
+import com.practicum.playlistmaker.data.mapper.TrackDtoResponseMapper
 
 
 const val HISTORY_LIST_TRACK = "HISTORY_LIST_TRACK"
@@ -15,7 +17,8 @@ const val PLAYLIST_MAKER = "PLAYLIST_MAKER"
 
 
 class RepositorySearchHistoryImpl(
-    val sharedPrefs: SharedPreferences
+    private val sharedPrefs: SharedPreferences,
+    private val trackDtoResponseMapper: TrackDtoResponseMapper
 ) : RepositorySearchHistory {
 
     private var songs: List<TrackDto> = emptyList()
@@ -37,38 +40,24 @@ class RepositorySearchHistoryImpl(
         read()
         return songs.map {
             TrackResponseMapper.map(it)
-
         }
     }
 
 
     private fun write() {
         val json = gson.toJson(songs)
-        sharedPrefs.edit()
-            .putString(HISTORY_LIST_TRACK, json)
-            .apply()
+        sharedPrefs.edit { putString(HISTORY_LIST_TRACK, json) }
     }
 
     override fun clear() {
         songs = emptyList()
-        sharedPrefs.edit()
-            .remove(HISTORY_LIST_TRACK)
-            .apply()
+        sharedPrefs.edit { remove(HISTORY_LIST_TRACK) }
+
     }
 
     override fun update(track: Track) {
-        val model = TrackDto(
-            track.trackName,
-            track.artistName,
-            track.trackTimeMillis,
-            track.artworkUrl100,
-            track.trackId,
-            track.releaseDate,
-            track.primaryGenreName,
-            track.collectionName,
-            track.country,
-            track.previewUrl
-        )
+
+        val model = trackDtoResponseMapper.map(track)
 
         read()
         val trackIndex = songs.indexOfFirst { it.trackId.equals(model.trackId) }

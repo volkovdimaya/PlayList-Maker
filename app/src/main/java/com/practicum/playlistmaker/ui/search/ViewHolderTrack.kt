@@ -29,14 +29,11 @@ class ViewHolderTrack(itemView: View) : RecyclerView.ViewHolder(itemView) {
         artistName = itemView.findViewById(R.id.artist_name)
         trackTime = itemView.findViewById(R.id.track_time)
         artworkUrl100 = itemView.findViewById(R.id.icon_track)
-
-
     }
 
     constructor(parent: ViewGroup) : this(
         LayoutInflater.from(parent.context).inflate(R.layout.item_track_search, parent, false)
     )
-
 
     fun bind(model: InfoTrackShort) {
 
@@ -58,14 +55,11 @@ class ViewHolderTrack(itemView: View) : RecyclerView.ViewHolder(itemView) {
             .transform(RoundedCorners(2))
             .placeholder(R.drawable.play_ic)
             .into(artworkUrl100)
-
-
     }
 
     fun getTime(time: Long): String {
         return SimpleDateFormat("mm:ss", Locale.getDefault()).format(time)
     }
-
 
     fun dpToPx(dp: Float, context: Context): Int {
         return TypedValue.applyDimension(

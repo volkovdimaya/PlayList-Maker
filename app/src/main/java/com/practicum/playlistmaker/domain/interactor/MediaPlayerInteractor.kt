@@ -3,13 +3,11 @@ package com.practicum.playlistmaker.domain.interactor
 
 import android.media.MediaPlayer
 
-class MediaPlayerInteractor {
-    private var mediaPlayer: MediaPlayer? = null
+class MediaPlayerInteractor(private val mediaPlayer: MediaPlayer) {
     private var playerState = STATE_DEFAULT
 
-
     fun getCurrentPosition(): Int {
-        return mediaPlayer?.currentPosition ?: 0
+        return mediaPlayer.currentPosition
     }
 
     fun togglePlayback(onPlay: () -> Unit, onPause: () -> Unit) {
@@ -25,7 +23,7 @@ class MediaPlayerInteractor {
     }
 
     fun preparePlayer(trackUrl: String, onPrepared: () -> Unit, onCompletion: () -> Unit) {
-        mediaPlayer = MediaPlayer().apply {
+        mediaPlayer.apply {
             setDataSource(trackUrl)
             prepareAsync()
             setOnPreparedListener {
@@ -41,8 +39,8 @@ class MediaPlayerInteractor {
         }
     }
 
-    fun startPlayer(onStart: () -> Unit) {
-        mediaPlayer?.let {
+    private fun startPlayer(onStart: () -> Unit) {
+        mediaPlayer.let {
             if (playerState == STATE_PREPARED || playerState == STATE_PAUSED) {
                 it.start()
                 playerState = STATE_PLAYING
@@ -52,7 +50,7 @@ class MediaPlayerInteractor {
     }
 
     fun pausePlayer(onPause: () -> Unit) {
-        mediaPlayer?.let {
+        mediaPlayer.let {
             if (playerState == STATE_PLAYING) {
                 it.pause()
                 playerState = STATE_PAUSED
@@ -62,14 +60,14 @@ class MediaPlayerInteractor {
     }
 
     fun release() {
-        mediaPlayer?.release()
-        mediaPlayer = null
+        mediaPlayer.release()
+        //mediaPlayer = null
     }
 
-    companion object {
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
+    private companion object {
+        const val STATE_DEFAULT = 0
+        const val STATE_PREPARED = 1
+        const val STATE_PLAYING = 2
+        const val STATE_PAUSED = 3
     }
 }
