@@ -1,6 +1,7 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.ui.setting
 
 
+import android.app.Application
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -8,9 +9,12 @@ import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.google.android.material.switchmaterial.SwitchMaterial
+import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.creator.Creator
 
 
 class SettingsActivity : AppCompatActivity() {
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,17 +56,13 @@ class SettingsActivity : AppCompatActivity() {
 
         val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
 
+        val interactorTheme = Creator.provideInteractorTheme()
 
-        val sharedPrefs = getSharedPreferences(PLAYLIST_MAKER, MODE_PRIVATE)
-        var darkTheme = sharedPrefs.getBoolean(MODE_THEME, false)
 
-        themeSwitcher.setChecked(darkTheme)
+        themeSwitcher.setChecked(interactorTheme.isDarkTheme())
 
         themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
-            (applicationContext as App).switchTheme(checked)
-            sharedPrefs.edit()
-                .putBoolean(MODE_THEME, checked)
-                .apply()
+            interactorTheme.switchTheme(checked)
         }
     }
 
