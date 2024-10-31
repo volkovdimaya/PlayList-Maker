@@ -2,9 +2,7 @@ package com.practicum.playlistmaker.creator
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.practicum.playlistmaker.ui.setting.App
 import com.practicum.playlistmaker.data.TracksRepositoryImpl
 import com.practicum.playlistmaker.data.mapper.TrackDtoResponseMapper
 import com.practicum.playlistmaker.data.mapper.TrackResponseMapper
@@ -30,7 +28,7 @@ object Creator {
     }
 
     private fun geTracksRepository(): TracksRepository {
-        return TracksRepositoryImpl(RetrofitNetworkClient(), TrackResponseMapper)
+        return TracksRepositoryImpl(RetrofitNetworkClient(appContext), TrackResponseMapper)
     }
 
     fun provideTracksInteractor(): TrackInteractorApi {
