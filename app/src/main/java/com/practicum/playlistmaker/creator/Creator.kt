@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker.creator
 
+import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
@@ -14,9 +15,13 @@ import com.practicum.playlistmaker.data.repository.ThemeRepositoryImpl
 import com.practicum.playlistmaker.domain.api.TrackInteractorApi
 import com.practicum.playlistmaker.domain.api.TracksRepository
 import com.practicum.playlistmaker.domain.impl.TracksInteractorImpl
+import com.practicum.playlistmaker.domain.interactor.InteractorSearchHistory
 import com.practicum.playlistmaker.domain.interactor.ThemeInteractor
 import com.practicum.playlistmaker.domain.repository.RepositorySearchHistory
 import com.practicum.playlistmaker.domain.repository.ThemeRepository
+import com.practicum.playlistmaker.presentation.controller.TrackSearchController
+import com.practicum.playlistmaker.presentation.controller.TrackSearchHistoryController
+import com.practicum.playlistmaker.ui.search.TrackAdapter
 
 
 object Creator {
@@ -50,6 +55,21 @@ object Creator {
     fun provideInteractorTheme(): ThemeInteractor {
 
         return ThemeInteractor(getRepositoryTheme(), appContext)
+    }
+
+    fun provideTrackSearchController(
+        activity: Activity,
+        trakAdapter: TrackAdapter,
+        trackSearchHistoryController: TrackSearchHistoryController
+    ): TrackSearchController {
+        return TrackSearchController(activity, trakAdapter, trackSearchHistoryController)
+    }
+
+    fun provideTrackSearchHistoryController(
+        activity: Activity,
+        interactorSearchHistory: InteractorSearchHistory
+    ): TrackSearchHistoryController {
+        return TrackSearchHistoryController(activity, interactorSearchHistory)
     }
 
 }

@@ -19,16 +19,19 @@ import com.practicum.playlistmaker.ui.search.TrackAdapter
 
 class TrackSearchHistoryController(
     private val activity: Activity,
-    private var historyTrackAdapter: TrackAdapter
+    private var interactorSearchHistory: InteractorSearchHistory
 ) {
 
     private lateinit var linearLayoutHistory: LinearLayout
     private lateinit var recyclerViewHistoryTrack: RecyclerView
+    private lateinit var historyTrackAdapter: TrackAdapter
     fun onCreate() {
         linearLayoutHistory = activity.findViewById(R.id.linear_layout_history)
         recyclerViewHistoryTrack = activity.findViewById(R.id.recycler_history_track)
 
         recyclerViewHistoryTrack.layoutManager = LinearLayoutManager(activity)
+
+        getHisory()
 
         val btnClearHistory = activity.findViewById<Button>(R.id.btn_clear_history)
         btnClearHistory.setOnClickListener {
@@ -42,15 +45,12 @@ class TrackSearchHistoryController(
         linearLayoutHistory.visibility = View.GONE
     }
 
-    private lateinit var interactorSearchHistory: InteractorSearchHistory
-
-
     private var isClickAllowed = true
 
     private val handler = Handler(Looper.getMainLooper())
 
 
-    private fun getHisory() {
+    fun getHisory() {
         historyTrackAdapter = TrackAdapter(
             interactorSearchHistory.getSong().reversed(), ::clickOnTrack
         )
