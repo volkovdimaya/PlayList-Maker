@@ -57,7 +57,7 @@ class TrackSearchHistoryController(
         recyclerViewHistoryTrack.adapter = historyTrackAdapter
     }
 
-    private fun clickOnTrack(track: Track) {
+    fun clickOnTrack(track: Track) {
         if (clickDebonce()) {
             interactorSearchHistory.write(track)
             getHisory()

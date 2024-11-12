@@ -2,6 +2,7 @@ package com.practicum.playlistmaker.presentation.controller
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -18,32 +19,37 @@ import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.creator.Creator
 import com.practicum.playlistmaker.domain.api.TrackInteractorApi
 import com.practicum.playlistmaker.domain.consumer.DataConsumer
 import com.practicum.playlistmaker.domain.consumer.TrackConsumer
+import com.practicum.playlistmaker.domain.interactor.InteractorSearchHistory
 import com.practicum.playlistmaker.domain.models.Track
+import com.practicum.playlistmaker.ui.audioplayer.AudioPlayerActivity
 import com.practicum.playlistmaker.ui.search.SearchActivity
+import com.practicum.playlistmaker.ui.search.TRACK_DETAILS
 import com.practicum.playlistmaker.ui.search.TrackAdapter
 
 
 class TrackSearchController(
     private val activity: Activity,
-    private val trakAdapter: TrackAdapter,
+   // private val interactorSearchHistory: InteractorSearchHistory,
     private val trackSearchHistoryController: TrackSearchHistoryController
 ) {
 
-    private lateinit var trackInteractor: TrackInteractorApi // не инициализирован
+    private lateinit var trackInteractor: TrackInteractorApi
 
     private var textSearch: String = ""
 
     private val handler = Handler(Looper.getMainLooper())
 
 
-    private lateinit var noContentPlaceHolder: LinearLayout //
-    private lateinit var noInternetPlaceHolder: LinearLayout //
-    private lateinit var recyclerViewTrak: RecyclerView //
-    private lateinit var progressBar: ProgressBar //
-    private lateinit var search: EditText // вроде все
+    private lateinit var noContentPlaceHolder: LinearLayout
+    private lateinit var noInternetPlaceHolder: LinearLayout
+    private lateinit var recyclerViewTrak: RecyclerView
+    private lateinit var progressBar: ProgressBar
+    private lateinit var search: EditText
+    private lateinit var trakAdapter: TrackAdapter
 
     fun onCreate() {
         progressBar = activity.findViewById(R.id.progressBar)
@@ -58,8 +64,10 @@ class TrackSearchController(
 
         recyclerViewTrak.layoutManager = LinearLayoutManager(activity)
 
-        recyclerViewTrak.adapter = trakAdapter
+        trakAdapter = TrackAdapter(emptyList(), ::clickOnTrack)
 
+        recyclerViewTrak.adapter = trakAdapter
+        trackInteractor = Creator.provideTracksInteractor()
 
         //изменить чтобы показывать историю
         search.addTextChangedListener(onTextChanged = { s, _, _, _ ->
@@ -110,6 +118,9 @@ class TrackSearchController(
             loadTrack(search.text.toString())
         }
     }
+    private fun clickOnTrack(track: Track) {
+        trackSearchHistoryController.clickOnTrack(track)
+    }
 
 
     private var searchRunnable = Runnable {
@@ -123,9 +134,11 @@ class TrackSearchController(
     }
 
     companion object {
-
         private const val SEARCH_TRACK_DEBOUNCE_DELAY = 2000L
+        const val FIELD_SEARCH = "FIELD_SEARCH"
     }
+
+
 
     fun loadTrack(text: String) {
 
@@ -179,11 +192,13 @@ class TrackSearchController(
     }
 
     fun onSaveInstanceState(outState: Bundle) {
-        outState.putString(SearchActivity.FIELD_SEARCH, textSearch)
+        outState.putString(FIELD_SEARCH, textSearch)
     }
 
     fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        textSearch = savedInstanceState.getString(SearchActivity.FIELD_SEARCH).toString()
+        textSearch = savedInstanceState.getString(FIELD_SEARCH).toString()
         search.setText(textSearch)
     }
+
+
 }

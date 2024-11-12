@@ -59,10 +59,9 @@ object Creator {
 
     fun provideTrackSearchController(
         activity: Activity,
-        trakAdapter: TrackAdapter,
         trackSearchHistoryController: TrackSearchHistoryController
     ): TrackSearchController {
-        return TrackSearchController(activity, trakAdapter, trackSearchHistoryController)
+        return TrackSearchController(activity, trackSearchHistoryController)
     }
 
     fun provideTrackSearchHistoryController(
