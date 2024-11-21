@@ -4,6 +4,7 @@ import androidx.core.widget.addTextChangedListener
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -67,26 +68,24 @@ class SearchActivity : AppCompatActivity(), SearchView {
         val clearButton: ImageView = findViewById(R.id.clearIcon)
 
 
-        search.addTextChangedListener(onTextChanged = { s, _, _, _ ->
-            clearButton.isVisible = (!s.isNullOrEmpty())
+        search.addTextChangedListener(
+            onTextChanged = { s, _, _, _ ->
+                clearButton.isVisible = (!s.isNullOrEmpty())
 
-            if (search.hasFocus() && s?.isEmpty() == true) {
-                progressBar.visibility = View.GONE
-                noContentPlaceHolder.visibility = View.GONE
-                noInternetPlaceHolder.visibility = View.GONE
+                if (search.hasFocus() && s?.isEmpty() == true) {
+                    progressBar.visibility = View.GONE
+                    noContentPlaceHolder.visibility = View.GONE
+                    noInternetPlaceHolder.visibility = View.GONE
 
-                trackSearchPresenter.addTextChangedListener()
+                    trackSearchPresenter.addTextChangedListener()
 
-                linearLayoutHistory.isVisible = trackSearchPresenter.showHistory()
+                    linearLayoutHistory.isVisible = trackSearchPresenter.showHistory()
 
-            } else {
-                linearLayoutHistory.visibility = View.GONE
-                trackSearchPresenter.searchDebounce()
-            }
-        },
-            afterTextChanged = {
-                trackSearchPresenter.afterTextChanged(search.getText().toString())
-            }
+                } else {
+                    linearLayoutHistory.visibility = View.GONE
+                    trackSearchPresenter.searchDebounce(s.toString())
+                }
+            },
         )
 
         search.setOnFocusChangeListener { view, hasFocus ->

@@ -54,6 +54,7 @@ class TrackSearchPresenter(
 
     fun afterTextChanged(text: String) {
         textSearch = text
+        //тут изменения
     }
 
     fun clearSearch() {
@@ -64,7 +65,8 @@ class TrackSearchPresenter(
         loadTrack(textSearch)
     }
 
-    fun searchDebounce() {
+    fun searchDebounce(changedText : String) {
+        textSearch =  changedText
         handler.removeCallbacks(searchRunnable)
         handler.postDelayed(searchRunnable, SEARCH_TRACK_DEBOUNCE_DELAY)
     }
