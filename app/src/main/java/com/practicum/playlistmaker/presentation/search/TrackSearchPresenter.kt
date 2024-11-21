@@ -12,6 +12,7 @@ import com.practicum.playlistmaker.domain.interactor.InteractorSearchHistory
 import com.practicum.playlistmaker.domain.models.Track
 import com.practicum.playlistmaker.presentation.mapper.TrackMapper
 import com.practicum.playlistmaker.ui.search.TrackAdapter
+import com.practicum.playlistmaker.ui.search.models.SearchState
 
 
 class TrackSearchPresenter(
@@ -65,8 +66,8 @@ class TrackSearchPresenter(
         loadTrack(textSearch)
     }
 
-    fun searchDebounce(changedText : String) {
-        textSearch =  changedText
+    fun searchDebounce(changedText: String) {
+        textSearch = changedText
         handler.removeCallbacks(searchRunnable)
         handler.postDelayed(searchRunnable, SEARCH_TRACK_DEBOUNCE_DELAY)
     }
@@ -79,7 +80,10 @@ class TrackSearchPresenter(
 
     fun loadTrack(text: String) {
 
-        view.showProgressBar()
+        view.render(
+            SearchState.ProgressBar
+        )
+        //view.showProgressBar()
         handler.removeCallbacks(searchRunnable)
 
         trackInteractor.searchTracks(text,
@@ -88,20 +92,29 @@ class TrackSearchPresenter(
                     when (data) {
                         is DataConsumer.Success -> {
                             handler.post {
-                                view.showTracks()
+                                view.render(
+                                    SearchState.Content
+                                )
+                                //view.showTracks()
                                 trakAdapter.updateData(data.data)
                             }
                         }
 
                         is DataConsumer.ResponseFailure -> {
                             handler.post {
-                                view.showNoInternet()
+                                view.render(
+                                    SearchState.NoInternet
+                                )
+                                //view.showNoInternet()
                             }
                         }
 
                         is DataConsumer.ResponseNoContent -> {
                             handler.post {
-                                view.showNoContent()
+                                view.render(
+                                    SearchState.NotContent
+                                )
+                                //view.showNoContent()
                             }
                         }
                     }

@@ -24,6 +24,7 @@ import com.practicum.playlistmaker.presentation.models.TrackAudioPlayer
 import com.practicum.playlistmaker.presentation.search.TrackSearchPresenter
 import com.practicum.playlistmaker.presentation.search.SearchView
 import com.practicum.playlistmaker.ui.audioplayer.AudioPlayerActivity
+import com.practicum.playlistmaker.ui.search.models.SearchState
 
 
 const val TRACK_DETAILS = "TRACK_DETAILS"
@@ -139,28 +140,28 @@ class SearchActivity : AppCompatActivity(), SearchView {
         trackSearchPresenter.onSaveInstanceState(outState)
     }
 
-    override fun showProgressBar() {
+    fun showProgressBar() {
         recyclerViewTrak.visibility = View.GONE
         progressBar.visibility = View.VISIBLE
         noInternetPlaceHolder.visibility = View.GONE
         noContentPlaceHolder.visibility = View.GONE
     }
 
-    override fun showNoInternet() {
+    fun showNoInternet() {
         noInternetPlaceHolder.visibility = View.VISIBLE
         noContentPlaceHolder.visibility = View.GONE
         recyclerViewTrak.visibility = View.GONE
         progressBar.visibility = View.GONE
     }
 
-    override fun showNoContent() {
+    fun showNoContent() {
         noInternetPlaceHolder.visibility = View.GONE
         recyclerViewTrak.visibility = View.GONE
         noContentPlaceHolder.visibility = View.VISIBLE
         progressBar.visibility = View.GONE
     }
 
-    override fun showTracks() {
+    fun showTracks() {
         progressBar.visibility = View.GONE
         recyclerViewTrak.visibility = View.VISIBLE
     }
@@ -169,6 +170,15 @@ class SearchActivity : AppCompatActivity(), SearchView {
         val intent = Intent(this, AudioPlayerActivity::class.java)
         intent.putExtra(TRACK_DETAILS, track)
         startActivity(intent)
+    }
+
+    override fun render(state: SearchState) {
+        when(state) {
+           is SearchState.NotContent -> showNoContent()
+            is SearchState.Content -> showTracks()
+            is SearchState.ProgressBar -> showProgressBar()
+            is SearchState.NoInternet -> showNoInternet()
+        }
     }
 
 
