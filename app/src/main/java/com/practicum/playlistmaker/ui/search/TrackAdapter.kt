@@ -8,7 +8,7 @@ import com.practicum.playlistmaker.presentation.mapper.TrackMapper
 import com.practicum.playlistmaker.presentation.models.InfoTrackShort
 
 class TrackAdapter(
-    private var tracks: List<Track>,//вопрос не лучше хранить тут в InfoTrackShort? если да то обработка нажатий как лучше сделать
+    private var tracks: List<Track>,
     private val itemClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<ViewHolderTrack>() {
     fun interface OnItemClickListener {
