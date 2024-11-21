@@ -15,6 +15,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.domain.interactor.MediaPlayerInteractor
 import com.practicum.playlistmaker.domain.models.Track
+import com.practicum.playlistmaker.presentation.models.TrackAudioPlayer
 import com.practicum.playlistmaker.ui.search.TRACK_DETAILS
 
 
@@ -24,7 +25,7 @@ class AudioPlayerActivity : AppCompatActivity() {
 
     private lateinit var btnActive: ImageView
     private lateinit var playbackTime: TextView
-    private var track: Track? = null
+    private var track: TrackAudioPlayer? = null
 
     private var secondsCount: Long = 0
     private val handler = Handler(Looper.getMainLooper())
@@ -48,7 +49,7 @@ class AudioPlayerActivity : AppCompatActivity() {
             finish()
         }
 
-        track = intent.getSerializableExtra(TRACK_DETAILS) as? Track
+        track = intent.getSerializableExtra(TRACK_DETAILS) as? TrackAudioPlayer
 
         track?.let {
             displayTrackData(it)
@@ -105,7 +106,7 @@ class AudioPlayerActivity : AppCompatActivity() {
         audioPlayerManager.release()
     }
 
-    private fun displayTrackData(track: Track) {
+    private fun displayTrackData(track: TrackAudioPlayer) {
         findViewById<TextView>(R.id.track_name).text = track.trackName
         findViewById<TextView>(R.id.artist_name).text = track.artistName
         findViewById<TextView>(R.id.album).text = track.collectionName

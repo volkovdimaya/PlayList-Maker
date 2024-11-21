@@ -56,11 +56,9 @@ object Creator {
     }
 
     fun provideTrackSearchController(
-        view: SearchView,
-        trakAdapter: TrackAdapter,
-        historyAdaper : TrackAdapter
+        view: SearchView
     ): TrackSearchPresenter {
-        return TrackSearchPresenter(view, trakAdapter, historyAdaper )
+        return TrackSearchPresenter(view)
     }
 
 

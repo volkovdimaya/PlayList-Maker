@@ -25,7 +25,7 @@ class TrackAdapter(
 
     override fun onBindViewHolder(holder: ViewHolderTrack, position: Int) {
 
-        holder.bind(TrackMapper.map(tracks[position]))
+        holder.bind(TrackMapper.mapToTrackShort(tracks[position]))
         holder.itemView.setOnClickListener {
             itemClickListener.onItemClick(tracks[position])
         }

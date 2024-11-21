@@ -1,35 +1,33 @@
 package com.practicum.playlistmaker.presentation.search
 
-import android.content.Intent
+
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import androidx.core.view.isVisible
 import com.practicum.playlistmaker.creator.Creator
 import com.practicum.playlistmaker.domain.api.TrackInteractorApi
 import com.practicum.playlistmaker.domain.consumer.DataConsumer
 import com.practicum.playlistmaker.domain.consumer.TrackConsumer
 import com.practicum.playlistmaker.domain.interactor.InteractorSearchHistory
 import com.practicum.playlistmaker.domain.models.Track
-import com.practicum.playlistmaker.ui.audioplayer.AudioPlayerActivity
-import com.practicum.playlistmaker.ui.search.TRACK_DETAILS
+import com.practicum.playlistmaker.presentation.mapper.TrackMapper
 import com.practicum.playlistmaker.ui.search.TrackAdapter
 
 
 class TrackSearchPresenter(
-    private val view: SearchView,
-    private val trakAdapter: TrackAdapter,
-    private val historyTrackAdapter: TrackAdapter,
-
-    //private val trackSearchHistoryPresenter: TrackSearchHistoryPresenter
+    private val view: SearchView
 ) {
+
+    private val trakAdapter = TrackAdapter(emptyList(), ::onTrackClicked)
+    private val historyTrackAdapter = TrackAdapter(emptyList(), ::onTrackClicked)
+
+    fun getTrackAdapter(): TrackAdapter = trakAdapter
+    fun getTrackHistoryAdapter(): TrackAdapter = historyTrackAdapter
+
 
     private var isClickAllowed = true
 
     private lateinit var interactorSearchHistory: InteractorSearchHistory
-
-
-
 
 
     private lateinit var trackInteractor: TrackInteractorApi
@@ -85,8 +83,6 @@ class TrackSearchPresenter(
         trackInteractor.searchTracks(text,
             object : TrackConsumer<List<Track>> {
                 override fun consume(data: DataConsumer<List<Track>>) {
-
-
                     when (data) {
                         is DataConsumer.Success -> {
                             handler.post {
@@ -121,39 +117,37 @@ class TrackSearchPresenter(
         // search.setText(textSearch)
     }
 
-    fun updateHistory()
-    {
+    fun updateHistory() {
         historyTrackAdapter.updateData(interactorSearchHistory.getSong().reversed())
     }
-    fun clearHistory()
-    {
+
+    fun clearHistory() {
         historyTrackAdapter.updateData(emptyList())
         interactorSearchHistory.clear()
-    }
-
-
-
-    fun clickOnTrack(track: Track) : Boolean {
-        if (clickDebonce()) {
-            interactorSearchHistory.write(track)
-            updateHistory()
-            return true
-        }
-        return false
     }
 
     private fun clickDebonce(): Boolean {
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true },
+            handler.postDelayed(
+                { isClickAllowed = true },
                 CLICK_DEBOUNCE_DELAY
             )
         }
         return current
     }
-    fun showHistory() : Boolean {
+
+    fun showHistory(): Boolean {
         return interactorSearchHistory.hasHistory()
+    }
+
+    private fun onTrackClicked(track: Track) {
+        if (clickDebonce()) {
+            interactorSearchHistory.write(track)
+            updateHistory()
+            view.clickOnTrack(TrackMapper.mapToTrackAudioPlayer(track))
+        }
     }
 
 

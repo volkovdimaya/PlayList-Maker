@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.creator.Creator
-import com.practicum.playlistmaker.domain.models.Track
+import com.practicum.playlistmaker.presentation.models.TrackAudioPlayer
 import com.practicum.playlistmaker.presentation.search.TrackSearchPresenter
 import com.practicum.playlistmaker.presentation.search.SearchView
 import com.practicum.playlistmaker.ui.audioplayer.AudioPlayerActivity
@@ -35,9 +35,7 @@ class SearchActivity : AppCompatActivity(), SearchView {
     private lateinit var noInternetPlaceHolder: LinearLayout
     private lateinit var recyclerViewTrak: RecyclerView
     private lateinit var search: EditText
-    private lateinit var trakAdapter: TrackAdapter
 
-    private lateinit var historyTrackAdapter: TrackAdapter
 
     private lateinit var linearLayoutHistory: LinearLayout
     private lateinit var recyclerViewHistoryTrack: RecyclerView
@@ -48,40 +46,26 @@ class SearchActivity : AppCompatActivity(), SearchView {
         setContentView(R.layout.activity_search)
 
         progressBar = findViewById(R.id.progressBar)
-
         noContentPlaceHolder = findViewById(R.id.error_no_content)
         noInternetPlaceHolder = findViewById(R.id.error_internet)
         recyclerViewTrak = findViewById(R.id.recycler_track)
         search = findViewById(R.id.search)
-
-        recyclerViewTrak.layoutManager = LinearLayoutManager(this)
-
-        trakAdapter = TrackAdapter(emptyList(), ::clickOnTrack)
-        recyclerViewTrak.adapter = trakAdapter
-
         linearLayoutHistory = findViewById(R.id.linear_layout_history)
         recyclerViewHistoryTrack = findViewById(R.id.recycler_history_track)
 
+        recyclerViewTrak.layoutManager = LinearLayoutManager(this)
         recyclerViewHistoryTrack.layoutManager = LinearLayoutManager(this)
 
-        historyTrackAdapter = TrackAdapter(
-            emptyList(), ::clickOnTrack
-        )
+        trackSearchPresenter = Creator.provideTrackSearchController(this)
 
-        recyclerViewHistoryTrack.adapter = historyTrackAdapter
-
-
-        trackSearchPresenter = Creator.provideTrackSearchController(
-            this,
-            trakAdapter,
-            historyTrackAdapter,
-        )
+        recyclerViewTrak.adapter = trackSearchPresenter.getTrackAdapter()
+        recyclerViewHistoryTrack.adapter = trackSearchPresenter.getTrackHistoryAdapter()
 
         trackSearchPresenter.onCreate()
         linearLayoutHistory.isVisible = trackSearchPresenter.showHistory()
 
         val clearButton: ImageView = findViewById(R.id.clearIcon)
-        val updateBtn = findViewById<Button>(R.id.btn_search_update)
+
 
         search.addTextChangedListener(onTextChanged = { s, _, _, _ ->
             clearButton.isVisible = (!s.isNullOrEmpty())
@@ -128,11 +112,10 @@ class SearchActivity : AppCompatActivity(), SearchView {
             }
             false
         }
-
+        val updateBtn = findViewById<Button>(R.id.btn_search_update)
         updateBtn.setOnClickListener {
             trackSearchPresenter.loadTrack(search.text.toString())
         }
-
 
         val toolbar: Toolbar = findViewById(R.id.toolbar_search)
 
@@ -183,13 +166,10 @@ class SearchActivity : AppCompatActivity(), SearchView {
         recyclerViewTrak.visibility = View.VISIBLE
     }
 
-    fun clickOnTrack(track: Track) {
-        if (trackSearchPresenter.clickOnTrack(track)) {
-            val intent = Intent(this, AudioPlayerActivity::class.java)
-            intent.putExtra(TRACK_DETAILS, track)
-            startActivity(intent)
-        }
-
+    override fun clickOnTrack(track: TrackAudioPlayer) {
+        val intent = Intent(this, AudioPlayerActivity::class.java)
+        intent.putExtra(TRACK_DETAILS, track)
+        startActivity(intent)
     }
 
 

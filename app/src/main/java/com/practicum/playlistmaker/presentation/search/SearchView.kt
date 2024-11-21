@@ -1,11 +1,13 @@
 package com.practicum.playlistmaker.presentation.search
 
 import com.practicum.playlistmaker.domain.models.Track
+import com.practicum.playlistmaker.presentation.models.TrackAudioPlayer
 
 interface SearchView {
     fun showProgressBar()
     fun showNoInternet()
     fun showNoContent()
     fun showTracks()
-    //fun showTracks(tracks: List<Track>)
+    fun clickOnTrack(track : TrackAudioPlayer)
+
 }
