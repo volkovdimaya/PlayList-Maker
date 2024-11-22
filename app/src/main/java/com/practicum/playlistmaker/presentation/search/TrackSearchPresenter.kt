@@ -14,20 +14,12 @@ import com.practicum.playlistmaker.domain.models.Track
 import com.practicum.playlistmaker.presentation.mapper.TrackMapper
 import com.practicum.playlistmaker.ui.search.TrackAdapter
 import com.practicum.playlistmaker.ui.search.models.SearchState
+import moxy.InjectViewState
+import moxy.MvpPresenter
 import kotlin.math.log
 
 
-class TrackSearchPresenter{
-    private var view: SearchView? = null
-    private var state: SearchState? = null
-    fun attachView(view: SearchView) {
-        this.view = view
-        state?.let { view.render(it) }
-    }
-
-    fun detachView() {
-        this.view = null
-    }
+class TrackSearchPresenter : MvpPresenter<SearchView>() {
 
     private val trakAdapter = TrackAdapter(emptyList(), ::onTrackClicked)
     private val historyTrackAdapter = TrackAdapter(emptyList(), ::onTrackClicked)
@@ -87,6 +79,7 @@ class TrackSearchPresenter{
     }
 
     fun loadTrack(text: String) {
+
         renderState(SearchState.ProgressBar)
 
         handler.removeCallbacks(searchRunnable)
@@ -98,8 +91,6 @@ class TrackSearchPresenter{
                         is DataConsumer.Success -> {
                             handler.post {
                                 renderState(SearchState.Content)
-
-                                //view.showTracks()
                                 trakAdapter.updateData(data.data)
                             }
                         }
@@ -107,16 +98,12 @@ class TrackSearchPresenter{
                         is DataConsumer.ResponseFailure -> {
                             handler.post {
                                 renderState(SearchState.NoInternet)
-
-                                //view.showNoInternet()
                             }
                         }
 
                         is DataConsumer.ResponseNoContent -> {
                             handler.post {
                                 renderState(SearchState.NotContent)
-
-                                //view.showNoContent()
                             }
                         }
                     }
@@ -134,7 +121,7 @@ class TrackSearchPresenter{
         // search.setText(textSearch)
     }
 
-    fun updateHistory() {
+    private fun updateHistory() {
         historyTrackAdapter.updateData(interactorSearchHistory.getSong().reversed())
     }
 
@@ -163,14 +150,11 @@ class TrackSearchPresenter{
         if (clickDebonce()) {
             interactorSearchHistory.write(track)
             updateHistory()
-            view?.clickOnTrack(TrackMapper.mapToTrackAudioPlayer(track))
+            viewState.clickOnTrack(TrackMapper.mapToTrackAudioPlayer(track))
         }
     }
 
     private fun renderState(state: SearchState) {
-        this.state = state
-        this.view?.render(state)
+        viewState.render(state)
     }
-
-
 }

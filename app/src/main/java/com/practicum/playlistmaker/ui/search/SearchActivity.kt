@@ -4,7 +4,6 @@ import androidx.core.widget.addTextChangedListener
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -13,7 +12,6 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,12 +23,22 @@ import com.practicum.playlistmaker.presentation.search.TrackSearchPresenter
 import com.practicum.playlistmaker.presentation.search.SearchView
 import com.practicum.playlistmaker.ui.audioplayer.AudioPlayerActivity
 import com.practicum.playlistmaker.ui.search.models.SearchState
+import moxy.MvpAppCompatActivity
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
 
 const val TRACK_DETAILS = "TRACK_DETAILS"
 
-class SearchActivity : AppCompatActivity(), SearchView {
-    //private lateinit var trackSearchPresenter: TrackSearchPresenter
+class SearchActivity : MvpAppCompatActivity(), SearchView {
+
+    @InjectPresenter
+    lateinit var trackSearchPresenter: TrackSearchPresenter
+
+    @ProvidePresenter
+    fun providePresenter(): TrackSearchPresenter {
+        return Creator.provideTrackSearchController()
+    }
 
     private lateinit var progressBar: ProgressBar
     private lateinit var noContentPlaceHolder: LinearLayout
@@ -58,17 +66,12 @@ class SearchActivity : AppCompatActivity(), SearchView {
         recyclerViewTrak.layoutManager = LinearLayoutManager(this)
         recyclerViewHistoryTrack.layoutManager = LinearLayoutManager(this)
 
-        if(trackSearchPresenter == null){
-            trackSearchPresenter = Creator.provideTrackSearchController()
-            trackSearchPresenter?.attachView(this)
-        }
 
+        recyclerViewTrak.adapter = trackSearchPresenter.getTrackAdapter()
+        recyclerViewHistoryTrack.adapter = trackSearchPresenter.getTrackHistoryAdapter()
 
-        recyclerViewTrak.adapter = trackSearchPresenter?.getTrackAdapter()
-        recyclerViewHistoryTrack.adapter = trackSearchPresenter?.getTrackHistoryAdapter()
-
-        trackSearchPresenter?.onCreate()
-        linearLayoutHistory.isVisible = trackSearchPresenter?.showHistory() == true
+        trackSearchPresenter.onCreate()
+        linearLayoutHistory.isVisible = trackSearchPresenter.showHistory() == true
 
         val clearButton: ImageView = findViewById(R.id.clearIcon)
 
@@ -82,20 +85,20 @@ class SearchActivity : AppCompatActivity(), SearchView {
                     noContentPlaceHolder.visibility = View.GONE
                     noInternetPlaceHolder.visibility = View.GONE
 
-                    trackSearchPresenter?.addTextChangedListener()
+                    trackSearchPresenter.addTextChangedListener()
 
-                    linearLayoutHistory.isVisible = trackSearchPresenter?.showHistory() == true
+                    linearLayoutHistory.isVisible = trackSearchPresenter.showHistory() == true
 
                 } else {
                     linearLayoutHistory.visibility = View.GONE
-                    trackSearchPresenter?.searchDebounce(s.toString())
+                    trackSearchPresenter.searchDebounce(s.toString())
                 }
             },
         )
 
-        search.setOnFocusChangeListener { view, hasFocus ->
+        search.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus && search.text.isEmpty()) {
-                linearLayoutHistory.isVisible = trackSearchPresenter?.showHistory() == true
+                linearLayoutHistory.isVisible = trackSearchPresenter.showHistory() == true
             }
         }
 
@@ -106,19 +109,19 @@ class SearchActivity : AppCompatActivity(), SearchView {
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(it.windowToken, 0)
 
-            trackSearchPresenter?.clearSearch()
+            trackSearchPresenter.clearSearch()
 
         }
 
         search.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                trackSearchPresenter?.loadTrack(search.text.toString())
+                trackSearchPresenter.loadTrack(search.text.toString())
             }
             false
         }
         val updateBtn = findViewById<Button>(R.id.btn_search_update)
         updateBtn.setOnClickListener {
-            trackSearchPresenter?.loadTrack(search.text.toString())
+            trackSearchPresenter.loadTrack(search.text.toString())
         }
 
         val toolbar: Toolbar = findViewById(R.id.toolbar_search)
@@ -129,40 +132,38 @@ class SearchActivity : AppCompatActivity(), SearchView {
 
         val btnClearHistory = findViewById<Button>(R.id.btn_clear_history)
         btnClearHistory.setOnClickListener {
-            trackSearchPresenter?.clearHistory()
+            trackSearchPresenter.clearHistory()
             linearLayoutHistory.visibility = View.GONE
         }
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        trackSearchPresenter?.onRestoreInstanceState(savedInstanceState)
+        trackSearchPresenter.onRestoreInstanceState(savedInstanceState)
     }
 
-
-
-    fun showProgressBar() {
+    private fun showProgressBar() {
         recyclerViewTrak.visibility = View.GONE
         progressBar.visibility = View.VISIBLE
         noInternetPlaceHolder.visibility = View.GONE
         noContentPlaceHolder.visibility = View.GONE
     }
 
-    fun showNoInternet() {
+    private fun showNoInternet() {
         noInternetPlaceHolder.visibility = View.VISIBLE
         noContentPlaceHolder.visibility = View.GONE
         recyclerViewTrak.visibility = View.GONE
         progressBar.visibility = View.GONE
     }
 
-    fun showNoContent() {
+    private fun showNoContent() {
         noInternetPlaceHolder.visibility = View.GONE
         recyclerViewTrak.visibility = View.GONE
         noContentPlaceHolder.visibility = View.VISIBLE
         progressBar.visibility = View.GONE
     }
 
-    fun showTracks() {
+    private fun showTracks() {
         progressBar.visibility = View.GONE
         recyclerViewTrak.visibility = View.VISIBLE
     }
@@ -174,7 +175,6 @@ class SearchActivity : AppCompatActivity(), SearchView {
     }
 
     override fun render(state: SearchState) {
-        Log.d("1212121212","render")
         when(state) {
            is SearchState.NotContent -> showNoContent()
             is SearchState.Content -> showTracks()
@@ -183,49 +183,26 @@ class SearchActivity : AppCompatActivity(), SearchView {
         }
     }
 
-   // override fun onRetainNonConfigurationInstance(): Any? {
-    //    return trackSearchPresenter
-   // }
 
-    companion object {
-
-        private var trackSearchPresenter: TrackSearchPresenter? = null
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        trackSearchPresenter?.detachView()
-        if (isFinishing()){
-            trackSearchPresenter = null
+    /*
+        override fun onDestroy() {
+            super.onDestroy()
+            trackSearchPresenter?.detachView()
+            if (isFinishing()){
+                trackSearchPresenter = null
+            }
         }
-    }
 
-    override fun onStop() {
-        super.onStop()
-        trackSearchPresenter?.detachView()
-    }
 
-    override fun onPause() {
-        super.onPause()
-        trackSearchPresenter?.detachView()
-    }
+
+
+
+        */
+
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        trackSearchPresenter?.onSaveInstanceState(outState)
-        trackSearchPresenter?.detachView()
+        trackSearchPresenter.onSaveInstanceState(outState)
     }
-
-
-    override fun onResume() {
-        super.onResume()
-        trackSearchPresenter?.attachView(this)
-    }
-
-    override fun onStart() {
-        super.onStart()
-        trackSearchPresenter?.attachView(this)
-    }
-
-
 }
 
