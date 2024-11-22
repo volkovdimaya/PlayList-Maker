@@ -18,8 +18,6 @@ import com.practicum.playlistmaker.domain.interactor.ThemeInteractor
 import com.practicum.playlistmaker.domain.repository.RepositorySearchHistory
 import com.practicum.playlistmaker.domain.repository.ThemeRepository
 import com.practicum.playlistmaker.presentation.search.TrackSearchPresenter
-import com.practicum.playlistmaker.presentation.search.SearchView
-import com.practicum.playlistmaker.ui.search.TrackAdapter
 
 
 object Creator {
@@ -55,10 +53,8 @@ object Creator {
         return ThemeInteractor(getRepositoryTheme(), appContext)
     }
 
-    fun provideTrackSearchController(
-        view: SearchView
-    ): TrackSearchPresenter {
-        return TrackSearchPresenter(view)
+    fun provideTrackSearchController(): TrackSearchPresenter {
+        return TrackSearchPresenter()
     }
 
 

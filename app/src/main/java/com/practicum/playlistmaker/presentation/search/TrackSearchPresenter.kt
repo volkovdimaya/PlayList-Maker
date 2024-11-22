@@ -4,6 +4,7 @@ package com.practicum.playlistmaker.presentation.search
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import com.practicum.playlistmaker.creator.Creator
 import com.practicum.playlistmaker.domain.api.TrackInteractorApi
 import com.practicum.playlistmaker.domain.consumer.DataConsumer
@@ -13,11 +14,20 @@ import com.practicum.playlistmaker.domain.models.Track
 import com.practicum.playlistmaker.presentation.mapper.TrackMapper
 import com.practicum.playlistmaker.ui.search.TrackAdapter
 import com.practicum.playlistmaker.ui.search.models.SearchState
+import kotlin.math.log
 
 
-class TrackSearchPresenter(
-    private val view: SearchView
-) {
+class TrackSearchPresenter{
+    private var view: SearchView? = null
+    private var state: SearchState? = null
+    fun attachView(view: SearchView) {
+        this.view = view
+        state?.let { view.render(it) }
+    }
+
+    fun detachView() {
+        this.view = null
+    }
 
     private val trakAdapter = TrackAdapter(emptyList(), ::onTrackClicked)
     private val historyTrackAdapter = TrackAdapter(emptyList(), ::onTrackClicked)
@@ -48,15 +58,10 @@ class TrackSearchPresenter(
     }
 
     fun addTextChangedListener() {
-        //trackSearchHistoryPresenter.showHistory()
         trakAdapter.updateData(emptyList())
         handler.removeCallbacks(searchRunnable)
     }
 
-    fun afterTextChanged(text: String) {
-        textSearch = text
-        //тут изменения
-    }
 
     fun clearSearch() {
         trakAdapter.updateData(emptyList())
@@ -67,6 +72,9 @@ class TrackSearchPresenter(
     }
 
     fun searchDebounce(changedText: String) {
+        if (textSearch == changedText) {
+            return
+        }
         textSearch = changedText
         handler.removeCallbacks(searchRunnable)
         handler.postDelayed(searchRunnable, SEARCH_TRACK_DEBOUNCE_DELAY)
@@ -79,11 +87,8 @@ class TrackSearchPresenter(
     }
 
     fun loadTrack(text: String) {
+        renderState(SearchState.ProgressBar)
 
-        view.render(
-            SearchState.ProgressBar
-        )
-        //view.showProgressBar()
         handler.removeCallbacks(searchRunnable)
 
         trackInteractor.searchTracks(text,
@@ -92,9 +97,8 @@ class TrackSearchPresenter(
                     when (data) {
                         is DataConsumer.Success -> {
                             handler.post {
-                                view.render(
-                                    SearchState.Content
-                                )
+                                renderState(SearchState.Content)
+
                                 //view.showTracks()
                                 trakAdapter.updateData(data.data)
                             }
@@ -102,18 +106,16 @@ class TrackSearchPresenter(
 
                         is DataConsumer.ResponseFailure -> {
                             handler.post {
-                                view.render(
-                                    SearchState.NoInternet
-                                )
+                                renderState(SearchState.NoInternet)
+
                                 //view.showNoInternet()
                             }
                         }
 
                         is DataConsumer.ResponseNoContent -> {
                             handler.post {
-                                view.render(
-                                    SearchState.NotContent
-                                )
+                                renderState(SearchState.NotContent)
+
                                 //view.showNoContent()
                             }
                         }
@@ -161,8 +163,13 @@ class TrackSearchPresenter(
         if (clickDebonce()) {
             interactorSearchHistory.write(track)
             updateHistory()
-            view.clickOnTrack(TrackMapper.mapToTrackAudioPlayer(track))
+            view?.clickOnTrack(TrackMapper.mapToTrackAudioPlayer(track))
         }
+    }
+
+    private fun renderState(state: SearchState) {
+        this.state = state
+        this.view?.render(state)
     }
 
 
