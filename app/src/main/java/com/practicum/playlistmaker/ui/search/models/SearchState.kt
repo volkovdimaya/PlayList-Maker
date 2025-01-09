@@ -8,4 +8,5 @@ sealed interface SearchState
     object NotContent : SearchState
     object Content : SearchState
     object NoInternet : SearchState
+    object ContentHistory : SearchState
 }

@@ -4,7 +4,6 @@ package com.practicum.playlistmaker.ui.search
 import android.content.Context
 import android.util.TypedValue
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
@@ -12,12 +11,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.domain.models.Track
-import com.practicum.playlistmaker.presentation.models.InfoTrackShort
+import com.practicum.playlistmaker.databinding.ItemTrackSearchBinding
+import com.practicum.playlistmaker.ui.search.models.InfoTrackShort
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class ViewHolderTrack(itemView: View) : RecyclerView.ViewHolder(itemView) {
+//class ViewHolderTrack(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class ViewHolderTrack(private val binding: ItemTrackSearchBinding) : RecyclerView.ViewHolder(binding.root) {
 
     private val trackName: TextView
     private val artistName: TextView
@@ -25,14 +25,15 @@ class ViewHolderTrack(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val artworkUrl100: ImageView
 
     init {
-        trackName = itemView.findViewById(R.id.track_name)
-        artistName = itemView.findViewById(R.id.artist_name)
-        trackTime = itemView.findViewById(R.id.track_time)
-        artworkUrl100 = itemView.findViewById(R.id.icon_track)
+        trackName = binding.trackName
+        artistName = binding.artistName
+        trackTime = binding.trackTime
+        artworkUrl100 = binding.iconTrack
     }
 
     constructor(parent: ViewGroup) : this(
-        LayoutInflater.from(parent.context).inflate(R.layout.item_track_search, parent, false)
+        ItemTrackSearchBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            // LayoutInflater.from(parent.context).inflate(R.layout.item_track_search, parent, false)
     )
 
     fun bind(model: InfoTrackShort) {
@@ -61,7 +62,7 @@ class ViewHolderTrack(itemView: View) : RecyclerView.ViewHolder(itemView) {
         return SimpleDateFormat("mm:ss", Locale.getDefault()).format(time)
     }
 
-    fun dpToPx(dp: Float, context: Context): Int {
+    private fun dpToPx(dp: Float, context: Context): Int {
         return TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
             dp,

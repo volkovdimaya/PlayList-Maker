@@ -1,6 +1,6 @@
 package com.practicum.playlistmaker.data.mapper
 
-import com.practicum.playlistmaker.data.dto.TrackDto
+import com.practicum.playlistmaker.data.search.dto.TrackDto
 import com.practicum.playlistmaker.domain.models.Track
 
 object TrackDtoResponseMapper {
