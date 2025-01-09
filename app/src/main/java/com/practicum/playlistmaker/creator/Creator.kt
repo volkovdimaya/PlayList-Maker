@@ -23,7 +23,6 @@ import com.practicum.playlistmaker.domain.interactor.ThemeInteractor
 import com.practicum.playlistmaker.domain.player.ManagerAudioPlayer
 import com.practicum.playlistmaker.domain.player.TrackPlayer
 import com.practicum.playlistmaker.domain.player.interactor.AudioPlayerInteractor
-import com.practicum.playlistmaker.domain.player.interactor.TrackPlayerImpl
 import com.practicum.playlistmaker.domain.search.RepositorySearchHistory
 import com.practicum.playlistmaker.domain.repository.ThemeRepository
 import com.practicum.playlistmaker.domain.sharing.ResourceProvider
@@ -83,11 +82,8 @@ object Creator {
    private fun providerManagerAudioPlayer(): ManagerAudioPlayer {
         return ManagerAudioPlayerImpl(MediaPlayer())
     }
-    fun providerAudioPlayerInteractor(): AudioPlayerInteractor {
-        return AudioPlayerInteractor(providerManagerAudioPlayer())
-    }
     fun providerTrackPlayer(previewUrl : String): TrackPlayer {
-        return TrackPlayerImpl(previewUrl, providerAudioPlayerInteractor())
+        return AudioPlayerInteractor(previewUrl, providerManagerAudioPlayer())
     }
 
 
