@@ -3,7 +3,7 @@ package com.practicum.playlistmaker.ui.audioplayer.mapper
 
 import com.practicum.playlistmaker.domain.models.Track
 import com.practicum.playlistmaker.ui.search.models.InfoTrackShort
-import com.practicum.playlistmaker.ui.audioplayer.models.TrackAudioPlayer
+import com.practicum.playlistmaker.domain.player.models.TrackAudioPlayer
 import java.text.SimpleDateFormat
 import java.util.Locale
 

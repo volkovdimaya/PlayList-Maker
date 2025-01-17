@@ -9,4 +9,5 @@ sealed interface SearchState
     object Content : SearchState
     object NoInternet : SearchState
     object ContentHistory : SearchState
+    object Empty : SearchState
 }

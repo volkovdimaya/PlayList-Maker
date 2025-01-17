@@ -1,9 +1,7 @@
 package com.practicum.playlistmaker.ui.audioplayer.activity
 
-import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -13,9 +11,9 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.creator.Creator
-import com.practicum.playlistmaker.domain.models.Track
-import com.practicum.playlistmaker.ui.audioplayer.models.AudioPlayerScreenState
 import com.practicum.playlistmaker.ui.audioplayer.models.PlayStatus
+import com.practicum.playlistmaker.domain.player.models.TrackAudioPlayer
+import com.practicum.playlistmaker.ui.audioplayer.models.AudioPlayerScreenState
 import com.practicum.playlistmaker.ui.audioplayer.view_model.TrackViewModel
 import com.practicum.playlistmaker.ui.search.activity.TRACK_DETAILS
 
@@ -24,7 +22,7 @@ class AudioPlayerActivity : AppCompatActivity() {
 
 
     private val viewModel: TrackViewModel by viewModels {
-        val track = intent.getSerializableExtra(TRACK_DETAILS) as? Track
+        val track = intent.getSerializableExtra(TRACK_DETAILS) as? TrackAudioPlayer
             ?: throw IllegalArgumentException("Ошибка, отсутствует песня")
         TrackViewModel.getViewModelFactory(
             track,
@@ -51,7 +49,6 @@ class AudioPlayerActivity : AppCompatActivity() {
         }
 
         viewModel.screenStateLiveData.observe(this) { screenState ->
-            // 1
             when (screenState) {
                 is AudioPlayerScreenState.Content -> {
                     displayTrackData(screenState.trackModel)
@@ -97,7 +94,7 @@ class AudioPlayerActivity : AppCompatActivity() {
         pausePlayback()
     }
 
-    private fun displayTrackData(track: Track) {
+    private fun displayTrackData(track: TrackAudioPlayer) {
         findViewById<TextView>(R.id.track_name).text = track.trackName
         findViewById<TextView>(R.id.artist_name).text = track.artistName
         findViewById<TextView>(R.id.album).text = track.collectionName

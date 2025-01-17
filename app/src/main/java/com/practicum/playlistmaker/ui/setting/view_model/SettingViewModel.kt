@@ -20,7 +20,7 @@ class SettingViewModel(
         val isDarkTheme = themeInteractor.isDarkTheme()
         _isDarkTheme.postValue(isDarkTheme)
 
-        Log.d("121212","${isDarkTheme}")
+
     }
 
     fun onShareAppClicked() {

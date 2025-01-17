@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.ui.audioplayer.models
+package com.practicum.playlistmaker.domain.player.models
 
 import java.io.Serializable
 

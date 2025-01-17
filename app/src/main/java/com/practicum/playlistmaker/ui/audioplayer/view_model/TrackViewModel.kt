@@ -1,19 +1,20 @@
 package com.practicum.playlistmaker.ui.audioplayer.view_model
 
 
+
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.practicum.playlistmaker.domain.models.Track
 import com.practicum.playlistmaker.domain.player.TrackPlayer
-import com.practicum.playlistmaker.ui.audioplayer.models.AudioPlayerScreenState
 import com.practicum.playlistmaker.ui.audioplayer.models.PlayStatus
+import com.practicum.playlistmaker.domain.player.models.TrackAudioPlayer
+import com.practicum.playlistmaker.ui.audioplayer.models.AudioPlayerScreenState
 
 class TrackViewModel(
-    track: Track?,
+    track: TrackAudioPlayer?,
     private val trackPlayer: TrackPlayer
 ) : ViewModel() {
     private val _screenStateLiveData =
@@ -67,7 +68,7 @@ class TrackViewModel(
 
     companion object {
         fun getViewModelFactory(
-            track: Track?,
+            track: TrackAudioPlayer?,
             trackPlayer: TrackPlayer
         ): ViewModelProvider.Factory = viewModelFactory {
             initializer {

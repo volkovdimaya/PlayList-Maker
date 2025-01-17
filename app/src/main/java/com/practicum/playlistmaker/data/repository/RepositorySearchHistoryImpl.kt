@@ -28,7 +28,7 @@ class RepositorySearchHistoryImpl(
         return songs.isNotEmpty()
     }
 
-    fun read() {
+    private fun read() {
         val json = sharedPrefs.getString(HISTORY_LIST_TRACK, null)
         songs = json?.let {
             gson.fromJson(it, object : TypeToken<List<TrackDto>>() {}.type)

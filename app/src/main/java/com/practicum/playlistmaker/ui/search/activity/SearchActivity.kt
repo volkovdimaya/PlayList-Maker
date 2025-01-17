@@ -26,27 +26,23 @@ import com.practicum.playlistmaker.ui.search.models.SearchState
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.practicum.playlistmaker.domain.models.Track
+import com.practicum.playlistmaker.ui.audioplayer.mapper.TrackMapper
 import com.practicum.playlistmaker.ui.search.TrackAdapter
 
 
 const val TRACK_DETAILS = "TRACK_DETAILS"
 
 class SearchActivity : AppCompatActivity() {
-
-
-
     private lateinit var progressBar: ProgressBar
     private lateinit var noContentPlaceHolder: LinearLayout
     private lateinit var noInternetPlaceHolder: LinearLayout
     private lateinit var recyclerViewTrak: RecyclerView
     private lateinit var search: EditText
 
-
     private lateinit var linearLayoutHistory: LinearLayout
     private lateinit var recyclerViewHistoryTrack: RecyclerView
 
     private lateinit var binding: ActivitySearchBinding
-
 
 
     private val viewModel by viewModels<TrackSearchViewModel> {
@@ -56,17 +52,9 @@ class SearchActivity : AppCompatActivity() {
         )
     }
 
-
-
-
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActivitySearchBinding.inflate(layoutInflater)
-
-
         setContentView(binding.root)
 
         progressBar = binding.progressBar
@@ -89,42 +77,15 @@ class SearchActivity : AppCompatActivity() {
 
         observeViewModel()
 
-
-        //trackSearchPresenter.onCreate()
-        //linearLayoutHistory.isVisible = trackSearchPresenter.showHistory() == true
-
-        //val clearButton: ImageView = findViewById(R.id.clearIcon)
-
         binding.search.addTextChangedListener {
-            viewModel.updateReqvest(it.toString())
+            viewModel.updateRequest(it.toString())
         }
 
+        /*
         binding.clearIcon.setOnClickListener {
             binding.search.text.clear()
             viewModel.clearSearch()
         }
-
-
-        /* скорее что то и надо
-        search.addTextChangedListener(
-            onTextChanged = { s, _, _, _ ->
-                clearButton.isVisible = (!s.isNullOrEmpty())
-
-                if (search.hasFocus() && s?.isEmpty() == true) {
-                    progressBar.visibility = View.GONE
-                    noContentPlaceHolder.visibility = View.GONE
-                    noInternetPlaceHolder.visibility = View.GONE
-
-                    trackSearchPresenter.addTextChangedListener()
-
-                    linearLayoutHistory.isVisible = trackSearchPresenter.showHistory() == true
-
-                } else {
-                    linearLayoutHistory.visibility = View.GONE
-                    trackSearchPresenter.searchDebounce(s.toString())
-                }
-            },
-        )
         */
 
         binding.search.setOnFocusChangeListener { _, hasFocus ->
@@ -139,40 +100,17 @@ class SearchActivity : AppCompatActivity() {
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(it.windowToken, 0)
         }
-/*
-
-        search.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && search.text.isEmpty()) {
-                linearLayoutHistory.isVisible = trackSearchPresenter.showHistory() == true
-            }
-        }
-        */
-/*
-        clearButton.setOnClickListener {
-            search.setText("")
-
-            val inputMethodManager =
-                getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-            inputMethodManager?.hideSoftInputFromWindow(it.windowToken, 0)
-
-            trackSearchPresenter.clearSearch()
-
-        }
-        */
 
         search.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                viewModel.updateReqvest(search.text.toString())
-               // trackSearchPresenter.loadTrack(search.text.toString())
+                viewModel.updateRequest(search.text.toString())
             }
             false
         }
 
         val updateBtn = findViewById<Button>(R.id.btn_search_update)
         updateBtn.setOnClickListener {
-            Log.d("1111112121", "updateBtn")
             viewModel.loadTrack(search.text.toString())
-           // trackSearchPresenter.loadTrack(search.text.toString()) непонятно!!!!
         }
 
         val toolbar: Toolbar = findViewById(R.id.toolbar_search)
@@ -183,8 +121,9 @@ class SearchActivity : AppCompatActivity() {
 
         val btnClearHistory = findViewById<Button>(R.id.btn_clear_history)
         btnClearHistory.setOnClickListener {
-           // trackSearchPresenter.clearHistory()
-            linearLayoutHistory.visibility = View.GONE
+            viewModel.clearHistory()
+           // dfdf
+
         }
     }
 
@@ -194,8 +133,6 @@ class SearchActivity : AppCompatActivity() {
         noInternetPlaceHolder.isVisible = false
         noContentPlaceHolder.isVisible = false
         binding.linearLayoutHistory.isVisible = false
-
-        Log.d("121212", "showProgressBar")
     }
 
     private fun showNoInternet() {
@@ -204,8 +141,6 @@ class SearchActivity : AppCompatActivity() {
         recyclerViewTrak.visibility = View.GONE
         progressBar.visibility = View.GONE
         binding.linearLayoutHistory.isVisible = false
-
-        Log.d("121212", "showNoInternet")
     }
 
     private fun showNoContent() {
@@ -214,48 +149,46 @@ class SearchActivity : AppCompatActivity() {
         noContentPlaceHolder.visibility = View.VISIBLE
         progressBar.visibility = View.GONE
         binding.linearLayoutHistory.isVisible = false
-
-        Log.d("1111112121", "showNoContent")
     }
-    private fun showContentHistory()
-    {
+
+    private fun showContentHistory() {
         noInternetPlaceHolder.visibility = View.GONE
         recyclerViewTrak.visibility = View.GONE
         noContentPlaceHolder.visibility = View.GONE
         progressBar.visibility = View.GONE
         binding.linearLayoutHistory.isVisible = true
-        Log.d("1111112121", "showContentHistory")
+    }
+
+    private fun showEmpty() {
+        noInternetPlaceHolder.visibility = View.GONE
+        recyclerViewTrak.visibility = View.GONE
+        noContentPlaceHolder.visibility = View.GONE
+        progressBar.visibility = View.GONE
+        binding.linearLayoutHistory.isVisible = false
+
     }
 
     private fun showTracks() {
-
-
-
         progressBar.visibility = View.GONE
         recyclerViewTrak.visibility = View.VISIBLE
-
-        Log.d("121212", "showTracks")
     }
 
-    fun clickOnTrack(track: Track) {
+    private fun clickOnTrack(track: Track) {
         viewModel.onTrackClicked(track)
-
-        Log.d("AudioPlayerActivity", "clickOnTrack")
     }
 
-    fun render(state: SearchState) {
+    private fun render(state: SearchState) {
         when (state) {
             is SearchState.NotContent -> showNoContent()
             is SearchState.Content -> showTracks()
             is SearchState.ProgressBar -> showProgressBar()
             is SearchState.NoInternet -> showNoInternet()
             is SearchState.ContentHistory -> showContentHistory()
+            is SearchState.Empty -> showEmpty()
         }
     }
 
-
     private fun observeViewModel() {
-
         viewModel.searchState.observe(this) {
             render(it)
         }
@@ -272,26 +205,17 @@ class SearchActivity : AppCompatActivity() {
             binding.progressBar.isVisible = isLoading
         }
 
-        /*
-        viewModel.showHistory.observe(this) { showHistory ->
-            binding.linearLayoutHistory.isVisible = showHistory
-        }
-        */
-
-
-
-
         viewModel.showBtnClear.observe(this) { showBtnClear ->
             binding.clearIcon.isVisible = showBtnClear
         }
 
-
-
         viewModel.navigateToTrackDetails.observe(this) { track ->
             val intent = Intent(this, AudioPlayerActivity::class.java)
-            intent.putExtra(TRACK_DETAILS, track)
+            intent.putExtra(TRACK_DETAILS, TrackMapper.mapToTrackAudioPlayer(track))
             startActivity(intent)
         }
     }
+
+
 }
 

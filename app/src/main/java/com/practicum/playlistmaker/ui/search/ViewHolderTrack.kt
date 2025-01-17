@@ -13,27 +13,18 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.ItemTrackSearchBinding
 import com.practicum.playlistmaker.ui.search.models.InfoTrackShort
-import java.text.SimpleDateFormat
-import java.util.Locale
 
-//class ViewHolderTrack(itemView: View) : RecyclerView.ViewHolder(itemView) {
-class ViewHolderTrack(private val binding: ItemTrackSearchBinding) : RecyclerView.ViewHolder(binding.root) {
 
-    private val trackName: TextView
-    private val artistName: TextView
-    private val trackTime: TextView
-    private val artworkUrl100: ImageView
 
-    init {
-        trackName = binding.trackName
-        artistName = binding.artistName
-        trackTime = binding.trackTime
-        artworkUrl100 = binding.iconTrack
-    }
+class ViewHolderTrack(binding: ItemTrackSearchBinding) : RecyclerView.ViewHolder(binding.root) {
+
+    private val trackName: TextView = binding.trackName
+    private val artistName: TextView = binding.artistName
+    private val trackTime: TextView = binding.trackTime
+    private val artworkUrl100: ImageView = binding.iconTrack
 
     constructor(parent: ViewGroup) : this(
         ItemTrackSearchBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            // LayoutInflater.from(parent.context).inflate(R.layout.item_track_search, parent, false)
     )
 
     fun bind(model: InfoTrackShort) {
@@ -43,12 +34,12 @@ class ViewHolderTrack(private val binding: ItemTrackSearchBinding) : RecyclerVie
         val widthInPx = dpToPx(45f, itemView.context)
         val heightInPx = dpToPx(45f, itemView.context)
 
-        trackName.setText(model.trackName)
-        artistName.setText(model.artistName)
+        trackName.text = model.trackName
+        artistName.text = model.artistName
 
 
 
-        trackTime.setText(model.trackTime)
+        trackTime.text = model.trackTime
         Glide.with(itemView)
             .load(model.artworkUrl100)
             .override(widthInPx, heightInPx)
@@ -56,10 +47,6 @@ class ViewHolderTrack(private val binding: ItemTrackSearchBinding) : RecyclerVie
             .transform(RoundedCorners(2))
             .placeholder(R.drawable.play_ic)
             .into(artworkUrl100)
-    }
-
-    fun getTime(time: Long): String {
-        return SimpleDateFormat("mm:ss", Locale.getDefault()).format(time)
     }
 
     private fun dpToPx(dp: Float, context: Context): Int {

@@ -1,7 +1,5 @@
 package com.practicum.playlistmaker.ui.search.view_model
 
-
-import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -23,20 +21,7 @@ class TrackSearchViewModel(
     private val interactorSearchHistory: InteractorSearchHistory, // История поиска
     private val trackInteractor: TrackInteractorApi
 ) : ViewModel() {
-
-    //private val trakAdapter = TrackAdapter(emptyList(), ::onTrackClicked)
-    //private val historyTrackAdapter = TrackAdapter(emptyList(), ::onTrackClicked)
-
-   // fun getTrackAdapter(): TrackAdapter = trakAdapter
-    //fun getTrackHistoryAdapter(): TrackAdapter = historyTrackAdapter
-
-
     private var isClickAllowed = true
-
-    //private lateinit var interactorSearchHistory: InteractorSearchHistory
-
-
-    //private lateinit var trackInteractor: TrackInteractorApi
 
     private var textSearch: String = ""
 
@@ -56,12 +41,6 @@ class TrackSearchViewModel(
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
-    /*
-    private val _showHistory = MutableLiveData<Boolean>()
-    val showHistory: LiveData<Boolean> = _showHistory
-
-    */
-
     private val _navigateToTrackDetails = SingleLiveEvent<Track>()
     val navigateToTrackDetails: LiveData<Track> = _navigateToTrackDetails
 
@@ -69,65 +48,46 @@ class TrackSearchViewModel(
     val showBtnClear: LiveData<Boolean> = _showBtnClear
 
 
-    fun updateReqvest(query: String) {
-        Log.d("1111112121","${query}")
+    fun updateRequest(query: String) {
+
         if (query.isEmpty()) {
-            Log.d("1111112121","Пусто")
-            //тетс
-            //_tracks.postValue(emptyList())  // под вопросом
-            //_showHistory.postValue(false)
             handler.removeCallbacks(searchRunnable)
-            _searchState.postValue(SearchState.ContentHistory)
+            updateHistory()
+            //_searchState.postValue(SearchState.ContentHistory)
             _showBtnClear.value =false
 
         } else {
-            Log.d("1111112121","else ${query}")
             _showBtnClear.postValue(true)
             searchDebounce(query)
-           // loadTrack(query)
         }
     }
-
-
     init {
-        updateHistory() // Инициализация истории при создании ViewModel
+        updateHistory()
     }
-    //fun onCreate() {
-        //interactorSearchHistory =
-           // InteractorSearchHistory(Creator.provideInteractorSearchHistory())
 
-        //updateHistory()
-
-        //trackInteractor = Creator.provideTracksInteractor()
-    //}
-
-    fun addTextChangedListener() {
-       // trakAdapter.updateData(emptyList())
+    override fun onCleared() {
         handler.removeCallbacks(searchRunnable)
     }
 
     fun onSearchFocusGained() {
-        //тетс
+        Log.d("12121", "onSearchFocusGained")
+        //updateHistory()
         if (interactorSearchHistory.hasHistory()){
             _searchState.postValue(SearchState.ContentHistory)
         }
-       // _showHistory.value =
     }
 
 
     fun clearSearch() {
-        //тетс
-       // _tracks.postValue(emptyList())   //новое не понятно
-        //_showHistory.postValue(true)
-        _searchState.postValue(SearchState.ContentHistory)
-        //trakAdapter.updateData(emptyList())
+        updateHistory()
+        //_searchState.postValue(SearchState.ContentHistory)
     }
 
     private var searchRunnable = Runnable {
         loadTrack(textSearch)
     }
 
-    fun searchDebounce(changedText: String) {
+    private fun searchDebounce(changedText: String) {
         if (textSearch == changedText) {
             return
         }
@@ -154,38 +114,25 @@ class TrackSearchViewModel(
     fun loadTrack(text: String) {
 
         textSearch = text
-        Log.d("1111112121","loadTrack")
         _searchState.postValue(SearchState.ProgressBar)
-        //тест ниже строчку по идеи тогда можно убрать
-        //_showHistory.postValue(false)
 
         handler.removeCallbacks(searchRunnable)
 
         trackInteractor.searchTracks(text,
             object : TrackConsumer<List<Track>> {
                 override fun consume(data: DataConsumer<List<Track>>) {
-
                     when (data) {
-
                         is DataConsumer.Success -> {
-                           // handler.post {
                                 _tracks.postValue(data.data)
                                 _searchState.postValue(SearchState.Content)
-                                //renderState(SearchState.Content)
-                                //trakAdapter.updateData(data.data)
-                            //}
                         }
 
                         is DataConsumer.ResponseFailure -> {
                                 _searchState.postValue(SearchState.NoInternet)
-                                //renderState(SearchState.NoInternet)
                         }
 
                         is DataConsumer.ResponseNoContent -> {
                             _searchState.postValue(SearchState.NotContent)
-
-                               // renderState(SearchState.NotContent)
-
                         }
                     }
                 }
@@ -193,31 +140,18 @@ class TrackSearchViewModel(
             })
     }
 
-    fun onSaveInstanceState(outState: Bundle) {
-        outState.putString(FIELD_SEARCH, textSearch)
-    }
-
-    fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        textSearch = savedInstanceState.getString(FIELD_SEARCH).toString()
-    }
-
     private fun updateHistory() {
-        //historyTrackAdapter.updateData(interactorSearchHistory.getSong().reversed())
-
         val history = interactorSearchHistory.getSong().reversed()
         _historyTracks.postValue(history)
         if (history.isNotEmpty()){
             _searchState.postValue(SearchState.ContentHistory)
         }
-        //тест
-        //_showHistory.postValue(history.isNotEmpty()) //тут показываем если история есть тест
     }
 
     fun clearHistory() {
         interactorSearchHistory.clear()
         updateHistory()
-        //historyTrackAdapter.updateData(emptyList())
-        //interactorSearchHistory.clear()
+        _searchState.postValue(SearchState.Empty)
     }
 
     private fun clickDebonce(): Boolean {
@@ -232,17 +166,11 @@ class TrackSearchViewModel(
         return current
     }
 
-    fun showHistory(): Boolean {
-        return interactorSearchHistory.hasHistory()
-    }
-
     fun onTrackClicked(track: Track) {
         if (clickDebonce()) {
             interactorSearchHistory.write(track)
-            updateHistory()
+            //updateHistory()
             _navigateToTrackDetails.postValue(track)
-           // _navigateToTrackDetails.value = TrackMapper.mapToTrackAudioPlayer(track)
-            //viewState.clickOnTrack(TrackMapper.mapToTrackAudioPlayer(track))
         }
     }
 
