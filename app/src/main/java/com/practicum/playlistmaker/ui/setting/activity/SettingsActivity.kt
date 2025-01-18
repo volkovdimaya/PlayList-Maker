@@ -3,6 +3,7 @@ package com.practicum.playlistmaker.ui.setting.activity
 
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.FrameLayout
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -55,6 +56,7 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         viewModel.isDarkTheme.observe(this) { isDarkTheme ->
+            Log.d("12121", "${isDarkTheme}")
             themeSwitcher.isChecked = isDarkTheme
         }
     }

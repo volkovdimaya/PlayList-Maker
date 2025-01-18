@@ -8,6 +8,11 @@ class ThemeInteractor(
     private val themeSwitcher: ThemeSwitcher,
 ) {
     fun isDarkTheme(): Boolean = repository.isDarkTheme()
+
+    fun isFirstStart() : Boolean {
+       return repository.isFirstStart()
+    }
+
     fun switchTheme(isDark: Boolean) {
         repository.saveTheme(isDark)
         themeSwitcher.switchTheme(isDark)
