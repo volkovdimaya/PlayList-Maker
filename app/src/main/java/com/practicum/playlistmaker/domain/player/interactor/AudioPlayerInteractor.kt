@@ -1,16 +1,15 @@
 package com.practicum.playlistmaker.domain.player.interactor
 
 import com.practicum.playlistmaker.domain.player.TrackPlayer
-import android.os.Handler
-import android.os.Looper
 import com.practicum.playlistmaker.domain.player.ManagerAudioPlayer
+import com.practicum.playlistmaker.domain.player.PlayerTimer
 
 class AudioPlayerInteractor(
     private val trackUrl : String,
-    private val mediaPlayer: ManagerAudioPlayer
+    private val mediaPlayer: ManagerAudioPlayer,
+    private  val playerTimer : PlayerTimer
 ) : TrackPlayer {
 
-    private val handler = Handler(Looper.getMainLooper())
     private var countingDownRunnable = Runnable {
         startProgressUpdates()
     }
@@ -41,7 +40,7 @@ class AudioPlayerInteractor(
 
     override fun pause() {
         statusObserver?.let {
-            handler.removeCallbacks(countingDownRunnable)
+            playerTimer.removeCallbacks(countingDownRunnable)
             mediaPlayer.pause {
                 it.onStop()
             }
@@ -56,7 +55,7 @@ class AudioPlayerInteractor(
     private fun startProgressUpdates() {
         val progress = mediaPlayer.getCurrentPosition() / 1000f
         statusObserver?.onProgress(progress)
-        handler.postDelayed(countingDownRunnable, SECOND)
+        playerTimer.postDelayed(SECOND, countingDownRunnable)
     }
 
     companion object {

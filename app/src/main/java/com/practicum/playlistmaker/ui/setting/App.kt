@@ -12,7 +12,7 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         Creator.initialize(applicationContext)
-        val interactorTheme = Creator.provideInteractorTheme()
+        val interactorTheme = Creator.providerThemeInteractor()
         switchTheme(interactorTheme.isDarkTheme())
     }
 

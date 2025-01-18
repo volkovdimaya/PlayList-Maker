@@ -81,13 +81,6 @@ class SearchActivity : AppCompatActivity() {
             viewModel.updateRequest(it.toString())
         }
 
-        /*
-        binding.clearIcon.setOnClickListener {
-            binding.search.text.clear()
-            viewModel.clearSearch()
-        }
-        */
-
         binding.search.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus && binding.search.text.isEmpty()) {
                 viewModel.onSearchFocusGained()
@@ -122,8 +115,6 @@ class SearchActivity : AppCompatActivity() {
         val btnClearHistory = findViewById<Button>(R.id.btn_clear_history)
         btnClearHistory.setOnClickListener {
             viewModel.clearHistory()
-           // dfdf
-
         }
     }
 
@@ -151,7 +142,8 @@ class SearchActivity : AppCompatActivity() {
         binding.linearLayoutHistory.isVisible = false
     }
 
-    private fun showContentHistory() {
+    private fun showContentHistory(history: List<Track>) {
+        (binding.recyclerHistoryTrack.adapter as TrackAdapter).updateData(history)
         noInternetPlaceHolder.visibility = View.GONE
         recyclerViewTrak.visibility = View.GONE
         noContentPlaceHolder.visibility = View.GONE
@@ -168,7 +160,8 @@ class SearchActivity : AppCompatActivity() {
 
     }
 
-    private fun showTracks() {
+    private fun showTracks(tracks: List<Track>) {
+        (binding.recyclerTrack.adapter as TrackAdapter).updateData(tracks)
         progressBar.visibility = View.GONE
         recyclerViewTrak.visibility = View.VISIBLE
     }
@@ -180,33 +173,22 @@ class SearchActivity : AppCompatActivity() {
     private fun render(state: SearchState) {
         when (state) {
             is SearchState.NotContent -> showNoContent()
-            is SearchState.Content -> showTracks()
+            is SearchState.Content -> showTracks(state.tracks)
             is SearchState.ProgressBar -> showProgressBar()
             is SearchState.NoInternet -> showNoInternet()
-            is SearchState.ContentHistory -> showContentHistory()
+            is SearchState.ContentHistory -> showContentHistory(state.history)
             is SearchState.Empty -> showEmpty()
+            is SearchState.BtnClear -> showBtnClear(state.visible)
         }
+    }
+
+    private fun showBtnClear(visible: Boolean) {
+        binding.clearIcon.isVisible = visible
     }
 
     private fun observeViewModel() {
         viewModel.searchState.observe(this) {
             render(it)
-        }
-
-        viewModel.tracks.observe(this) { tracks ->
-            (binding.recyclerTrack.adapter as TrackAdapter).updateData(tracks)
-        }
-
-        viewModel.historyTracks.observe(this) { historyTracks ->
-            (binding.recyclerHistoryTrack.adapter as TrackAdapter).updateData(historyTracks)
-        }
-
-        viewModel.isLoading.observe(this) { isLoading ->
-            binding.progressBar.isVisible = isLoading
-        }
-
-        viewModel.showBtnClear.observe(this) { showBtnClear ->
-            binding.clearIcon.isVisible = showBtnClear
         }
 
         viewModel.navigateToTrackDetails.observe(this) { track ->

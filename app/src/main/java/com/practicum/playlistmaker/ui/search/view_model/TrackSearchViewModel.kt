@@ -31,33 +31,17 @@ class TrackSearchViewModel(
     private val _searchState: MutableLiveData<SearchState> = MutableLiveData()
     val searchState: LiveData<SearchState> = _searchState
 
-    private val _tracks = MutableLiveData<List<Track>>()
-    val tracks: LiveData<List<Track>> = _tracks
-
-
-    private val _historyTracks = MutableLiveData<List<Track>>()
-    val historyTracks: LiveData<List<Track>> = _historyTracks
-
-    private val _isLoading = MutableLiveData<Boolean>()
-    val isLoading: LiveData<Boolean> = _isLoading
-
     private val _navigateToTrackDetails = SingleLiveEvent<Track>()
     val navigateToTrackDetails: LiveData<Track> = _navigateToTrackDetails
 
-    private val _showBtnClear = MutableLiveData<Boolean>()
-    val showBtnClear: LiveData<Boolean> = _showBtnClear
-
-
     fun updateRequest(query: String) {
-
         if (query.isEmpty()) {
             handler.removeCallbacks(searchRunnable)
+            _searchState.value = SearchState.BtnClear(false)
             updateHistory()
-            //_searchState.postValue(SearchState.ContentHistory)
-            _showBtnClear.value =false
 
         } else {
-            _showBtnClear.postValue(true)
+            _searchState.postValue(SearchState.BtnClear(true))
             searchDebounce(query)
         }
     }
@@ -70,17 +54,14 @@ class TrackSearchViewModel(
     }
 
     fun onSearchFocusGained() {
-        Log.d("12121", "onSearchFocusGained")
-        //updateHistory()
         if (interactorSearchHistory.hasHistory()){
-            _searchState.postValue(SearchState.ContentHistory)
+            updateHistory()
         }
     }
 
 
     fun clearSearch() {
         updateHistory()
-        //_searchState.postValue(SearchState.ContentHistory)
     }
 
     private var searchRunnable = Runnable {
@@ -99,7 +80,7 @@ class TrackSearchViewModel(
     companion object {
         private const val SEARCH_TRACK_DEBOUNCE_DELAY = 2000L
         private const val CLICK_DEBOUNCE_DELAY = 2000L
-        const val FIELD_SEARCH = "FIELD_SEARCH"
+
 
         fun provideFactory(
             interactorSearchHistory: InteractorSearchHistory,
@@ -123,8 +104,7 @@ class TrackSearchViewModel(
                 override fun consume(data: DataConsumer<List<Track>>) {
                     when (data) {
                         is DataConsumer.Success -> {
-                                _tracks.postValue(data.data)
-                                _searchState.postValue(SearchState.Content)
+                                _searchState.postValue(SearchState.Content(data.data))
                         }
 
                         is DataConsumer.ResponseFailure -> {
@@ -142,9 +122,8 @@ class TrackSearchViewModel(
 
     private fun updateHistory() {
         val history = interactorSearchHistory.getSong().reversed()
-        _historyTracks.postValue(history)
         if (history.isNotEmpty()){
-            _searchState.postValue(SearchState.ContentHistory)
+            _searchState.postValue(SearchState.ContentHistory(history))
         }
     }
 
@@ -169,7 +148,6 @@ class TrackSearchViewModel(
     fun onTrackClicked(track: Track) {
         if (clickDebonce()) {
             interactorSearchHistory.write(track)
-            //updateHistory()
             _navigateToTrackDetails.postValue(track)
         }
     }

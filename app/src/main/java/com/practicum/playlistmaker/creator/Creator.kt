@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import com.practicum.playlistmaker.data.audioplayer.ManagerAudioPlayerImpl
+import com.practicum.playlistmaker.data.audioplayer.PlayerTimerImpl
 import com.practicum.playlistmaker.data.search.TracksRepositoryImpl
 import com.practicum.playlistmaker.data.mapper.TrackDtoResponseMapper
 import com.practicum.playlistmaker.data.mapper.TrackResponseMapper
@@ -12,6 +13,7 @@ import com.practicum.playlistmaker.data.search.network.RetrofitNetworkClient
 import com.practicum.playlistmaker.data.repository.PLAYLIST_MAKER
 import com.practicum.playlistmaker.data.repository.RepositorySearchHistoryImpl
 import com.practicum.playlistmaker.data.repository.ThemeRepositoryImpl
+import com.practicum.playlistmaker.data.search.network.SearchTrackApi
 import com.practicum.playlistmaker.data.sharing.ExternalNavigator
 import com.practicum.playlistmaker.data.sharing.impl.ExternalNavigatorimpl
 import com.practicum.playlistmaker.data.sharing.impl.ResourceProviderImpl
@@ -21,13 +23,19 @@ import com.practicum.playlistmaker.domain.api.TracksRepository
 import com.practicum.playlistmaker.domain.impl.TracksInteractorImpl
 import com.practicum.playlistmaker.domain.interactor.ThemeInteractor
 import com.practicum.playlistmaker.domain.player.ManagerAudioPlayer
+import com.practicum.playlistmaker.domain.player.PlayerTimer
 import com.practicum.playlistmaker.domain.player.TrackPlayer
 import com.practicum.playlistmaker.domain.player.interactor.AudioPlayerInteractor
 import com.practicum.playlistmaker.domain.search.RepositorySearchHistory
 import com.practicum.playlistmaker.domain.repository.ThemeRepository
+import com.practicum.playlistmaker.domain.setting.ThemeSwitcher
 import com.practicum.playlistmaker.domain.sharing.ResourceProvider
 import com.practicum.playlistmaker.domain.sharing.SharingInteractor
 import com.practicum.playlistmaker.domain.sharing.impl.SharingInteractorImpl
+import com.practicum.playlistmaker.ui.setting.App
+import com.practicum.playlistmaker.ui.setting.AppThemeSwitcher
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 
 object Creator {
@@ -37,9 +45,18 @@ object Creator {
 
         appContext = context.applicationContext
     }
+    private val translateBaseUrl = "https://itunes.apple.com/"
+
+    private val retrofit = Retrofit.Builder()
+        .baseUrl(translateBaseUrl)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    private val itunesService = retrofit.create(SearchTrackApi::class.java)
+
 
     private fun geTracksRepository(): TracksRepository {
-        return TracksRepositoryImpl(RetrofitNetworkClient(appContext), TrackResponseMapper)
+        return TracksRepositoryImpl(RetrofitNetworkClient(appContext, itunesService), TrackResponseMapper)
     }
 
     fun provideTracksInteractor(): TrackInteractorApi {
@@ -58,14 +75,11 @@ object Creator {
         return ThemeRepositoryImpl(getSharedPreferences())
     }
 
-    fun provideInteractorTheme(): ThemeInteractor {
 
-        return ThemeInteractor(getRepositoryTheme(), appContext)
-    }
 
 
     fun providerThemeInteractor(): ThemeInteractor {
-        return ThemeInteractor(getRepositoryTheme(), appContext)
+        return ThemeInteractor(getRepositoryTheme(), providerAppThemeSwitcher())
     }
 
     fun providerSharingInteractor(): SharingInteractor {
@@ -83,7 +97,15 @@ object Creator {
         return ManagerAudioPlayerImpl(MediaPlayer())
     }
     fun providerTrackPlayer(previewUrl : String): TrackPlayer {
-        return AudioPlayerInteractor(previewUrl, providerManagerAudioPlayer())
+        return AudioPlayerInteractor(previewUrl, providerManagerAudioPlayer(), providerPlayerTimer())
+    }
+
+    private fun providerPlayerTimer(): PlayerTimer {
+        return PlayerTimerImpl()
+    }
+
+    private fun providerAppThemeSwitcher(): ThemeSwitcher {
+        return AppThemeSwitcher(appContext as App)
     }
 
 
