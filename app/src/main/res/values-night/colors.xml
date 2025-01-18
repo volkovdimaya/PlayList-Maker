@@ -14,4 +14,7 @@
 
     <color name="btn_play_and_pause">#FFFFFF</color>
 
+    <color name="switchThumbTint">#3772E7</color>
+    <color name="switchTrackTint">#9FBBF3</color>
+
 </resources>

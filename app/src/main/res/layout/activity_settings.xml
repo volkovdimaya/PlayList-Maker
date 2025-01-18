@@ -33,6 +33,8 @@
 
     </FrameLayout>
     <com.google.android.material.switchmaterial.SwitchMaterial
+        app:thumbTint="@color/switchThumbTint"
+        app:trackTint="@color/switchTrackTint"
         android:id="@+id/themeSwitcher"
         android:text="@string/mode_theme"
         style="@style/SettingItem"
