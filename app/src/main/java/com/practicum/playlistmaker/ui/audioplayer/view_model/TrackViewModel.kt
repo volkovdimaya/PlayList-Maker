@@ -40,6 +40,11 @@ class TrackViewModel(
                 override fun onPlay() {
                     playStatusLiveData.value = getCurrentPlayStatus().copy(isPlaying = true)
                 }
+
+                override fun onCompletion() {
+                    pause()
+                    playStatusLiveData.value = getCurrentPlayStatus().copy(isPlaying = false, progress = 0.0f)
+                }
             },
         )
     }

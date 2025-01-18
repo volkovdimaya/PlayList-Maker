@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker.domain.player.interactor
 
+
 import com.practicum.playlistmaker.domain.player.TrackPlayer
 import com.practicum.playlistmaker.domain.player.ManagerAudioPlayer
 import com.practicum.playlistmaker.domain.player.PlayerTimer
@@ -33,7 +34,7 @@ class AudioPlayerInteractor(
                 )
             },
             onCompletion = {
-                statusObserver.onStop()
+                statusObserver.onCompletion()
             }
         )
     }

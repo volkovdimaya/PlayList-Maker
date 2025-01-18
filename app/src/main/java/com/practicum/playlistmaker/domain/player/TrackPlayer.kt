@@ -10,5 +10,6 @@ interface TrackPlayer {
         fun onProgress(progress: Float)
         fun onStop()
         fun onPlay()
+        fun onCompletion()
     }
 }
