@@ -6,6 +6,7 @@ import com.practicum.playlistmaker.domain.repository.ThemeRepository
 class ThemeRepositoryImpl(private val sharedPrefs: SharedPreferences): ThemeRepository {
 
     override fun isDarkTheme(): Boolean = sharedPrefs.getBoolean(MODE_THEME, false)
+    override fun isFirstStart(): Boolean = (sharedPrefs.contains(MODE_THEME))
 
     override fun saveTheme(isDark: Boolean) {
         sharedPrefs.edit().putBoolean(MODE_THEME, isDark).apply()

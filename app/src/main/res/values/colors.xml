@@ -4,9 +4,12 @@
     <color name="white">#FFFFFFFF</color>
 
     <color name="background">#3772E7</color>
-    <color name="background_setting">#FFFFFFFF</color>
+    <color name="background_main">#FFFFFFFF</color>
     <color name="color_title">#1A1B22</color>
     <color name="color_item">#000000</color>
+
+    <color name="switchThumbTint">#AEAFB4</color>
+    <color name="switchTrackTint">#E6E8EB</color>
 
 
     <color name="main_btn_content">#1A1B22</color>

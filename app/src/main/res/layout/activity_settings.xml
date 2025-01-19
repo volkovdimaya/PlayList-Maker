@@ -3,28 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_setting"
+    android:background="@color/background_main"
     android:orientation="vertical">
 
 
     <androidx.appcompat.widget.Toolbar
+        app:contentInsetStartWithNavigation="0dp"
         android:id="@+id/toolbar_setting"
         android:paddingStart="@dimen/standard_margins"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:tint="@color/color_title"
+        android:layout_height="@dimen/setting_tool_bar"
+        app:title="@string/Setting"
+        app:titleTextColor="@color/color_title"
+        app:titleTextAppearance="@style/TextAppearance.MyToolbarTitle"
         app:navigationIcon="@drawable/ic_btn_back"
-        android:layout_marginBottom="24dp">
-        <TextView
-            android:id="@+id/Setting"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center|start"
-            android:text="@string/Setting"
-            android:fontFamily="@font/ys_display_medium"
-            android:textColor="@color/color_title"
-            android:textSize="@dimen/text_size"/>
-    </androidx.appcompat.widget.Toolbar>
+        android:layout_marginBottom="24dp"/>
 
     <FrameLayout
         style="@style/SettingItem"
@@ -33,6 +26,8 @@
 
     </FrameLayout>
     <com.google.android.material.switchmaterial.SwitchMaterial
+        app:thumbTint="@color/switchThumbTint"
+        app:trackTint="@color/switchTrackTint"
         android:id="@+id/themeSwitcher"
         android:text="@string/mode_theme"
         style="@style/SettingItem"

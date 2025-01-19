@@ -3,10 +3,10 @@ package com.practicum.playlistmaker.data.repository
 import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.practicum.playlistmaker.data.dto.TrackDto
+import com.practicum.playlistmaker.data.search.dto.TrackDto
 import com.practicum.playlistmaker.data.mapper.TrackResponseMapper
 import com.practicum.playlistmaker.domain.models.Track
-import com.practicum.playlistmaker.domain.repository.RepositorySearchHistory
+import com.practicum.playlistmaker.domain.search.RepositorySearchHistory
 import androidx.core.content.edit
 import com.practicum.playlistmaker.data.mapper.TrackDtoResponseMapper
 
@@ -28,7 +28,7 @@ class RepositorySearchHistoryImpl(
         return songs.isNotEmpty()
     }
 
-    fun read() {
+    private fun read() {
         val json = sharedPrefs.getString(HISTORY_LIST_TRACK, null)
         songs = json?.let {
             gson.fromJson(it, object : TypeToken<List<TrackDto>>() {}.type)

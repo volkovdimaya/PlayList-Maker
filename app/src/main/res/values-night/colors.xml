@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="background">#1A1B22</color>
-    <color name="background_setting">#1A1B22</color>
+    <color name="background_main">#1A1B22</color>
     <color name="color_title">#FFFFFF</color>
     <color name="color_item">#FFFFFF</color>
     <color name="item_setting">#FFFFFF</color>
@@ -13,5 +13,8 @@
     <color name="btn_update_background">#FFFFFFFF</color>
 
     <color name="btn_play_and_pause">#FFFFFF</color>
+
+    <color name="switchThumbTint">#3772E7</color>
+    <color name="switchTrackTint">#9FBBF3</color>
 
 </resources>

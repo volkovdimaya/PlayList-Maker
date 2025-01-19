@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name= "main_side_margins">14dp</dimen>
+    <dimen name= "corner_radius_btn">16dp</dimen>
+    <dimen name= "side_margins">16dp</dimen>
+    <dimen name= "setting_vertical_margin">24dp</dimen>
+    <dimen name= "text_size">22sp</dimen>
+    <dimen name= "text_size_setting">16sp</dimen>
+    <dimen name= "main_btn_margin">16dp</dimen>
+
+    <dimen name= "search_layout_horizontal">12dp</dimen>
+    <dimen name= "search_layout_vertical">10dp</dimen>
+    <dimen name= "search_padding_horizontal">36dp</dimen>
+    <dimen name= "search_place_holder_resolution">120dp</dimen>
+    <dimen name= "search_place_holder_padding_top">102dp</dimen>
+
+    <dimen name= "search_history_margin_top">24dp</dimen>
+
+
+    <dimen name= "standard_margins">8dp</dimen>
+
+    <dimen name= "item_track_search_image_setting">24dp</dimen>
+    <dimen name= "item_track_search_image_point">13dp</dimen>
+    <dimen name= "item_track_search_image_track">45dp</dimen>
+    <dimen name= "item_track_search_text_size">11sp</dimen>
+
+
+
+    <!-- для Activity Audio Player -->
+    <dimen name= "audio_player_btn_play_resolution">100dp</dimen>
+    <dimen name= "audio_player_additional_btn_resolution">51dp</dimen>
+    <dimen name= "audio_player_text_size_14">14sp</dimen>
+    <dimen name="guideline_margin_24">24dp</dimen>
+    <dimen name="guideline_margin_16">16dp</dimen>
+</resources>

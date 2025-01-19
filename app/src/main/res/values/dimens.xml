@@ -4,6 +4,7 @@
     <dimen name= "corner_radius_btn">16dp</dimen>
     <dimen name= "side_margins">16dp</dimen>
     <dimen name= "setting_vertical_margin">24dp</dimen>
+    <dimen name= "setting_tool_bar">56dp</dimen>
     <dimen name= "text_size">22sp</dimen>
     <dimen name= "text_size_setting">16sp</dimen>
     <dimen name= "main_btn_margin">16dp</dimen>
