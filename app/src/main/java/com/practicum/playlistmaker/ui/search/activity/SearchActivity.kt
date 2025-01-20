@@ -4,7 +4,6 @@ import androidx.core.widget.addTextChangedListener
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -17,9 +16,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.creator.Creator
 import com.practicum.playlistmaker.databinding.ActivitySearchBinding
-import com.practicum.playlistmaker.domain.interactor.InteractorSearchHistory
 import com.practicum.playlistmaker.ui.search.view_model.TrackSearchViewModel
 import com.practicum.playlistmaker.ui.audioplayer.activity.AudioPlayerActivity
 import com.practicum.playlistmaker.ui.search.models.SearchState
@@ -28,6 +25,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.practicum.playlistmaker.domain.models.Track
 import com.practicum.playlistmaker.ui.audioplayer.mapper.TrackMapper
 import com.practicum.playlistmaker.ui.search.TrackAdapter
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 const val TRACK_DETAILS = "TRACK_DETAILS"
@@ -45,12 +43,9 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySearchBinding
 
 
-    private val viewModel by viewModels<TrackSearchViewModel> {
-        TrackSearchViewModel.provideFactory(
-            InteractorSearchHistory(Creator.provideInteractorSearchHistory()),
-            Creator.provideTracksInteractor()
-        )
-    }
+    private val viewModel by viewModel<TrackSearchViewModel>()
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -10,25 +10,25 @@ import androidx.appcompat.widget.Toolbar
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.creator.Creator
+//import com.practicum.playlistmaker.creator.Creator
+import com.practicum.playlistmaker.domain.player.TrackPlayer
 import com.practicum.playlistmaker.ui.audioplayer.models.PlayStatus
 import com.practicum.playlistmaker.domain.player.models.TrackAudioPlayer
 import com.practicum.playlistmaker.ui.audioplayer.models.AudioPlayerScreenState
 import com.practicum.playlistmaker.ui.audioplayer.view_model.TrackViewModel
 import com.practicum.playlistmaker.ui.search.activity.TRACK_DETAILS
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 
 class AudioPlayerActivity : AppCompatActivity() {
 
-
-    private val viewModel: TrackViewModel by viewModels {
+    private val viewModel: TrackViewModel by viewModel {
         val track = intent.getSerializableExtra(TRACK_DETAILS) as? TrackAudioPlayer
             ?: throw IllegalArgumentException("Ошибка, отсутствует песня")
-        TrackViewModel.getViewModelFactory(
-            track,
-            Creator.providerTrackPlayer(track.previewUrl)
-        )
 
+        parametersOf(track)
     }
 
     private lateinit var btnActive: ImageView
