@@ -2,6 +2,8 @@ package com.practicum.playlistmaker.di
 
 import com.practicum.playlistmaker.domain.player.models.TrackAudioPlayer
 import com.practicum.playlistmaker.ui.audioplayer.view_model.TrackViewModel
+import com.practicum.playlistmaker.ui.library.view_model.FavouritesViewModel
+import com.practicum.playlistmaker.ui.library.view_model.PlaylistViewModel
 import com.practicum.playlistmaker.ui.search.view_model.TrackSearchViewModel
 import com.practicum.playlistmaker.ui.setting.view_model.SettingViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -10,7 +12,7 @@ import org.koin.dsl.module
 
 val viewModelModule = module {
 
-    viewModel {(track: TrackAudioPlayer?)->
+    viewModel { (track: TrackAudioPlayer?) ->
         TrackViewModel(track, get { parametersOf(track?.previewUrl ?: "") })
     }
     viewModel {
@@ -20,6 +22,13 @@ val viewModelModule = module {
         SettingViewModel(get(), get())
     }
 
+    viewModel {
+        FavouritesViewModel()
+    }
+
+    viewModel {
+        PlaylistViewModel()
+    }
 
 
 }

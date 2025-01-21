@@ -22,6 +22,7 @@
 
     <color name="btn_update_text">#FFFFFFFF</color>
     <color name="btn_update_background">#1A1B22</color>
+    <color name="tablayout">#1A1B22</color>
 
     <color name="btn_play_and_pause">#1A1B22</color>
 

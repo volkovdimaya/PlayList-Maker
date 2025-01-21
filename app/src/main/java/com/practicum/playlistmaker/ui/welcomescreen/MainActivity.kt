@@ -5,7 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
-import com.practicum.playlistmaker.MedialibraryActivity
+import com.practicum.playlistmaker.ui.library.activity.MediaLibraryActivity
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.ui.search.activity.SearchActivity
 import com.practicum.playlistmaker.ui.setting.activity.SettingsActivity
@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
         val btnMedia = findViewById<Button>(R.id.btn_media_library)
 
         btnMedia.setOnClickListener {
-            val displayMedialibrary = Intent(this, MedialibraryActivity::class.java)
+            val displayMedialibrary = Intent(this, MediaLibraryActivity::class.java)
             startActivity(displayMedialibrary)
         }
 
