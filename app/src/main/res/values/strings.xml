@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Playlist Maker</string>
     <string name="search">Поиск</string>
+    <string name="mediateka">Медиатека</string>
     <string name="description_btn_back">Кнопка назад</string>
     <string name="Media">Медиатека</string>
     <string name="Setting">Настройки</string>
@@ -14,8 +15,11 @@
     <string name="send_developer_theme">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
     <string name="send_developer_body">Спасибо разработчикам и разработчицам за крутое приложение!</string>
     <string name="error_no_content">Ничего не нашлось</string>
+    <string name="error_no_favourites">Ваша медиатека пуста</string>
+    <string name="error_no_playlist">Вы не создали \nни одного плейлиста</string>
     <string name="error_no_internet">Проблемы со связью \n\nЗагрузка не удалась. Проверьте \n подключение к интернету</string>
     <string name="btn_update">Обновить</string>
+    <string name="btn_new_play_list">Новый плейлист</string>
     <string name="unknown">Неизвестно</string>
     <string name="clear_history">Очистить историю</string>
     <string name="text_search_history">Вы искали</string>
@@ -28,4 +32,7 @@
     <string name="text_duration">Длительность</string>
     <string name="image_resolution">512x512bb.jpg</string>
     <string name="toast_error">Ошибка</string>
+
+    <string name="favourites_tracks">Избранные треки</string>
+    <string name="playlists">Плейлисты</string>
 </resources>
