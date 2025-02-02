@@ -8,7 +8,7 @@ import com.practicum.playlistmaker.ui.library.fragments.FavouritesFragment
 import com.practicum.playlistmaker.ui.library.fragments.PlaylistFragment
 
 
-class LibraryViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle) : FragmentStateAdapter(fragmentManager, lifecycle){
+class LibraryViewPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment){
     override fun getItemCount(): Int {
         return 2
     }
@@ -19,6 +19,8 @@ class LibraryViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifec
             else -> PlaylistFragment.newInstance()
         }
     }
+
+
 }
 
 

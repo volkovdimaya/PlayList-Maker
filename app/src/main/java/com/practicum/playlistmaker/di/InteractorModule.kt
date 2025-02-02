@@ -19,7 +19,7 @@ val interactorModule = module {
     single<TrackInteractorApi> {
         TracksInteractorImpl(get())
     }
-    single<TrackPlayer> { (previewUrl : String) ->
+    factory<TrackPlayer> { (previewUrl : String) ->
         AudioPlayerInteractor(previewUrl, get(), get())
     }
     single {

@@ -2,6 +2,7 @@ package com.practicum.playlistmaker.ui.audioplayer.view_model
 
 
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -66,6 +67,9 @@ class TrackViewModel(
     fun pause() {
         trackPlayer.pause()
     }
+
+
+
 
     override fun onCleared() {
         trackPlayer.release()

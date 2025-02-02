@@ -1,6 +1,7 @@
 package com.practicum.playlistmaker.domain.player.interactor
 
 
+import android.util.Log
 import com.practicum.playlistmaker.domain.player.TrackPlayer
 import com.practicum.playlistmaker.domain.player.ManagerAudioPlayer
 import com.practicum.playlistmaker.domain.player.PlayerTimer
@@ -19,7 +20,6 @@ class AudioPlayerInteractor(
 
     override fun play(statusObserver: TrackPlayer.StatusObserver) {
         this.statusObserver = statusObserver
-
         mediaPlayer.prepare(
             trackUrl = trackUrl,
             onPrepared = {
@@ -52,6 +52,9 @@ class AudioPlayerInteractor(
         mediaPlayer.release()
         statusObserver = null
     }
+
+
+
 
     private fun startProgressUpdates() {
         val progress = mediaPlayer.getCurrentPosition() / 1000f
