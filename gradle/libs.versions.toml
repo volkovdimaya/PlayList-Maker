@@ -1,0 +1,34 @@
+[versions]
+retrofit = "2.9.0"
+glide = "4.14.2"
+navigation = "2.5.3"
+koin = "3.5.0"
+viewmodel = "2.5.1"
+fragment = "1.6.2"
+activity = "1.6.1"
+material = "1.8.0"
+constraintlayout = "2.1.4"
+
+[libraries]
+retrofit-core = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+retrofit-converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
+
+glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
+glide-compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glide" }
+
+navigation-fragment = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigation" }
+navigation-ui = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigation" }
+
+koin-core = { module = "io.insert-koin:koin-android", version.ref = "koin" }
+
+view-model = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "viewmodel" }
+
+fragment-core = { module = "androidx.fragment:fragment-ktx", version.ref = "fragment" }
+
+activity-core = { module = "androidx.activity:activity-ktx", version.ref = "activity" }
+appcompat-core = { module = "androidx.appcompat:appcompat", version.ref = "activity" }
+
+material-google = { module = "com.google.android.material:material", version.ref = "material" }
+
+constraint-layout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
+
