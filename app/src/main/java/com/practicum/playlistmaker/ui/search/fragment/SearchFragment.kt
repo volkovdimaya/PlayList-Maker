@@ -1,27 +1,25 @@
-package com.practicum.playlistmaker.ui.search.activity
+package com.practicum.playlistmaker.ui.search.fragment
 
 import androidx.core.widget.addTextChangedListener
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.ProgressBar
-import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.databinding.ActivitySearchBinding
 import com.practicum.playlistmaker.ui.search.view_model.TrackSearchViewModel
 import com.practicum.playlistmaker.ui.audioplayer.activity.AudioPlayerActivity
 import com.practicum.playlistmaker.ui.search.models.SearchState
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import com.practicum.playlistmaker.databinding.FragmentSearchBinding
 import com.practicum.playlistmaker.domain.models.Track
 import com.practicum.playlistmaker.ui.audioplayer.mapper.TrackMapper
 import com.practicum.playlistmaker.ui.search.TrackAdapter
@@ -30,7 +28,12 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 const val TRACK_DETAILS = "TRACK_DETAILS"
 
-class SearchActivity : AppCompatActivity() {
+class SearchFragment : Fragment() {
+
+    private var _binding : FragmentSearchBinding? = null
+    private val binding
+        get() = _binding!!
+
     private lateinit var progressBar: ProgressBar
     private lateinit var noContentPlaceHolder: LinearLayout
     private lateinit var noInternetPlaceHolder: LinearLayout
@@ -40,17 +43,21 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var linearLayoutHistory: LinearLayout
     private lateinit var recyclerViewHistoryTrack: RecyclerView
 
-    private lateinit var binding: ActivitySearchBinding
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentSearchBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
 
     private val viewModel by viewModel<TrackSearchViewModel>()
 
 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivitySearchBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         progressBar = binding.progressBar
         noContentPlaceHolder = binding.errorNoContent
@@ -60,8 +67,8 @@ class SearchActivity : AppCompatActivity() {
         linearLayoutHistory = binding.linearLayoutHistory
         recyclerViewHistoryTrack = binding.recyclerHistoryTrack
 
-        recyclerViewTrak.layoutManager = LinearLayoutManager(this)
-        recyclerViewHistoryTrack.layoutManager = LinearLayoutManager(this)
+        recyclerViewTrak.layoutManager = LinearLayoutManager(requireContext())
+        recyclerViewHistoryTrack.layoutManager = LinearLayoutManager(requireContext())
 
         val trakAdapter = TrackAdapter(emptyList(), ::clickOnTrack)
         val historyAdapter = TrackAdapter(emptyList(), ::clickOnTrack)
@@ -85,7 +92,7 @@ class SearchActivity : AppCompatActivity() {
             binding.search.text.clear()
             viewModel.clearSearch()
             val inputMethodManager =
-                getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+                requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(it.windowToken, 0)
         }
 
@@ -96,19 +103,13 @@ class SearchActivity : AppCompatActivity() {
             false
         }
 
-        val updateBtn = findViewById<Button>(R.id.btn_search_update)
-        updateBtn.setOnClickListener {
+
+        binding.btnSearchUpdate.setOnClickListener {
             viewModel.loadTrack(search.text.toString())
         }
 
-        val toolbar: Toolbar = findViewById(R.id.toolbar_search)
 
-        toolbar.setNavigationOnClickListener {
-            finish()
-        }
-
-        val btnClearHistory = findViewById<Button>(R.id.btn_clear_history)
-        btnClearHistory.setOnClickListener {
+        binding.btnClearHistory.setOnClickListener {
             viewModel.clearHistory()
         }
     }
@@ -182,17 +183,21 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-        viewModel.searchState.observe(this) {
+        viewModel.searchState.observe(viewLifecycleOwner) {
             render(it)
         }
 
-        viewModel.navigateToTrackDetails.observe(this) { track ->
-            val intent = Intent(this, AudioPlayerActivity::class.java)
+        viewModel.navigateToTrackDetails.observe(viewLifecycleOwner) { track ->
+            val intent = Intent(requireContext(), AudioPlayerActivity::class.java)
             intent.putExtra(TRACK_DETAILS, TrackMapper.mapToTrackAudioPlayer(track))
             startActivity(intent)
         }
     }
 
+    override fun onDestroy() {
+        _binding = null
+        super.onDestroy()
+    }
 
 }
 

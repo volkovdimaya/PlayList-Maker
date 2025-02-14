@@ -6,14 +6,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/background_main"
-    tools:context=".ui.search.activity.SearchActivity">
+    tools:context=".ui.search.fragment.SearchFragment">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:tint="@color/color_title"
-        app:navigationIcon="@drawable/ic_btn_back">
+        android:tint="@color/color_title">
 
         <TextView
             android:id="@+id/Setting"
@@ -34,13 +33,7 @@
         android:background="@drawable/background_line_search"
         app:cornerRadius="@dimen/standard_margins">
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start|center_vertical"
-            android:layout_marginVertical="@dimen/search_layout_vertical"
-            android:layout_marginStart="@dimen/search_layout_horizontal"
-            android:src="@drawable/search_icon" />
+
 
         <EditText
             android:id="@+id/search"
@@ -60,6 +53,13 @@
             android:textCursorDrawable="@drawable/blue_cursor"
             android:textSize="16sp"
             tools:ignore="TouchTargetSizeCheck" />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|center_vertical"
+            android:layout_marginVertical="@dimen/search_layout_vertical"
+            android:layout_marginStart="@dimen/search_layout_horizontal"
+            android:src="@drawable/search_icon" />
 
         <ImageView
             android:id="@+id/clearIcon"

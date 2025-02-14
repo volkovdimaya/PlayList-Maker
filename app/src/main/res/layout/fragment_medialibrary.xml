@@ -5,13 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.library.activity.MediaLibraryActivity">
+    android:background="@color/background_main"
+    tools:context=".ui.library.fragments.MediaLibraryFragment">
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_library"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:tint="@color/color_title"
-        app:navigationIcon="@drawable/ic_btn_back">
+        android:tint="@color/color_title">
 
         <TextView
             android:id="@+id/library"
@@ -25,6 +25,7 @@
     </androidx.appcompat.widget.Toolbar>
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
+        android:background="@color/background_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:tabIndicatorColor="@color/tablayout"

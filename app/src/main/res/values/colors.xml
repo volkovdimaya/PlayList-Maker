@@ -4,6 +4,7 @@
     <color name="white">#FFFFFFFF</color>
 
     <color name="background">#3772E7</color>
+
     <color name="background_main">#FFFFFFFF</color>
     <color name="color_title">#1A1B22</color>
     <color name="color_item">#000000</color>
@@ -15,6 +16,7 @@
     <color name="main_btn_content">#1A1B22</color>
     <color name="item_setting">#AEAFB4</color>
     <color name="backgroud_search">#E6E8EB</color>
+
     <color name="line_search_color">#AEAFB4</color>
     <color name="search_item_description">#AEAFB4</color>
     <color name="search_item_title">#000000</color>
@@ -23,6 +25,10 @@
     <color name="btn_update_text">#FFFFFFFF</color>
     <color name="btn_update_background">#1A1B22</color>
     <color name="tablayout">#1A1B22</color>
+
+    <color name="active_botton_menu">#3772E7</color>
+    <color name="botton_menu">#1A1B22</color>
+    <color name="botton_menu_divider">#E6E8EB</color>
 
     <color name="btn_play_and_pause">#1A1B22</color>
 

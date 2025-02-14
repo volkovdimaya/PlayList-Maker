@@ -10,12 +10,12 @@ class ManagerAudioPlayerImpl(private val mediaPlayer: MediaPlayer) : ManagerAudi
     override fun prepare(
         trackUrl: String, onPrepared: () -> Unit, onCompletion: () -> Unit
     ) {
+
         mediaPlayer.apply {
-            if (isPlaying || playerState == STATE_PREPARED || playerState ==  STATE_PAUSED) {
+            if (playerState == STATE_PLAYING || playerState == STATE_PREPARED || playerState == STATE_PAUSED) {
                 onPrepared()
                 return
             }
-
             setDataSource(trackUrl)
             prepareAsync()
             setOnPreparedListener {
@@ -28,6 +28,8 @@ class ManagerAudioPlayerImpl(private val mediaPlayer: MediaPlayer) : ManagerAudi
                     onCompletion()
                 }
             }
+
+
         }
     }
 
@@ -58,12 +60,12 @@ class ManagerAudioPlayerImpl(private val mediaPlayer: MediaPlayer) : ManagerAudi
             STATE_PLAYING -> {
                 pause(onPause)
             }
+
             STATE_PREPARED, STATE_PAUSED -> {
                 play(onPlay)
             }
         }
     }
-
 
 
     override fun stop() {
@@ -76,8 +78,10 @@ class ManagerAudioPlayerImpl(private val mediaPlayer: MediaPlayer) : ManagerAudi
     }
 
     override fun release() {
-        mediaPlayer.release()
+        mediaPlayer.reset()
+        playerState = STATE_DEFAULT
     }
+
 
     private companion object {
         const val STATE_DEFAULT = 0

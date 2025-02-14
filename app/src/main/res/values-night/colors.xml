@@ -18,4 +18,7 @@
     <color name="switchThumbTint">#3772E7</color>
     <color name="switchTrackTint">#9FBBF3</color>
 
+    <color name="botton_menu">#FFFFFF</color>
+    <color name="backgroud_search">#FFFFFF</color>
+
 </resources>

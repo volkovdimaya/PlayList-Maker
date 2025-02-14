@@ -18,7 +18,7 @@ import com.practicum.playlistmaker.ui.search.models.SearchState
 
 
 class TrackSearchViewModel(
-    private val interactorSearchHistory: InteractorSearchHistory, // История поиска
+    private val interactorSearchHistory: InteractorSearchHistory,
     private val trackInteractor: TrackInteractorApi
 ) : ViewModel() {
     private var isClickAllowed = true
@@ -36,6 +36,7 @@ class TrackSearchViewModel(
 
     fun updateRequest(query: String) {
         if (query.isEmpty()) {
+            textSearch = ""
             handler.removeCallbacks(searchRunnable)
             _searchState.value = SearchState.BtnClear(false)
             updateHistory()
@@ -148,6 +149,9 @@ class TrackSearchViewModel(
     fun onTrackClicked(track: Track) {
         if (clickDebonce()) {
             interactorSearchHistory.write(track)
+            if (textSearch.equals("")){
+                updateHistory()
+            }
             _navigateToTrackDetails.postValue(track)
         }
     }

@@ -67,6 +67,9 @@ class TrackViewModel(
         trackPlayer.pause()
     }
 
+
+
+
     override fun onCleared() {
         trackPlayer.release()
     }

@@ -2,27 +2,26 @@ package com.practicum.playlistmaker.ui.audioplayer.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.viewModels
-import androidx.appcompat.widget.Toolbar
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
-//import com.practicum.playlistmaker.creator.Creator
-import com.practicum.playlistmaker.domain.player.TrackPlayer
+import com.practicum.playlistmaker.databinding.ActivityAudioPlayerBinding
 import com.practicum.playlistmaker.ui.audioplayer.models.PlayStatus
 import com.practicum.playlistmaker.domain.player.models.TrackAudioPlayer
 import com.practicum.playlistmaker.ui.audioplayer.models.AudioPlayerScreenState
 import com.practicum.playlistmaker.ui.audioplayer.view_model.TrackViewModel
-import com.practicum.playlistmaker.ui.search.activity.TRACK_DETAILS
-import org.koin.android.ext.android.inject
+import com.practicum.playlistmaker.ui.search.fragment.TRACK_DETAILS
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
 
 class AudioPlayerActivity : AppCompatActivity() {
+
+    private var _binding : ActivityAudioPlayerBinding? = null
+    private val binding
+        get() = _binding!!
+
 
     private val viewModel: TrackViewModel by viewModel {
         val track = intent.getSerializableExtra(TRACK_DETAILS) as? TrackAudioPlayer
@@ -31,20 +30,15 @@ class AudioPlayerActivity : AppCompatActivity() {
         parametersOf(track)
     }
 
-    private lateinit var btnActive: ImageView
-    private lateinit var playbackTime: TextView
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_audio_player)
 
-        btnActive = findViewById(R.id.play)
+        _binding = ActivityAudioPlayerBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        playbackTime = findViewById(R.id.playback_time)
 
-        val toolbar: Toolbar = findViewById(R.id.toolbar_audio_player)
-        toolbar.setNavigationOnClickListener {
+        binding.toolbarAudioPlayer.setNavigationOnClickListener {
             finish()
         }
 
@@ -65,16 +59,16 @@ class AudioPlayerActivity : AppCompatActivity() {
             changeButtonStyle(playStatus)
         }
 
-        btnActive.setOnClickListener {
+        binding.play.setOnClickListener {
             viewModel.play()
         }
     }
 
     private fun changeButtonStyle(playStatus: PlayStatus?) {
         if (playStatus?.isPlaying == true) {
-            btnActive.setImageResource(R.drawable.btn_pause)
+            binding.play.setImageResource(R.drawable.btn_pause)
         } else {
-            btnActive.setImageResource(R.drawable.btn_play)
+            binding.play.setImageResource(R.drawable.btn_play)
         }
         playStatus?.progress?.let {
             updatePlaybackTime(it.toInt())
@@ -86,7 +80,7 @@ class AudioPlayerActivity : AppCompatActivity() {
     }
 
     private fun updatePlaybackTime(secondsCount: Int) {
-        playbackTime.text = String.format("%d:%02d", secondsCount / 60, secondsCount % 60)
+        binding.playbackTime.text = String.format("%d:%02d", secondsCount / 60, secondsCount % 60)
     }
 
     override fun onPause() {
@@ -95,18 +89,25 @@ class AudioPlayerActivity : AppCompatActivity() {
     }
 
     private fun displayTrackData(track: TrackAudioPlayer) {
-        findViewById<TextView>(R.id.track_name).text = track.trackName
-        findViewById<TextView>(R.id.artist_name).text = track.artistName
-        findViewById<TextView>(R.id.album).text = track.collectionName
-        findViewById<TextView>(R.id.year).text = track.releaseDate.take(4)
-        findViewById<TextView>(R.id.genre).text = track.primaryGenreName
-        findViewById<TextView>(R.id.country).text = track.country
+        binding.trackName.text = track.trackName
+        binding.artistName.text = track.artistName
+        binding.album.text = track.collectionName
+        binding.year.text = track.releaseDate.take(4)
+        binding.genre.text = track.primaryGenreName
+        binding.country.text = track.country
+
+
 
         Glide.with(this)
             .load(track.artworkUrl100.replaceAfterLast('/', getString(R.string.image_resolution)))
             .centerCrop()
             .transform(RoundedCorners(8))
             .placeholder(R.drawable.place_holder_cover)
-            .into(findViewById(R.id.cover))
+            .into(binding.cover)
+    }
+
+    override fun onDestroy() {
+        _binding = null
+        super.onDestroy()
     }
 }
