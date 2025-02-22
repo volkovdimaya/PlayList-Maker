@@ -1,11 +1,10 @@
 package com.practicum.playlistmaker.ui.search.view_model
 
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
+
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.practicum.playlistmaker.domain.api.TrackInteractorApi
@@ -15,6 +14,9 @@ import com.practicum.playlistmaker.domain.interactor.InteractorSearchHistory
 import com.practicum.playlistmaker.domain.models.Track
 import com.practicum.playlistmaker.ui.search.SingleLiveEvent
 import com.practicum.playlistmaker.ui.search.models.SearchState
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 class TrackSearchViewModel(
@@ -25,7 +27,7 @@ class TrackSearchViewModel(
 
     private var textSearch: String = ""
 
-    private val handler = Handler(Looper.getMainLooper())
+    private var searchJob  : Job? = null
 
 
     private val _searchState: MutableLiveData<SearchState> = MutableLiveData()
@@ -37,7 +39,6 @@ class TrackSearchViewModel(
     fun updateRequest(query: String) {
         if (query.isEmpty()) {
             textSearch = ""
-            handler.removeCallbacks(searchRunnable)
             _searchState.value = SearchState.BtnClear(false)
             updateHistory()
 
@@ -48,10 +49,6 @@ class TrackSearchViewModel(
     }
     init {
         updateHistory()
-    }
-
-    override fun onCleared() {
-        handler.removeCallbacks(searchRunnable)
     }
 
     fun onSearchFocusGained() {
@@ -65,21 +62,21 @@ class TrackSearchViewModel(
         updateHistory()
     }
 
-    private var searchRunnable = Runnable {
-        loadTrack(textSearch)
-    }
 
     private fun searchDebounce(changedText: String) {
         if (textSearch == changedText) {
             return
         }
         textSearch = changedText
-        handler.removeCallbacks(searchRunnable)
-        handler.postDelayed(searchRunnable, SEARCH_TRACK_DEBOUNCE_DELAY)
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(SEARCH_TRACK_DEBOUNCE_DELAY)
+            loadTrack(textSearch)
+        }
     }
 
     companion object {
-        private const val SEARCH_TRACK_DEBOUNCE_DELAY = 2000L
+        private const val SEARCH_TRACK_DEBOUNCE_DELAY = 5000L
         private const val CLICK_DEBOUNCE_DELAY = 2000L
 
 
@@ -94,11 +91,8 @@ class TrackSearchViewModel(
     }
 
     fun loadTrack(text: String) {
-
         textSearch = text
         _searchState.postValue(SearchState.ProgressBar)
-
-        handler.removeCallbacks(searchRunnable)
 
         trackInteractor.searchTracks(text,
             object : TrackConsumer<List<Track>> {
@@ -134,20 +128,24 @@ class TrackSearchViewModel(
         _searchState.postValue(SearchState.Empty)
     }
 
-    private fun clickDebonce(): Boolean {
+    private fun clickDebounce(): Boolean {
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
-            handler.postDelayed(
-                { isClickAllowed = true },
-                CLICK_DEBOUNCE_DELAY
-            )
+            viewModelScope.launch { 
+                delay(CLICK_DEBOUNCE_DELAY)
+                isClickAllowed = true
+            }
+//            handler.postDelayed(
+//                { isClickAllowed = true },
+//                CLICK_DEBOUNCE_DELAY
+//            )
         }
         return current
     }
 
     fun onTrackClicked(track: Track) {
-        if (clickDebonce()) {
+        if (clickDebounce()) {
             interactorSearchHistory.write(track)
             if (textSearch.equals("")){
                 updateHistory()
