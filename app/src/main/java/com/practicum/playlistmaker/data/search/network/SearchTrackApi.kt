@@ -9,10 +9,10 @@ import retrofit2.http.Query
 
 interface SearchTrackApi {
     @GET("search")
-    fun search(
+    suspend fun search(
         @Query("term") searchText: String,
         @Query("entity") entity: String = "song"
     )
-            : Call<SearchTrackResponse>
+            : SearchTrackResponse
 }
 

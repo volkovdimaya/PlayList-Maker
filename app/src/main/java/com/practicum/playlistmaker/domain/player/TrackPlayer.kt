@@ -1,9 +1,12 @@
 package com.practicum.playlistmaker.domain.player
 
+
+
 interface TrackPlayer {
     fun play(statusObserver: StatusObserver)
     fun pause()
     fun release()
+
 
 
 

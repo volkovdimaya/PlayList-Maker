@@ -8,6 +8,7 @@ import com.practicum.playlistmaker.data.audioplayer.PlayerTimerImpl
 import com.practicum.playlistmaker.data.mapper.TrackDtoResponseMapper
 import com.practicum.playlistmaker.data.mapper.TrackResponseMapper
 import com.practicum.playlistmaker.data.repository.PLAYLIST_MAKER
+import com.practicum.playlistmaker.data.search.network.NetworkClient
 import com.practicum.playlistmaker.data.search.network.RetrofitNetworkClient
 import com.practicum.playlistmaker.data.search.network.SearchTrackApi
 import com.practicum.playlistmaker.data.sharing.ExternalNavigator
@@ -56,7 +57,7 @@ val dataModule = module {
     single<ExternalNavigator> {
         ExternalNavigatorimpl(androidContext())
     }
-    single {
+    single<NetworkClient> {
         RetrofitNetworkClient(androidContext(), get() )
     }
 

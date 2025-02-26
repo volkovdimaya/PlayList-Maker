@@ -76,7 +76,7 @@ class TrackSearchViewModel(
     }
 
     companion object {
-        private const val SEARCH_TRACK_DEBOUNCE_DELAY = 5000L
+        private const val SEARCH_TRACK_DEBOUNCE_DELAY = 2000L
         private const val CLICK_DEBOUNCE_DELAY = 2000L
 
 
@@ -94,10 +94,9 @@ class TrackSearchViewModel(
         textSearch = text
         _searchState.postValue(SearchState.ProgressBar)
 
-        trackInteractor.searchTracks(text,
-            object : TrackConsumer<List<Track>> {
-                override fun consume(data: DataConsumer<List<Track>>) {
-                    when (data) {
+        viewModelScope.launch {
+            trackInteractor.searchTracks(text).collect{ data ->
+                when (data) {
                         is DataConsumer.Success -> {
                                 _searchState.postValue(SearchState.Content(data.data))
                         }
@@ -110,9 +109,28 @@ class TrackSearchViewModel(
                             _searchState.postValue(SearchState.NotContent)
                         }
                     }
-                }
+            }
+        }
 
-            })
+//        trackInteractor.searchTracks(text,
+//            object : TrackConsumer<List<Track>> {
+//                override fun consume(data: DataConsumer<List<Track>>) {
+//                    when (data) {
+//                        is DataConsumer.Success -> {
+//                                _searchState.postValue(SearchState.Content(data.data))
+//                        }
+//
+//                        is DataConsumer.ResponseFailure -> {
+//                                _searchState.postValue(SearchState.NoInternet)
+//                        }
+//
+//                        is DataConsumer.ResponseNoContent -> {
+//                            _searchState.postValue(SearchState.NotContent)
+//                        }
+//                    }
+//                }
+//
+//            })
     }
 
     private fun updateHistory() {

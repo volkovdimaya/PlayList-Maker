@@ -5,6 +5,7 @@ package com.practicum.playlistmaker.domain.player.interactor
 import com.practicum.playlistmaker.domain.player.TrackPlayer
 import com.practicum.playlistmaker.domain.player.ManagerAudioPlayer
 import com.practicum.playlistmaker.domain.player.PlayerTimer
+import com.practicum.playlistmaker.ui.audioplayer.models.PlayerState
 
 class AudioPlayerInteractor(
     private val trackUrl : String,
@@ -26,6 +27,7 @@ class AudioPlayerInteractor(
                 mediaPlayer.togglePlayback(
                     onPlay = {
                         statusObserver.onPlay()
+
                         startProgressUpdates()
                     },
                     onPause = {
