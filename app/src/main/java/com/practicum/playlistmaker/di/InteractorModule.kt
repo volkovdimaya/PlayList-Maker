@@ -20,7 +20,7 @@ val interactorModule = module {
         TracksInteractorImpl(get())
     }
     factory<TrackPlayer> { (previewUrl : String) ->
-        AudioPlayerInteractor(previewUrl, get(), get())
+        AudioPlayerInteractor(previewUrl, get())
     }
     single {
         ThemeInteractor(get(), get() )

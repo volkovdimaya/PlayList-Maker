@@ -28,8 +28,6 @@ class ManagerAudioPlayerImpl(private val mediaPlayer: MediaPlayer) : ManagerAudi
                     onCompletion()
                 }
             }
-
-
         }
     }
 

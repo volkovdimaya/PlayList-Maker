@@ -4,7 +4,6 @@ package com.practicum.playlistmaker.di
 import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import com.practicum.playlistmaker.data.audioplayer.ManagerAudioPlayerImpl
-import com.practicum.playlistmaker.data.audioplayer.PlayerTimerImpl
 import com.practicum.playlistmaker.data.mapper.TrackDtoResponseMapper
 import com.practicum.playlistmaker.data.mapper.TrackResponseMapper
 import com.practicum.playlistmaker.data.repository.PLAYLIST_MAKER
@@ -15,7 +14,6 @@ import com.practicum.playlistmaker.data.sharing.ExternalNavigator
 import com.practicum.playlistmaker.data.sharing.impl.ExternalNavigatorimpl
 import com.practicum.playlistmaker.data.sharing.impl.ResourceProviderImpl
 import com.practicum.playlistmaker.domain.player.ManagerAudioPlayer
-import com.practicum.playlistmaker.domain.player.PlayerTimer
 import com.practicum.playlistmaker.domain.setting.ThemeSwitcher
 import com.practicum.playlistmaker.domain.sharing.ResourceProvider
 import com.practicum.playlistmaker.ui.setting.App
@@ -35,9 +33,6 @@ val dataModule = module {
     single {
         MediaPlayer()
     }
-    single<PlayerTimer> {
-        PlayerTimerImpl()
-    }
 
     single<SearchTrackApi> {
         Retrofit.Builder()
@@ -53,22 +48,20 @@ val dataModule = module {
     }
 
 
-
     single<ExternalNavigator> {
         ExternalNavigatorimpl(androidContext())
     }
     single<NetworkClient> {
-        RetrofitNetworkClient(androidContext(), get() )
+        RetrofitNetworkClient(androidContext(), get())
     }
 
 
     single {
         androidContext()
-            .getSharedPreferences(PLAYLIST_MAKER , AppCompatActivity.MODE_PRIVATE)
+            .getSharedPreferences(PLAYLIST_MAKER, AppCompatActivity.MODE_PRIVATE)
     }
 
     single<ThemeSwitcher> { AppThemeSwitcher(androidContext() as App) }
-
 
 
 }

@@ -6,12 +6,10 @@ interface TrackPlayer {
     fun play(statusObserver: StatusObserver)
     fun pause()
     fun release()
-
-
+    fun getProgress() : Float
 
 
     interface StatusObserver {
-        fun onProgress(progress: Float)
         fun onStop()
         fun onPlay()
         fun onCompletion()

@@ -1,22 +1,13 @@
 package com.practicum.playlistmaker.domain.player.interactor
 
 
-
 import com.practicum.playlistmaker.domain.player.TrackPlayer
 import com.practicum.playlistmaker.domain.player.ManagerAudioPlayer
-import com.practicum.playlistmaker.domain.player.PlayerTimer
-import com.practicum.playlistmaker.ui.audioplayer.models.PlayerState
 
 class AudioPlayerInteractor(
-    private val trackUrl : String,
-    private val mediaPlayer: ManagerAudioPlayer,
-    private  val playerTimer : PlayerTimer
+    private val trackUrl: String,
+    private val mediaPlayer: ManagerAudioPlayer
 ) : TrackPlayer {
-
-    private var countingDownRunnable = Runnable {
-        startProgressUpdates()
-    }
-
     private var statusObserver: TrackPlayer.StatusObserver? = null
 
     override fun play(statusObserver: TrackPlayer.StatusObserver) {
@@ -27,8 +18,6 @@ class AudioPlayerInteractor(
                 mediaPlayer.togglePlayback(
                     onPlay = {
                         statusObserver.onPlay()
-
-                        startProgressUpdates()
                     },
                     onPause = {
                         statusObserver.onStop()
@@ -43,7 +32,6 @@ class AudioPlayerInteractor(
 
     override fun pause() {
         statusObserver?.let {
-            playerTimer.removeCallbacks(countingDownRunnable)
             mediaPlayer.pause {
                 it.onStop()
             }
@@ -55,16 +43,5 @@ class AudioPlayerInteractor(
         statusObserver = null
     }
 
-
-
-
-    private fun startProgressUpdates() {
-        val progress = mediaPlayer.getCurrentPosition() / 1000f
-        statusObserver?.onProgress(progress)
-        playerTimer.postDelayed(SECOND, countingDownRunnable)
-    }
-
-    companion object {
-        private const val SECOND = 1000L
-    }
+    override fun getProgress(): Float = mediaPlayer.getCurrentPosition() / 1000f
 }
