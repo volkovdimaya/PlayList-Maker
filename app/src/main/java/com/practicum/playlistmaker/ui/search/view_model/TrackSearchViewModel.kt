@@ -1,61 +1,61 @@
 package com.practicum.playlistmaker.ui.search.view_model
 
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
+
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.practicum.playlistmaker.domain.api.TrackInteractorApi
 import com.practicum.playlistmaker.domain.consumer.DataConsumer
-import com.practicum.playlistmaker.domain.consumer.TrackConsumer
-import com.practicum.playlistmaker.domain.interactor.InteractorSearchHistory
+import com.practicum.playlistmaker.domain.search.interactor.InteractorSearchHistoryImpl
 import com.practicum.playlistmaker.domain.models.Track
+import com.practicum.playlistmaker.domain.search.InteractorSearchHistory
 import com.practicum.playlistmaker.ui.search.SingleLiveEvent
 import com.practicum.playlistmaker.ui.search.models.SearchState
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 
 class TrackSearchViewModel(
-    private val interactorSearchHistory: InteractorSearchHistory,
+    private val interactorSearchHistoryImpl: InteractorSearchHistory,
     private val trackInteractor: TrackInteractorApi
 ) : ViewModel() {
     private var isClickAllowed = true
 
     private var textSearch: String = ""
 
-    private val handler = Handler(Looper.getMainLooper())
+    private var searchJob: Job? = null
 
 
-    private val _searchState: MutableLiveData<SearchState> = MutableLiveData()
-    val searchState: LiveData<SearchState> = _searchState
+    private val _searchState: MutableStateFlow<SearchState> = MutableStateFlow(SearchState.Empty)
+    val searchState: StateFlow<SearchState> = _searchState
 
     private val _navigateToTrackDetails = SingleLiveEvent<Track>()
     val navigateToTrackDetails: LiveData<Track> = _navigateToTrackDetails
 
     fun updateRequest(query: String) {
+        searchJob?.cancel()
         if (query.isEmpty()) {
             textSearch = ""
-            handler.removeCallbacks(searchRunnable)
             _searchState.value = SearchState.BtnClear(false)
             updateHistory()
 
         } else {
-            _searchState.postValue(SearchState.BtnClear(true))
+            _searchState.value = SearchState.BtnClear(true)
             searchDebounce(query)
         }
     }
+
     init {
         updateHistory()
     }
 
-    override fun onCleared() {
-        handler.removeCallbacks(searchRunnable)
-    }
-
     fun onSearchFocusGained() {
-        if (interactorSearchHistory.hasHistory()){
+        if (interactorSearchHistoryImpl.hasHistory()) {
             updateHistory()
         }
     }
@@ -65,17 +65,16 @@ class TrackSearchViewModel(
         updateHistory()
     }
 
-    private var searchRunnable = Runnable {
-        loadTrack(textSearch)
-    }
 
     private fun searchDebounce(changedText: String) {
         if (textSearch == changedText) {
             return
         }
         textSearch = changedText
-        handler.removeCallbacks(searchRunnable)
-        handler.postDelayed(searchRunnable, SEARCH_TRACK_DEBOUNCE_DELAY)
+        searchJob = viewModelScope.launch {
+            delay(SEARCH_TRACK_DEBOUNCE_DELAY)
+            loadTrack(textSearch)
+        }
     }
 
     companion object {
@@ -84,72 +83,68 @@ class TrackSearchViewModel(
 
 
         fun provideFactory(
-            interactorSearchHistory: InteractorSearchHistory,
+            interactorSearchHistoryImpl: InteractorSearchHistoryImpl,
             trackInteractor: TrackInteractorApi
         ) = viewModelFactory {
             initializer {
-                TrackSearchViewModel(interactorSearchHistory, trackInteractor)
+                TrackSearchViewModel(interactorSearchHistoryImpl, trackInteractor)
             }
         }
     }
 
     fun loadTrack(text: String) {
-
         textSearch = text
-        _searchState.postValue(SearchState.ProgressBar)
+        _searchState.value = SearchState.ProgressBar
 
-        handler.removeCallbacks(searchRunnable)
+        viewModelScope.launch {
+            trackInteractor.searchTracks(text).collect { data ->
+                when (data) {
+                    is DataConsumer.Success -> {
+                        _searchState.value = SearchState.Content(data.data)
+                    }
 
-        trackInteractor.searchTracks(text,
-            object : TrackConsumer<List<Track>> {
-                override fun consume(data: DataConsumer<List<Track>>) {
-                    when (data) {
-                        is DataConsumer.Success -> {
-                                _searchState.postValue(SearchState.Content(data.data))
-                        }
+                    is DataConsumer.ResponseFailure -> {
+                        _searchState.value = SearchState.NoInternet
+                    }
 
-                        is DataConsumer.ResponseFailure -> {
-                                _searchState.postValue(SearchState.NoInternet)
-                        }
-
-                        is DataConsumer.ResponseNoContent -> {
-                            _searchState.postValue(SearchState.NotContent)
-                        }
+                    is DataConsumer.ResponseNoContent -> {
+                        _searchState.value = SearchState.NotContent
                     }
                 }
-
-            })
+            }
+        }
     }
 
     private fun updateHistory() {
-        val history = interactorSearchHistory.getSong().reversed()
-        if (history.isNotEmpty()){
-            _searchState.postValue(SearchState.ContentHistory(history))
+        val history = interactorSearchHistoryImpl.getSong().reversed()
+        if (history.isNotEmpty()) {
+            _searchState.value = SearchState.ContentHistory(history)
+        } else {
+            _searchState.value = SearchState.Empty
         }
     }
 
     fun clearHistory() {
-        interactorSearchHistory.clear()
-        updateHistory()
-        _searchState.postValue(SearchState.Empty)
+        interactorSearchHistoryImpl.clear()
+        _searchState.value = SearchState.Empty
     }
 
-    private fun clickDebonce(): Boolean {
+    private fun clickDebounce(): Boolean {
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
-            handler.postDelayed(
-                { isClickAllowed = true },
-                CLICK_DEBOUNCE_DELAY
-            )
+            viewModelScope.launch {
+                delay(CLICK_DEBOUNCE_DELAY)
+                isClickAllowed = true
+            }
         }
         return current
     }
 
     fun onTrackClicked(track: Track) {
-        if (clickDebonce()) {
-            interactorSearchHistory.write(track)
-            if (textSearch.equals("")){
+        if (clickDebounce()) {
+            interactorSearchHistoryImpl.write(track)
+            if (textSearch.isBlank()){
                 updateHistory()
             }
             _navigateToTrackDetails.postValue(track)

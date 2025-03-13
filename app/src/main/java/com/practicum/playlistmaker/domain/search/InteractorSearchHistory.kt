@@ -1,20 +1,10 @@
-package com.practicum.playlistmaker.domain.interactor
-
+package com.practicum.playlistmaker.domain.search
 
 import com.practicum.playlistmaker.domain.models.Track
-import com.practicum.playlistmaker.domain.search.RepositorySearchHistory
 
-class InteractorSearchHistory(private val repository: RepositorySearchHistory) {
-    fun write(model: Track) {
-        repository.update(model)
-    }
-    fun clear() {
-        repository.clear()
-    }
-    fun getSong(): List<Track> {
-        return repository.getSong()
-    }
-    fun hasHistory(): Boolean {
-        return repository.hasHistory()
-    }
+interface InteractorSearchHistory {
+    fun write(model: Track)
+    fun clear()
+    fun getSong(): List<Track>
+    fun hasHistory(): Boolean
 }
