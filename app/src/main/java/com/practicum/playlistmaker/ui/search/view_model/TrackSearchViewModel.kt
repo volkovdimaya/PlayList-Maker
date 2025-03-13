@@ -2,15 +2,15 @@ package com.practicum.playlistmaker.ui.search.view_model
 
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.practicum.playlistmaker.domain.api.TrackInteractorApi
 import com.practicum.playlistmaker.domain.consumer.DataConsumer
-import com.practicum.playlistmaker.domain.interactor.InteractorSearchHistory
+import com.practicum.playlistmaker.domain.search.interactor.InteractorSearchHistoryImpl
 import com.practicum.playlistmaker.domain.models.Track
+import com.practicum.playlistmaker.domain.search.InteractorSearchHistory
 import com.practicum.playlistmaker.ui.search.SingleLiveEvent
 import com.practicum.playlistmaker.ui.search.models.SearchState
 import kotlinx.coroutines.Job
@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 
 
 class TrackSearchViewModel(
-    private val interactorSearchHistory: InteractorSearchHistory,
+    private val interactorSearchHistoryImpl: InteractorSearchHistory,
     private val trackInteractor: TrackInteractorApi
 ) : ViewModel() {
     private var isClickAllowed = true
@@ -55,7 +55,7 @@ class TrackSearchViewModel(
     }
 
     fun onSearchFocusGained() {
-        if (interactorSearchHistory.hasHistory()) {
+        if (interactorSearchHistoryImpl.hasHistory()) {
             updateHistory()
         }
     }
@@ -83,11 +83,11 @@ class TrackSearchViewModel(
 
 
         fun provideFactory(
-            interactorSearchHistory: InteractorSearchHistory,
+            interactorSearchHistoryImpl: InteractorSearchHistoryImpl,
             trackInteractor: TrackInteractorApi
         ) = viewModelFactory {
             initializer {
-                TrackSearchViewModel(interactorSearchHistory, trackInteractor)
+                TrackSearchViewModel(interactorSearchHistoryImpl, trackInteractor)
             }
         }
     }
@@ -116,7 +116,7 @@ class TrackSearchViewModel(
     }
 
     private fun updateHistory() {
-        val history = interactorSearchHistory.getSong().reversed()
+        val history = interactorSearchHistoryImpl.getSong().reversed()
         if (history.isNotEmpty()) {
             _searchState.value = SearchState.ContentHistory(history)
         } else {
@@ -125,7 +125,7 @@ class TrackSearchViewModel(
     }
 
     fun clearHistory() {
-        interactorSearchHistory.clear()
+        interactorSearchHistoryImpl.clear()
         _searchState.value = SearchState.Empty
     }
 
@@ -143,7 +143,7 @@ class TrackSearchViewModel(
 
     fun onTrackClicked(track: Track) {
         if (clickDebounce()) {
-            interactorSearchHistory.update(track)
+            interactorSearchHistoryImpl.write(track)
             if (textSearch.isBlank()){
                 updateHistory()
             }
