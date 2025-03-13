@@ -9,7 +9,6 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.practicum.playlistmaker.domain.api.TrackInteractorApi
 import com.practicum.playlistmaker.domain.consumer.DataConsumer
-import com.practicum.playlistmaker.domain.consumer.TrackConsumer
 import com.practicum.playlistmaker.domain.interactor.InteractorSearchHistory
 import com.practicum.playlistmaker.domain.models.Track
 import com.practicum.playlistmaker.ui.search.SingleLiveEvent
@@ -27,7 +26,7 @@ class TrackSearchViewModel(
 
     private var textSearch: String = ""
 
-    private var searchJob  : Job? = null
+    private var searchJob: Job? = null
 
 
     private val _searchState: MutableLiveData<SearchState> = MutableLiveData()
@@ -37,6 +36,7 @@ class TrackSearchViewModel(
     val navigateToTrackDetails: LiveData<Track> = _navigateToTrackDetails
 
     fun updateRequest(query: String) {
+        searchJob?.cancel()
         if (query.isEmpty()) {
             textSearch = ""
             _searchState.value = SearchState.BtnClear(false)
@@ -47,12 +47,13 @@ class TrackSearchViewModel(
             searchDebounce(query)
         }
     }
+
     init {
         updateHistory()
     }
 
     fun onSearchFocusGained() {
-        if (interactorSearchHistory.hasHistory()){
+        if (interactorSearchHistory.hasHistory()) {
             updateHistory()
         }
     }
@@ -68,7 +69,6 @@ class TrackSearchViewModel(
             return
         }
         textSearch = changedText
-        searchJob?.cancel()
         searchJob = viewModelScope.launch {
             delay(SEARCH_TRACK_DEBOUNCE_DELAY)
             loadTrack(textSearch)
@@ -95,54 +95,35 @@ class TrackSearchViewModel(
         _searchState.postValue(SearchState.ProgressBar)
 
         viewModelScope.launch {
-            trackInteractor.searchTracks(text).collect{ data ->
+            trackInteractor.searchTracks(text).collect { data ->
                 when (data) {
-                        is DataConsumer.Success -> {
-                                _searchState.postValue(SearchState.Content(data.data))
-                        }
-
-                        is DataConsumer.ResponseFailure -> {
-                                _searchState.postValue(SearchState.NoInternet)
-                        }
-
-                        is DataConsumer.ResponseNoContent -> {
-                            _searchState.postValue(SearchState.NotContent)
-                        }
+                    is DataConsumer.Success -> {
+                        _searchState.postValue(SearchState.Content(data.data))
                     }
+
+                    is DataConsumer.ResponseFailure -> {
+                        _searchState.postValue(SearchState.NoInternet)
+                    }
+
+                    is DataConsumer.ResponseNoContent -> {
+                        _searchState.postValue(SearchState.NotContent)
+                    }
+                }
             }
         }
-
-//        trackInteractor.searchTracks(text,
-//            object : TrackConsumer<List<Track>> {
-//                override fun consume(data: DataConsumer<List<Track>>) {
-//                    when (data) {
-//                        is DataConsumer.Success -> {
-//                                _searchState.postValue(SearchState.Content(data.data))
-//                        }
-//
-//                        is DataConsumer.ResponseFailure -> {
-//                                _searchState.postValue(SearchState.NoInternet)
-//                        }
-//
-//                        is DataConsumer.ResponseNoContent -> {
-//                            _searchState.postValue(SearchState.NotContent)
-//                        }
-//                    }
-//                }
-//
-//            })
     }
 
     private fun updateHistory() {
         val history = interactorSearchHistory.getSong().reversed()
-        if (history.isNotEmpty()){
+        if (history.isNotEmpty()) {
             _searchState.postValue(SearchState.ContentHistory(history))
+        } else {
+            _searchState.postValue(SearchState.Empty)
         }
     }
 
     fun clearHistory() {
         interactorSearchHistory.clear()
-        updateHistory()
         _searchState.postValue(SearchState.Empty)
     }
 
@@ -150,22 +131,18 @@ class TrackSearchViewModel(
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
-            viewModelScope.launch { 
+            viewModelScope.launch {
                 delay(CLICK_DEBOUNCE_DELAY)
                 isClickAllowed = true
             }
-//            handler.postDelayed(
-//                { isClickAllowed = true },
-//                CLICK_DEBOUNCE_DELAY
-//            )
         }
         return current
     }
 
     fun onTrackClicked(track: Track) {
         if (clickDebounce()) {
-            interactorSearchHistory.write(track)
-            if (textSearch.equals("")){
+            interactorSearchHistory.update(track)
+            if (textSearch.isBlank()){
                 updateHistory()
             }
             _navigateToTrackDetails.postValue(track)
