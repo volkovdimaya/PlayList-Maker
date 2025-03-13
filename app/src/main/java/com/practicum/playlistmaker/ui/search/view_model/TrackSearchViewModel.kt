@@ -15,6 +15,8 @@ import com.practicum.playlistmaker.ui.search.SingleLiveEvent
 import com.practicum.playlistmaker.ui.search.models.SearchState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 
@@ -29,8 +31,8 @@ class TrackSearchViewModel(
     private var searchJob: Job? = null
 
 
-    private val _searchState: MutableLiveData<SearchState> = MutableLiveData()
-    val searchState: LiveData<SearchState> = _searchState
+    private val _searchState: MutableStateFlow<SearchState> = MutableStateFlow(SearchState.Empty)
+    val searchState: StateFlow<SearchState> = _searchState
 
     private val _navigateToTrackDetails = SingleLiveEvent<Track>()
     val navigateToTrackDetails: LiveData<Track> = _navigateToTrackDetails
@@ -43,7 +45,7 @@ class TrackSearchViewModel(
             updateHistory()
 
         } else {
-            _searchState.postValue(SearchState.BtnClear(true))
+            _searchState.value = SearchState.BtnClear(true)
             searchDebounce(query)
         }
     }
@@ -92,21 +94,21 @@ class TrackSearchViewModel(
 
     fun loadTrack(text: String) {
         textSearch = text
-        _searchState.postValue(SearchState.ProgressBar)
+        _searchState.value = SearchState.ProgressBar
 
         viewModelScope.launch {
             trackInteractor.searchTracks(text).collect { data ->
                 when (data) {
                     is DataConsumer.Success -> {
-                        _searchState.postValue(SearchState.Content(data.data))
+                        _searchState.value = SearchState.Content(data.data)
                     }
 
                     is DataConsumer.ResponseFailure -> {
-                        _searchState.postValue(SearchState.NoInternet)
+                        _searchState.value = SearchState.NoInternet
                     }
 
                     is DataConsumer.ResponseNoContent -> {
-                        _searchState.postValue(SearchState.NotContent)
+                        _searchState.value = SearchState.NotContent
                     }
                 }
             }
@@ -116,15 +118,15 @@ class TrackSearchViewModel(
     private fun updateHistory() {
         val history = interactorSearchHistory.getSong().reversed()
         if (history.isNotEmpty()) {
-            _searchState.postValue(SearchState.ContentHistory(history))
+            _searchState.value = SearchState.ContentHistory(history)
         } else {
-            _searchState.postValue(SearchState.Empty)
+            _searchState.value = SearchState.Empty
         }
     }
 
     fun clearHistory() {
         interactorSearchHistory.clear()
-        _searchState.postValue(SearchState.Empty)
+        _searchState.value = SearchState.Empty
     }
 
     private fun clickDebounce(): Boolean {
