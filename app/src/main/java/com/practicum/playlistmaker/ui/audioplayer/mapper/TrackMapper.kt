@@ -16,20 +16,7 @@ object TrackMapper {
             artworkUrl100 = track.artworkUrl100
         )
     }
-    fun mapToTrackAudioPlayer(track: Track): TrackAudioPlayer {
-        return TrackAudioPlayer(
-            track.trackName,
-            track.artistName,
-            track.trackTimeMillis,
-            track.artworkUrl100,
-            track.trackId,
-            track.releaseDate,
-            track.primaryGenreName,
-            track.collectionName,
-            track.country,
-            track.previewUrl
-        )
-    }
+
 
     private fun getTime(time: Long): String {
         return SimpleDateFormat("mm:ss", Locale.getDefault()).format(time)

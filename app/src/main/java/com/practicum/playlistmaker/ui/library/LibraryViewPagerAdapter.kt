@@ -1,10 +1,8 @@
 package com.practicum.playlistmaker.ui.library
 
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.practicum.playlistmaker.ui.library.fragments.FavouritesFragment
+import com.practicum.playlistmaker.ui.library.favorites.fragment.FavouritesFragment
 import com.practicum.playlistmaker.ui.library.fragments.PlaylistFragment
 
 

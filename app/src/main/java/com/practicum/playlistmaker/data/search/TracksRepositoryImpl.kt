@@ -17,7 +17,6 @@ class TracksRepositoryImpl(
 
     override fun searchTracks(term: String): Flow<Resource<List<Track>>>  = flow{
         val response = networkClient.doRequest(SearchTrackRequest(term))
-//        return when (response.resultCode) {
         when (response.resultCode) {
             200 -> (response as SearchTrackResponse)
                 .results.map(trackResponseMapper::map)

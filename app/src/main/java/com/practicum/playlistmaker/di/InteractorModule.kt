@@ -2,6 +2,10 @@ package com.practicum.playlistmaker.di
 
 
 import com.practicum.playlistmaker.domain.api.TrackInteractorApi
+import com.practicum.playlistmaker.domain.db.InteractorFavorite
+import com.practicum.playlistmaker.domain.db.UseCaseGetFavoritesTracks
+import com.practicum.playlistmaker.domain.db.use_case.InteractorFavoriteImpl
+import com.practicum.playlistmaker.domain.db.use_case.UseCaseGetFavoritesTracksImpl
 import com.practicum.playlistmaker.domain.impl.TracksInteractorImpl
 import com.practicum.playlistmaker.domain.search.interactor.InteractorSearchHistoryImpl
 import com.practicum.playlistmaker.domain.interactor.ThemeInteractor
@@ -20,14 +24,17 @@ val interactorModule = module {
     single<TrackInteractorApi> {
         TracksInteractorImpl(get())
     }
-    factory<TrackPlayer> { (previewUrl : String) ->
+    factory<TrackPlayer> { (previewUrl: String) ->
         AudioPlayerInteractor(previewUrl, get())
     }
     single {
-        ThemeInteractor(get(), get() )
+        ThemeInteractor(get(), get())
     }
     single<InteractorSearchHistory> {
-        InteractorSearchHistoryImpl(get() )
+        InteractorSearchHistoryImpl(get())
     }
+
+    single<UseCaseGetFavoritesTracks> { UseCaseGetFavoritesTracksImpl(get()) }
+    single<InteractorFavorite> { InteractorFavoriteImpl(get()) }
 
 }
