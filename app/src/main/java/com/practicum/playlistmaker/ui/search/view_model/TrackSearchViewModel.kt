@@ -82,14 +82,14 @@ class TrackSearchViewModel(
         private const val CLICK_DEBOUNCE_DELAY = 2000L
 
 
-        fun provideFactory(
-            interactorSearchHistoryImpl: InteractorSearchHistoryImpl,
-            trackInteractor: TrackInteractorApi
-        ) = viewModelFactory {
-            initializer {
-                TrackSearchViewModel(interactorSearchHistoryImpl, trackInteractor)
-            }
-        }
+//        fun provideFactory(
+//            interactorSearchHistoryImpl: InteractorSearchHistoryImpl,
+//            trackInteractor: TrackInteractorApi
+//        ) = viewModelFactory {
+//            initializer {
+//                TrackSearchViewModel(interactorSearchHistoryImpl, trackInteractor)
+//            }
+//        }
     }
 
     fun loadTrack(text: String) {

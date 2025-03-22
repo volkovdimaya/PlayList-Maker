@@ -86,7 +86,7 @@
         android:id="@+id/btn_like"
         android:layout_width="@dimen/audio_player_additional_btn_resolution"
         android:layout_height="@dimen/audio_player_additional_btn_resolution"
-        android:src="@drawable/btn_like_audio_player"
+        android:src="@drawable/selector_favorite"
         app:layout_constraintBottom_toBottomOf="@+id/play"
         app:layout_constraintEnd_toStartOf="@+id/right_guideline"
         app:layout_constraintTop_toTopOf="@+id/play" />

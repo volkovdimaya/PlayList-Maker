@@ -1,24 +1,25 @@
 package com.practicum.playlistmaker.ui.audioplayer.view_model
 
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
+import com.practicum.playlistmaker.domain.db.InteractorFavorite
+import com.practicum.playlistmaker.domain.db.model.DataFavorite
+import com.practicum.playlistmaker.domain.models.Track
 import com.practicum.playlistmaker.domain.player.TrackPlayer
 import com.practicum.playlistmaker.ui.audioplayer.models.PlayStatus
-import com.practicum.playlistmaker.domain.player.models.TrackAudioPlayer
 import com.practicum.playlistmaker.ui.audioplayer.models.AudioPlayerScreenState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class TrackViewModel(
-    track: TrackAudioPlayer?,
-    private val trackPlayer: TrackPlayer
+    private val track: Track?,
+    private val trackPlayer: TrackPlayer,
+    private val InteractorFavorite: InteractorFavorite
 ) : ViewModel() {
     private val _screenStateLiveData =
         MutableLiveData<AudioPlayerScreenState>()
@@ -28,6 +29,17 @@ class TrackViewModel(
     private var timerJob: Job? = null
 
     fun getPlayStatusLiveData(): LiveData<PlayStatus> = playStatusLiveData
+
+    fun clickFavorite() {
+        viewModelScope.launch {
+            InteractorFavorite.clickFavorite(track!!).collect { track ->
+                _screenStateLiveData.value = when (track) {
+                    DataFavorite.Add -> AudioPlayerScreenState.IsFavorite(true)
+                    DataFavorite.Delete -> AudioPlayerScreenState.IsFavorite(false)
+                }
+            }
+        }
+    }
 
 
     fun play() {
@@ -54,7 +66,6 @@ class TrackViewModel(
 
     private fun startTimer() {
         timerJob = viewModelScope.launch {
-            //стоит ли тут использовать не главный поток? и использовать flow 
             while (true) {
                 delay(SECOND)
                 playStatusLiveData.value =
@@ -73,6 +84,13 @@ class TrackViewModel(
             _screenStateLiveData.postValue(
                 AudioPlayerScreenState.Content(track)
             )
+            viewModelScope.launch {
+                InteractorFavorite.isFavorite(track).collect { isFavorite ->
+                    _screenStateLiveData.postValue(
+                        AudioPlayerScreenState.IsFavorite(isFavorite)
+                    )
+                }
+            }
         }
     }
 
@@ -91,17 +109,17 @@ class TrackViewModel(
     companion object {
         private const val SECOND = 300L
 
-        fun getViewModelFactory(
-            track: TrackAudioPlayer?,
-            trackPlayer: TrackPlayer
-        ): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                TrackViewModel(
-                    track,
-                    trackPlayer,
-                )
-            }
-        }
+//        fun getViewModelFactory(
+//            track: TrackAudioPlayer?,
+//            trackPlayer: TrackPlayer
+//        ): ViewModelProvider.Factory = viewModelFactory {
+//            initializer {
+//                TrackViewModel(
+//                    track,
+//                    trackPlayer,
+//                )
+//            }
+//        }
     }
 
     private fun getCurrentPlayStatus(): PlayStatus {

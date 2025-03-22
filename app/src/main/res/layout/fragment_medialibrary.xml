@@ -28,6 +28,7 @@
         android:background="@color/background_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:tabTextAppearance="@style/CustomTabText"
         app:tabIndicatorColor="@color/tablayout"
         app:tabTextColor="@color/color_title"/>
 

@@ -7,8 +7,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.ActivityAudioPlayerBinding
+import com.practicum.playlistmaker.domain.models.Track
 import com.practicum.playlistmaker.ui.audioplayer.models.PlayStatus
-import com.practicum.playlistmaker.domain.player.models.TrackAudioPlayer
 import com.practicum.playlistmaker.ui.audioplayer.models.AudioPlayerScreenState
 import com.practicum.playlistmaker.ui.audioplayer.view_model.TrackViewModel
 import com.practicum.playlistmaker.ui.search.fragment.TRACK_DETAILS
@@ -24,7 +24,7 @@ class AudioPlayerActivity : AppCompatActivity() {
 
 
     private val viewModel: TrackViewModel by viewModel {
-        val track = intent.getSerializableExtra(TRACK_DETAILS) as? TrackAudioPlayer
+        val track = intent.getSerializableExtra(TRACK_DETAILS) as? Track
             ?: throw IllegalArgumentException("Ошибка, отсутствует песня")
 
         parametersOf(track)
@@ -42,6 +42,10 @@ class AudioPlayerActivity : AppCompatActivity() {
             finish()
         }
 
+        binding.btnLike.setOnClickListener {
+            viewModel.clickFavorite()
+        }
+
         viewModel.screenStateLiveData.observe(this) { screenState ->
             when (screenState) {
                 is AudioPlayerScreenState.Content -> {
@@ -51,6 +55,10 @@ class AudioPlayerActivity : AppCompatActivity() {
                 is AudioPlayerScreenState.Error -> {
                     Toast.makeText(this, getString(R.string.toast_error), Toast.LENGTH_SHORT).show()
                     finish()
+                }
+
+                is AudioPlayerScreenState.IsFavorite -> {
+                    renderBtnFavorite(screenState.active)
                 }
             }
         }
@@ -62,6 +70,10 @@ class AudioPlayerActivity : AppCompatActivity() {
         binding.play.setOnClickListener {
             viewModel.play()
         }
+    }
+
+    private fun renderBtnFavorite(active: Boolean) {
+        binding.btnLike.isSelected = active
     }
 
     private fun changeButtonStyle(playStatus: PlayStatus?) {
@@ -88,7 +100,7 @@ class AudioPlayerActivity : AppCompatActivity() {
         pausePlayback()
     }
 
-    private fun displayTrackData(track: TrackAudioPlayer) {
+    private fun displayTrackData(track: Track) {
         binding.trackName.text = track.trackName
         binding.artistName.text = track.artistName
         binding.album.text = track.collectionName

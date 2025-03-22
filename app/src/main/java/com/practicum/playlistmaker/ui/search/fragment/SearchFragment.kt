@@ -22,9 +22,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.practicum.playlistmaker.databinding.FragmentSearchBinding
 import com.practicum.playlistmaker.domain.models.Track
-import com.practicum.playlistmaker.ui.audioplayer.mapper.TrackMapper
 import com.practicum.playlistmaker.ui.search.TrackAdapter
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -192,13 +190,10 @@ class SearchFragment : Fragment() {
                 render(it)
             }
         }
-//        viewModel.searchState.observe(viewLifecycleOwner) {
-//            render(it)
-//        }
 
         viewModel.navigateToTrackDetails.observe(viewLifecycleOwner) { track ->
             val intent = Intent(requireContext(), AudioPlayerActivity::class.java)
-            intent.putExtra(TRACK_DETAILS, TrackMapper.mapToTrackAudioPlayer(track))
+            intent.putExtra(TRACK_DETAILS, track)
             startActivity(intent)
         }
     }
