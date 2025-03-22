@@ -13,7 +13,7 @@ fragment = "1.8.6"
 activity = "1.8.1"
 appcompat = "1.7.0"
 material = "1.12.0"
-constraintlayout = "2.1.4"
+constraintlayout = "2.2.1"
 
 roomCompilerVersion = "2.5.2"
 roomKtx = "2.5.2"

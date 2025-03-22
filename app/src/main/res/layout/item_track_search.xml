@@ -39,13 +39,16 @@
             android:layout_height="13dp">
 
             <TextView
+                android:text=""
                 android:id="@+id/artist_name"
                 style="@style/ItemTrackDescriptionText"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintEnd_toStartOf="@id/imageView"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constrainedWidth="true"/>
 
             <ImageView
                 android:id="@+id/imageView"
@@ -57,16 +60,27 @@
                 app:srcCompat="@drawable/point_ic" />
 
             <TextView
+
+                android:textSize="@dimen/item_track_search_text_size"
+                android:textColor="@color/search_item_description"
                 android:id="@+id/track_time"
-                style="@style/ItemTrackDescriptionText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text=""
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/imageView"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+            <View
+                android:id="@+id/view_separator"
+                android:layout_width="1dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/track_time" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
 
 
     </LinearLayout>

@@ -14,7 +14,6 @@ import kotlinx.coroutines.launch
 
 class FavouritesViewModel(
     private val useCaseGetFavoritesTracks: UseCaseGetFavoritesTracks,
-    private val interactorSearchHistoryImpl: InteractorSearchHistory,
 ) : ViewModel() {
     private val _state: MutableLiveData<FavouritesState> = MutableLiveData()
     val state: LiveData<FavouritesState> = _state
@@ -51,7 +50,6 @@ class FavouritesViewModel(
 
     fun onTrackClicked(track: Track) {
         if (clickDebounce()) {
-            interactorSearchHistoryImpl.write(track)
             _navigateToTrackDetails.postValue(track)
         }
     }
