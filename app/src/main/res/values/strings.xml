@@ -2,6 +2,7 @@
     <string name="app_name">Playlist Maker</string>
     <string name="search">Поиск</string>
     <string name="mediateka">Медиатека</string>
+    <string name="add_play_list">Новый плейлист</string>
     <string name="description_btn_back">Кнопка назад</string>
     <string name="Media">Медиатека</string>
     <string name="Setting">Настройки</string>
@@ -35,4 +36,8 @@
 
     <string name="favourites_tracks">Избранные треки</string>
     <string name="playlists">Плейлисты</string>
+    <string name="image_add_playlist">изображение добавить плей лист</string>
+    <string name="name_playlist">Название*</string>
+    <string name="description_playlist">Описание</string>
+    <string name="btn_create_playlist">Создать</string>
 </resources>
