@@ -58,28 +58,7 @@ class AddNewPlayListFragment : Fragment() {
 
         val requester = PermissionRequester.instance()
 
-        lifecycleScope.launch {
-            requester.request(
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            ).collect { result ->
-                when (result) {
-                    is PermissionResult.Granted -> {
-                        Toast.makeText(requireContext(), "Разрешение на использование геолокации получено", Toast.LENGTH_LONG).show()
-                    }
-                    is PermissionResult.Denied.DeniedPermanently -> {
-                        Toast.makeText(requireContext(), "Разрешение на использование геолокации отклонено", Toast.LENGTH_LONG).show()
 
-                    }
-                    is PermissionResult.Denied.NeedsRationale -> {
-                        Toast.makeText(requireContext(), "Разрешение на использование геолокации необходимо для доступа к Bluetooth-устройствам", Toast.LENGTH_LONG).show()
-                    }
-                    is PermissionResult.Cancelled -> {
-                        return@collect
-                    }
-                }
-
-            }
-        }
 
 
 
