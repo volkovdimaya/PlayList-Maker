@@ -3,15 +3,14 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
-//    id 'kotlin-kapt'
     id("com.google.devtools.ksp")
+    id("androidx.navigation.safeargs.kotlin")
 
 
 }
 ksp {
     arg("room.schemaLocation", "$projectDir/schemas")
 }
-
 android {
     namespace 'com.practicum.playlistmaker'
     compileSdk 34
@@ -46,8 +45,7 @@ android {
 
 dependencies {
 
-//    implementation libs.adapterdelegates4.kotlin.dsl
-//    implementation libs.x.x.x
+
 
     // Подключаем основную библиотеку
     implementation 'com.hannesdorfmann:adapterdelegates4-kotlin-dsl:4.3.2'
@@ -58,6 +56,8 @@ dependencies {
 
     implementation libs.room.ktx
     implementation libs.room.runtime
+
+    implementation libs.peko
 
 
 
@@ -85,7 +85,6 @@ dependencies {
 
     implementation(libs.constraint.layout)
 
-//    implementation(libs.annotations)
 
     testImplementation libs.junit
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
@@ -94,9 +93,3 @@ dependencies {
 
 
 }
-//tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
-//    kotlinOptions {
-//        jvmTarget = "17"
-//        languageVersion = "1.9"
-//    }
-//}
