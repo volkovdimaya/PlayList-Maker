@@ -8,6 +8,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.ActivityAudioPlayerBinding
 import com.practicum.playlistmaker.domain.models.Track
+import com.practicum.playlistmaker.ui.audioplayer.bottom_sheet.fragment.BottomSheetFragment
 import com.practicum.playlistmaker.ui.audioplayer.models.PlayStatus
 import com.practicum.playlistmaker.ui.audioplayer.models.AudioPlayerScreenState
 import com.practicum.playlistmaker.ui.audioplayer.view_model.TrackViewModel
@@ -18,14 +19,16 @@ import org.koin.core.parameter.parametersOf
 
 class AudioPlayerActivity : AppCompatActivity() {
 
-    private var _binding : ActivityAudioPlayerBinding? = null
+    private var _binding: ActivityAudioPlayerBinding? = null
     private val binding
         get() = _binding!!
 
+    private lateinit var  trackId: String
 
     private val viewModel: TrackViewModel by viewModel {
         val track = intent.getSerializableExtra(TRACK_DETAILS) as? Track
             ?: throw IllegalArgumentException("Ошибка, отсутствует песня")
+        trackId = track.trackId
 
         parametersOf(track)
     }
@@ -70,6 +73,12 @@ class AudioPlayerActivity : AppCompatActivity() {
         binding.play.setOnClickListener {
             viewModel.play()
         }
+        binding.btnAdd.setOnClickListener {
+            BottomSheetFragment.newInstance(trackId).show(supportFragmentManager, "MyBottomSheet")
+        }
+
+
+
     }
 
     private fun renderBtnFavorite(active: Boolean) {
