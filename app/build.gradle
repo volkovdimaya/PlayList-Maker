@@ -5,6 +5,11 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 //    id 'kotlin-kapt'
     id("com.google.devtools.ksp")
+
+
+}
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
 }
 
 android {
