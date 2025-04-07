@@ -1,63 +1,70 @@
-package com.practicum.playlistmaker.ui.audioplayer.activity
+package com.practicum.playlistmaker.ui.audioplayer.fragment
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.databinding.ActivityAudioPlayerBinding
+import com.practicum.playlistmaker.databinding.FragmentAudioPlayerBinding
 import com.practicum.playlistmaker.domain.models.Track
 import com.practicum.playlistmaker.ui.audioplayer.bottom_sheet.fragment.BottomSheetFragment
 import com.practicum.playlistmaker.ui.audioplayer.models.PlayStatus
 import com.practicum.playlistmaker.ui.audioplayer.models.AudioPlayerScreenState
 import com.practicum.playlistmaker.ui.audioplayer.view_model.TrackViewModel
-import com.practicum.playlistmaker.ui.search.fragment.TRACK_DETAILS
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
 
-class AudioPlayerActivity : AppCompatActivity() {
+class AudioPlayerFragment : Fragment() {
 
-    private var _binding: ActivityAudioPlayerBinding? = null
+    private var _binding: FragmentAudioPlayerBinding? = null
     private val binding
         get() = _binding!!
 
     private lateinit var  trackId: String
 
     private val viewModel: TrackViewModel by viewModel {
-        val track = intent.getSerializableExtra(TRACK_DETAILS) as? Track
-            ?: throw IllegalArgumentException("Ошибка, отсутствует песня")
-        trackId = track.trackId
-
+        val track = arguments?.let {
+            AudioPlayerFragmentArgs.fromBundle(it).track
+        }
+        trackId = track?.trackId ?: ""
         parametersOf(track)
     }
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentAudioPlayerBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        _binding = ActivityAudioPlayerBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         binding.toolbarAudioPlayer.setNavigationOnClickListener {
-            finish()
+            findNavController().popBackStack()
         }
-
         binding.btnLike.setOnClickListener {
             viewModel.clickFavorite()
         }
 
-        viewModel.screenStateLiveData.observe(this) { screenState ->
+        viewModel.screenStateLiveData.observe(viewLifecycleOwner) { screenState ->
             when (screenState) {
                 is AudioPlayerScreenState.Content -> {
                     displayTrackData(screenState.trackModel)
                 }
 
                 is AudioPlayerScreenState.Error -> {
-                    Toast.makeText(this, getString(R.string.toast_error), Toast.LENGTH_SHORT).show()
-                    finish()
+
+                    Toast.makeText(requireContext(), getString(R.string.toast_error), Toast.LENGTH_SHORT).show()
+                    findNavController().popBackStack()
                 }
 
                 is AudioPlayerScreenState.IsFavorite -> {
@@ -66,7 +73,7 @@ class AudioPlayerActivity : AppCompatActivity() {
             }
         }
 
-        viewModel.getPlayStatusLiveData().observe(this) { playStatus ->
+        viewModel.getPlayStatusLiveData().observe(viewLifecycleOwner) { playStatus ->
             changeButtonStyle(playStatus)
         }
 
@@ -74,11 +81,8 @@ class AudioPlayerActivity : AppCompatActivity() {
             viewModel.play()
         }
         binding.btnAdd.setOnClickListener {
-            BottomSheetFragment.newInstance(trackId).show(supportFragmentManager, "MyBottomSheet")
+            BottomSheetFragment.newInstance(trackId).show(parentFragmentManager, "MyBottomSheet")
         }
-
-
-
     }
 
     private fun renderBtnFavorite(active: Boolean) {
