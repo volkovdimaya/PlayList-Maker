@@ -46,6 +46,14 @@ android {
 
 dependencies {
 
+//    implementation libs.adapterdelegates4.kotlin.dsl
+//    implementation libs.x.x.x
+
+    // Подключаем основную библиотеку
+    implementation 'com.hannesdorfmann:adapterdelegates4-kotlin-dsl:4.3.2'
+    // Подключаем модуль для работы с ViewBinding
+    implementation 'com.hannesdorfmann:adapterdelegates4-kotlin-dsl-viewbinding:4.3.2'
+
     ksp(libs.room.compiler)
 
     implementation libs.room.ktx
