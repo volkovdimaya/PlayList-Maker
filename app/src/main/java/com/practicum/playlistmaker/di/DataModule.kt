@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.room.Room
 import com.practicum.playlistmaker.data.audioplayer.ManagerAudioPlayerImpl
 import com.practicum.playlistmaker.data.db.AppDatabase
-import com.practicum.playlistmaker.data.db.MIGRATION_2_3
 import com.practicum.playlistmaker.data.mapper.TrackDtoResponseMapper
 import com.practicum.playlistmaker.data.mapper.TrackResponseMapper
 import com.practicum.playlistmaker.data.repository.PLAYLIST_MAKER
@@ -46,8 +45,7 @@ val dataModule = module {
     }
     single {
         Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")
-            .addMigrations(MIGRATION_2_3)
-
+//            .fallbackToDestructiveMigration()
             .build()
     }
 

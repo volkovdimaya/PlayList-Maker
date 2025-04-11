@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:id="@+id/standard_bottom_sheet"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/sheet_add_playlist"
+    android:orientation="vertical"
+    android:paddingHorizontal="13dp">
+
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:background="@color/bottomsheet_view" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingTop="30dp"
+        android:paddingBottom="28dp"
+        android:text="@string/add_playlist_button_sheet"
+        android:textColor="@color/color_title"
+        android:textSize="19sp" />
+
+    <Button
+        android:id="@+id/btn_new_playlist"
+        style="@style/ButtonSheetAddPlaylist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/btn_new_play_list" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:paddingTop="24dp"
+        android:id="@+id/recycler_playlist_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</LinearLayout>
+

@@ -32,4 +32,10 @@
 
     <color name="btn_play_and_pause">#1A1B22</color>
 
+    <color name="edt_add_player">#1A1B22</color>
+    <color name="btn_disabled">#AEAFB4</color>
+    <color name="btn_enabled">#3772E7</color>
+    <color name="item_playllist_text">#1A1B22</color>
+    <color name="bottomsheet_view">#E6E8EB</color>
+
 </resources>

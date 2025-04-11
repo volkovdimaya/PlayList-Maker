@@ -21,4 +21,8 @@
     <color name="botton_menu">#FFFFFF</color>
     <color name="backgroud_search">#FFFFFF</color>
 
+    <color name="edt_add_player">#FFFFFF</color>
+    <color name="item_playllist_text">#FFFFFF</color>
+    <color name="bottomsheet_view">#FFFFFF</color>
+
 </resources>

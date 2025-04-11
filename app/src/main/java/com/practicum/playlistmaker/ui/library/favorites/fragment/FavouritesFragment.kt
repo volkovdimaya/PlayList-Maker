@@ -1,21 +1,20 @@
 package com.practicum.playlistmaker.ui.library.favorites.fragment
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.databinding.FragmentFavouritesBinding
 import com.practicum.playlistmaker.domain.models.Track
-import com.practicum.playlistmaker.ui.audioplayer.activity.AudioPlayerActivity
 import com.practicum.playlistmaker.ui.library.favorites.view_model.FavouritesViewModel
+import com.practicum.playlistmaker.ui.library.fragments.MediaLibraryFragmentDirections
 import com.practicum.playlistmaker.ui.library.models.FavouritesState
 import com.practicum.playlistmaker.ui.search.TrackAdapter
-import com.practicum.playlistmaker.ui.search.fragment.TRACK_DETAILS
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FavouritesFragment : Fragment() {
@@ -54,9 +53,11 @@ class FavouritesFragment : Fragment() {
         recyclerViewTrak.adapter = trakAdapter
 
         viewModel.navigateToTrackDetails.observe(viewLifecycleOwner) { track ->
-            val intent = Intent(requireContext(), AudioPlayerActivity::class.java)
-            intent.putExtra(TRACK_DETAILS, track)
-            startActivity(intent)
+            val action = MediaLibraryFragmentDirections.actionMediaLibraryFragmentToAudioPlayerFragment(track)
+            findNavController().navigate(action)
+//            val intent = Intent(requireContext(), AudioPlayerFragment::class.java)
+//            intent.putExtra(TRACK_DETAILS, track)
+//            startActivity(intent)
         }
     }
 

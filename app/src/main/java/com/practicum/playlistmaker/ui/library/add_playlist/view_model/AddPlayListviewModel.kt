@@ -26,16 +26,21 @@ class AddPlayListviewModel(
 
     val state: LiveData<AddPlaylistState> = _state
 
+    private var _content: AddPlaylistState.Content? = null
+    val content: AddPlaylistState.Content
+        get() = _content ?: AddPlaylistState.Content()
+
     init {
-        _state.postValue(AddPlaylistState.BtnDisabled)
+        _state.postValue(content)
     }
 
     fun changeTitle(title: String) {
         if (title.isNotEmpty()) {
-            _state.postValue(AddPlaylistState.BtnEnabled)
+            _content = content.copy(btnEnabled = true)
         } else {
-            _state.postValue(AddPlaylistState.BtnDisabled)
+            _content = content.copy(btnEnabled = false)
         }
+        _state.postValue(content)
     }
 
     fun validationForm(playlist: Playlist) {
@@ -76,7 +81,9 @@ class AddPlayListviewModel(
     }
 
     fun addImage(uri: Uri) {
-        _state.value = AddPlaylistState.ShowPic(uri)
+        _content = content.copy(uri = uri)
+        _state.postValue(content)
+//        _state.value = AddPlaylistState.ShowPic(uri)
     }
 
 

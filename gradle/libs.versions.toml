@@ -1,8 +1,10 @@
 [versions]
 
+adapterdelegates4KotlinDsl = "4.3.2"
 agp = "8.8.2"
 kotlinkapt = "1.9.0"
 junit = "4.13.2"
+peko = "3.0.5"
 retrofit = "2.9.0"
 glide = "4.14.2"
 glideCompiler = "4.14.2"
@@ -16,14 +18,16 @@ material = "1.12.0"
 constraintlayout = "2.2.1"
 
 roomCompilerVersion = "2.5.2"
-roomKtx = "2.5.2"
+roomKtx = "2.6.1"
 roomruntime = "2.5.2"
 
 
 [libraries]
 
+#adapterdelegates4-kotlin-dsl = { module = "com.hannesdorfmann:adapterdelegates4-kotlin-dsl", version.ref = "adapterdelegates4KotlinDsl" }
 junit = { module = "junit:junit", version.ref = "junit" }
 
+peko = { module = "com.markodevcic:peko", version.ref = "peko" }
 retrofit-core = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit-converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 
@@ -49,6 +53,7 @@ constraint-layout = { module = "androidx.constraintlayout:constraintlayout", ver
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomCompilerVersion" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomKtx" }
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomruntime" }
+#x-x-x = { module = "com.hannesdorfmann.adapterdelegates4-kotlin-dsl-viewbinding:4.3.2" }
 
 
 [plugins]

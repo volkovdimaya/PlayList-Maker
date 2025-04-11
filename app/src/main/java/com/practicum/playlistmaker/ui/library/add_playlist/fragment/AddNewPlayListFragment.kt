@@ -1,33 +1,26 @@
 package com.practicum.playlistmaker.ui.library.add_playlist.fragment
 
-import android.Manifest
 import android.app.AlertDialog
-import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
-import com.markodevcic.peko.PermissionRequester
-import com.markodevcic.peko.PermissionResult
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentAddNewPlaylistBinding
 import com.practicum.playlistmaker.ui.library.add_playlist.models.AddPlaylistState
 import com.practicum.playlistmaker.ui.library.add_playlist.models.Playlist
 import com.practicum.playlistmaker.ui.library.add_playlist.view_model.AddPlayListviewModel
-import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class AddNewPlayListFragment : Fragment() {
@@ -78,6 +71,7 @@ class AddNewPlayListFragment : Fragment() {
     }
 
     private fun playlistCreate(): Playlist {
+
         return with(binding) {
             Playlist(
                 title = namePlaylist.text.toString(),
@@ -94,20 +88,15 @@ class AddNewPlayListFragment : Fragment() {
     }
 
     private fun render(it: AddPlaylistState) {
-        Log.d("AddNewPlayListFragment", "render: $it")
         when (it) {
-            AddPlaylistState.BtnEnabled -> {
-                binding.btnCreatePlaylist.isEnabled = true
+            is AddPlaylistState.Content -> {
+                renderContent(it)
             }
-            AddPlaylistState.BtnDisabled -> {
-                binding.btnCreatePlaylist.isEnabled = false
-            }
-            is AddPlaylistState.ShowPic -> {
-                renderPic(it)
-            }
+
             is AddPlaylistState.HasValidField -> {
                 handleValidField(it)
             }
+
             is AddPlaylistState.CreatePlayList -> {
                 renderCreatePlaylist(it)
             }
@@ -138,10 +127,15 @@ class AddNewPlayListFragment : Fragment() {
         }
     }
 
-    private fun renderPic(it: AddPlaylistState.ShowPic) {
-        binding.defaultImageAddPlaylist.visibility = View.GONE
-        binding.imageAddPlaylist.setImageURI(it.uri)
-        binding.imageAddPlaylist.visibility = View.VISIBLE
+    private fun renderContent(it: AddPlaylistState.Content) {
+        pic = it.uri
+        binding.btnCreatePlaylist.isEnabled = it.btnEnabled
+
+        if (it.uri != null) {
+            binding.defaultImageAddPlaylist.visibility = View.GONE
+            binding.imageAddPlaylist.setImageURI(it.uri)
+            binding.imageAddPlaylist.visibility = View.VISIBLE
+        }
     }
 
     override fun onDestroy() {
@@ -173,6 +167,7 @@ class AddNewPlayListFragment : Fragment() {
 
     private val onBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
+
             viewModel.validationForm(playlistCreate())
         }
     }
@@ -180,11 +175,8 @@ class AddNewPlayListFragment : Fragment() {
 
     private val pickMedia =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            pic = uri
             if (uri != null) {
                 viewModel.addImage(uri)
-
-
             } else {
                 Log.d("PhotoPicker", "No media selected")
             }

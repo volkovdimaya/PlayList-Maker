@@ -28,14 +28,19 @@ class TrackViewModel(
 
     private var timerJob: Job? = null
 
+    private var _content: AudioPlayerScreenState.Content? = null
+    private val content get() = _content!!
+
     fun getPlayStatusLiveData(): LiveData<PlayStatus> = playStatusLiveData
 
+
     fun clickFavorite() {
+
         viewModelScope.launch {
             InteractorFavorite.clickFavorite(track!!).collect { track ->
                 _screenStateLiveData.value = when (track) {
-                    DataFavorite.Add -> AudioPlayerScreenState.IsFavorite(true)
-                    DataFavorite.Delete -> AudioPlayerScreenState.IsFavorite(false)
+                    DataFavorite.Add -> _content?.copy(isFavorite = true)
+                    DataFavorite.Delete -> _content?.copy(isFavorite = false)
                 }
             }
         }
@@ -81,18 +86,26 @@ class TrackViewModel(
                 AudioPlayerScreenState.Error
             )
         } else {
+            _content = AudioPlayerScreenState.Content(track, false)
+
             _screenStateLiveData.postValue(
-                AudioPlayerScreenState.Content(track)
+//                AudioPlayerScreenState.Content(track)
+                content
             )
             viewModelScope.launch {
                 InteractorFavorite.isFavorite(track).collect { isFavorite ->
+                    _content = content.copy(
+                        isFavorite = isFavorite
+                    )
                     _screenStateLiveData.postValue(
-                        AudioPlayerScreenState.IsFavorite(isFavorite)
+//                        AudioPlayerScreenState.IsFavorite(isFavorite)
+                                content
                     )
                 }
             }
         }
     }
+
 
     val screenStateLiveData: LiveData<AudioPlayerScreenState> = _screenStateLiveData
 
