@@ -1,9 +1,9 @@
 package com.practicum.playlistmaker.ui.welcomescreen
 
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -24,18 +24,21 @@ class MainActivity : AppCompatActivity() {
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomnavigation)
         bottomNavigationView.setupWithNavController(navController)
 
+        val bottomNavigationLayout = findViewById<LinearLayout>(R.id.bottomnavigation_layout)
+
+
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.addNewPlayListFragment -> {
-                    bottomNavigationView.visibility = View.GONE
+                    bottomNavigationLayout.visibility = View.GONE
                 }
 
                 R.id.audioPlayerFragment -> {
-                    bottomNavigationView.visibility = View.GONE
+                    bottomNavigationLayout.visibility = View.GONE
                 }
 
                 else -> {
-                    bottomNavigationView.visibility = View.VISIBLE
+                    bottomNavigationLayout.visibility = View.VISIBLE
                 }
             }
         }
