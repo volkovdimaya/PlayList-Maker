@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import com.markodevcic.peko.PermissionRequester
 import com.markodevcic.peko.PermissionResult
 import com.practicum.playlistmaker.R
@@ -55,11 +56,6 @@ class AddNewPlayListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
 //        requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-
-        val requester = PermissionRequester.instance()
-
-
-
 
 
         binding.namePlaylist.addTextChangedListener {
@@ -98,6 +94,7 @@ class AddNewPlayListFragment : Fragment() {
     }
 
     private fun render(it: AddPlaylistState) {
+        Log.d("AddNewPlayListFragment", "render: $it")
         when (it) {
             AddPlaylistState.BtnEnabled -> {
                 binding.btnCreatePlaylist.isEnabled = true
@@ -120,10 +117,10 @@ class AddNewPlayListFragment : Fragment() {
 
     private fun renderCreatePlaylist(it: AddPlaylistState.CreatePlayList) {
         if (it.successfully) {
-            Toast.makeText(
-                requireContext(),
+            Snackbar.make(
+                binding.root,
                 "Плейлист ${playlistCreate().title} создан",
-                Toast.LENGTH_SHORT
+                Snackbar.LENGTH_LONG
             ).show()
             findNavController().popBackStack()
         } else {
@@ -149,7 +146,7 @@ class AddNewPlayListFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+//        requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         _binding = null
     }
 
