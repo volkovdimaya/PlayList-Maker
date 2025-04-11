@@ -118,6 +118,7 @@ class SearchFragment : Fragment() {
         noInternetPlaceHolder.isVisible = false
         noContentPlaceHolder.isVisible = false
         binding.linearLayoutHistory.isVisible = false
+        showBtnClear(true)
     }
 
     private fun showNoInternet() {
@@ -126,6 +127,7 @@ class SearchFragment : Fragment() {
         recyclerViewTrak.visibility = View.GONE
         progressBar.visibility = View.GONE
         binding.linearLayoutHistory.isVisible = false
+        showBtnClear(true)
     }
 
     private fun showNoContent() {
@@ -134,6 +136,7 @@ class SearchFragment : Fragment() {
         noContentPlaceHolder.visibility = View.VISIBLE
         progressBar.visibility = View.GONE
         binding.linearLayoutHistory.isVisible = false
+        showBtnClear(true)
     }
 
     private fun showContentHistory(history: List<Track>) {
@@ -143,6 +146,7 @@ class SearchFragment : Fragment() {
         noContentPlaceHolder.visibility = View.GONE
         progressBar.visibility = View.GONE
         binding.linearLayoutHistory.isVisible = true
+        showBtnClear(false)
     }
 
     private fun showEmpty() {
@@ -151,6 +155,7 @@ class SearchFragment : Fragment() {
         noContentPlaceHolder.visibility = View.GONE
         progressBar.visibility = View.GONE
         binding.linearLayoutHistory.isVisible = false
+        showBtnClear(false)
 
     }
 
@@ -158,6 +163,7 @@ class SearchFragment : Fragment() {
         (binding.recyclerTrack.adapter as TrackAdapter).updateData(tracks)
         progressBar.visibility = View.GONE
         recyclerViewTrak.visibility = View.VISIBLE
+        showBtnClear(true)
     }
 
     private fun clickOnTrack(track: Track) {
