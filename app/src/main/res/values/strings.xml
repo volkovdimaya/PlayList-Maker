@@ -43,7 +43,7 @@
     <string name="cancle">Отмена</string>
     <string name="message_data_lose">Все несохраненные данные будут потеряны</string>
     <string name="title_complite_playlist">Завершить создание плейлиста?</string>
-    <string name="yes">Да</string>
+    <string name="exit">Завершить</string>
     <string name="image_playlist">изображение плейлиста</string>
     <string name="add_playlist_button_sheet">Добавить в плейлист</string>
 </resources>

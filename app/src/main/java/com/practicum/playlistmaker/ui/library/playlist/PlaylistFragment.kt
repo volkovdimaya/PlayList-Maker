@@ -77,5 +77,10 @@ class PlaylistFragment : Fragment(){
        binding.emptyPlaylist.isVisible = true
         binding.recyclerPlaylist.isVisible = false
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
 }
 

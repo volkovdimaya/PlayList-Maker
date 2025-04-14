@@ -17,6 +17,12 @@ fun playlistItemAdapterDelegates() = adapterDelegateViewBinding<PlaylistItem, RV
             .placeholder(R.drawable.place_holder_cover)
             .into(binding.image)
         binding.title.text = item.title
-        binding.count.text = "${item.trackCount} треков"
+
+        val wordTrack = when (item.trackCount) {
+            1 -> "трек"
+            in 2..4 -> "трека"
+            else -> "треков"
+        }
+        binding.count.text = "${item.trackCount} $wordTrack"
     }
 }

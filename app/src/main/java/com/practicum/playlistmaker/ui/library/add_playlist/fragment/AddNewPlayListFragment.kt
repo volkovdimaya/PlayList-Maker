@@ -149,7 +149,7 @@ class AddNewPlayListFragment : Fragment() {
             .setTitle(getString(R.string.title_complite_playlist))
             .setMessage(getString(R.string.message_data_lose))
             .setNeutralButton(getString(R.string.cancle)) { dialog, which -> }
-            .setPositiveButton(getString(R.string.yes)) { dialog, which ->
+            .setPositiveButton(getString(R.string.exit)) { dialog, which ->
                 onBackPressedCallback.remove()
                 requireActivity().onBackPressedDispatcher.onBackPressed()
             }
