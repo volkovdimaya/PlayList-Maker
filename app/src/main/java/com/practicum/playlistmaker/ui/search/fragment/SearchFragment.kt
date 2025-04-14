@@ -2,7 +2,6 @@ package com.practicum.playlistmaker.ui.search.fragment
 
 import androidx.core.widget.addTextChangedListener
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,7 +15,6 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.ui.search.view_model.TrackSearchViewModel
-import com.practicum.playlistmaker.ui.audioplayer.activity.AudioPlayerActivity
 import com.practicum.playlistmaker.ui.search.models.SearchState
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -25,9 +23,8 @@ import com.practicum.playlistmaker.domain.models.Track
 import com.practicum.playlistmaker.ui.search.TrackAdapter
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import androidx.navigation.fragment.findNavController
 
-
-const val TRACK_DETAILS = "TRACK_DETAILS"
 
 class SearchFragment : Fragment() {
 
@@ -121,6 +118,7 @@ class SearchFragment : Fragment() {
         noInternetPlaceHolder.isVisible = false
         noContentPlaceHolder.isVisible = false
         binding.linearLayoutHistory.isVisible = false
+        showBtnClear(true)
     }
 
     private fun showNoInternet() {
@@ -129,6 +127,7 @@ class SearchFragment : Fragment() {
         recyclerViewTrak.visibility = View.GONE
         progressBar.visibility = View.GONE
         binding.linearLayoutHistory.isVisible = false
+        showBtnClear(true)
     }
 
     private fun showNoContent() {
@@ -137,6 +136,7 @@ class SearchFragment : Fragment() {
         noContentPlaceHolder.visibility = View.VISIBLE
         progressBar.visibility = View.GONE
         binding.linearLayoutHistory.isVisible = false
+        showBtnClear(true)
     }
 
     private fun showContentHistory(history: List<Track>) {
@@ -146,6 +146,7 @@ class SearchFragment : Fragment() {
         noContentPlaceHolder.visibility = View.GONE
         progressBar.visibility = View.GONE
         binding.linearLayoutHistory.isVisible = true
+        showBtnClear(false)
     }
 
     private fun showEmpty() {
@@ -154,6 +155,7 @@ class SearchFragment : Fragment() {
         noContentPlaceHolder.visibility = View.GONE
         progressBar.visibility = View.GONE
         binding.linearLayoutHistory.isVisible = false
+        showBtnClear(false)
 
     }
 
@@ -161,6 +163,7 @@ class SearchFragment : Fragment() {
         (binding.recyclerTrack.adapter as TrackAdapter).updateData(tracks)
         progressBar.visibility = View.GONE
         recyclerViewTrak.visibility = View.VISIBLE
+        showBtnClear(true)
     }
 
     private fun clickOnTrack(track: Track) {
@@ -175,7 +178,6 @@ class SearchFragment : Fragment() {
             is SearchState.NoInternet -> showNoInternet()
             is SearchState.ContentHistory -> showContentHistory(state.history)
             is SearchState.Empty -> showEmpty()
-            is SearchState.BtnClear -> showBtnClear(state.visible)
         }
     }
 
@@ -184,7 +186,6 @@ class SearchFragment : Fragment() {
     }
 
     private fun observeViewModel() {
-
         lifecycleScope.launch {
             viewModel.searchState.collect{
                 render(it)
@@ -192,9 +193,8 @@ class SearchFragment : Fragment() {
         }
 
         viewModel.navigateToTrackDetails.observe(viewLifecycleOwner) { track ->
-            val intent = Intent(requireContext(), AudioPlayerActivity::class.java)
-            intent.putExtra(TRACK_DETAILS, track)
-            startActivity(intent)
+            val action = SearchFragmentDirections.actionSearchFragmentToAudioPlayerActivity(track)
+            findNavController().navigate(action)
         }
     }
 
@@ -202,6 +202,5 @@ class SearchFragment : Fragment() {
         _binding = null
         super.onDestroy()
     }
-
 }
 

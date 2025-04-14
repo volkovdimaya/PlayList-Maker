@@ -3,9 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@color/background_main"
     android:layout_height="match_parent"
-    tools:context=".ui.audioplayer.activity.AudioPlayerActivity">
+    android:background="@color/background_main"
+    tools:context=".ui.audioplayer.fragment.AudioPlayerFragment">
+
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/left_guideline"
         android:layout_width="wrap_content"
@@ -26,9 +27,10 @@
         android:layout_height="wrap_content"
         android:tint="@color/color_title"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:navigationIcon="@drawable/ic_btn_back"/>
+        app:navigationIcon="@drawable/ic_btn_back" />
 
     <ImageView
         android:id="@+id/cover"
@@ -42,23 +44,23 @@
         app:layout_constraintTop_toBottomOf="@+id/toolbar_audio_player" />
 
     <TextView
-        style="@style/AudioPlayerText"
         android:id="@+id/track_name"
+        style="@style/AudioPlayerText"
         android:layout_width="0dp"
+        android:layout_marginBottom="12dp"
         android:text="Yesterday (Remastered )"
         android:textSize="22sp"
         app:layout_constraintBottom_toTopOf="@+id/artist_name"
         app:layout_constraintEnd_toStartOf="@+id/right_guideline"
-        app:layout_constraintStart_toStartOf="@+id/left_guideline"
-        android:layout_marginBottom="12dp"/>
+        app:layout_constraintStart_toStartOf="@+id/left_guideline" />
 
     <TextView
-        style="@style/AudioPlayerText"
         android:id="@+id/artist_name"
+        style="@style/AudioPlayerText"
         android:layout_width="0dp"
+        android:layout_marginBottom="30dp"
         android:text="The Beatles  "
         android:textSize="@dimen/audio_player_text_size_14"
-        android:layout_marginBottom="30dp"
         app:layout_constraintBottom_toTopOf="@+id/play"
         app:layout_constraintEnd_toStartOf="@+id/right_guideline"
         app:layout_constraintStart_toStartOf="@+id/left_guideline" />
@@ -67,8 +69,8 @@
         android:id="@+id/play"
         android:layout_width="@dimen/audio_player_btn_play_resolution"
         android:layout_height="@dimen/audio_player_btn_play_resolution"
-        android:src="@drawable/btn_play"
         android:layout_marginBottom="4dp"
+        android:src="@drawable/btn_play"
         app:layout_constraintBottom_toTopOf="@+id/playback_time"
         app:layout_constraintEnd_toStartOf="@+id/btn_like"
         app:layout_constraintStart_toEndOf="@+id/btn_add" />
@@ -92,8 +94,8 @@
         app:layout_constraintTop_toTopOf="@+id/play" />
 
     <TextView
-        style="@style/AudioPlayerText"
         android:id="@+id/playback_time"
+        style="@style/AudioPlayerText"
         android:layout_width="wrap_content"
         android:layout_marginBottom="22dp"
         android:text="0:00"
@@ -128,7 +130,7 @@
         style="@style/AudioPlayerTextDescriptionRight"
         app:layout_constraintBaseline_toBaselineOf="@+id/text_duration"
         app:layout_constraintEnd_toStartOf="@+id/right_guideline_16"
-        app:layout_constraintStart_toEndOf="@+id/textsBarrier"/>
+        app:layout_constraintStart_toEndOf="@+id/textsBarrier" />
 
 
     <androidx.constraintlayout.widget.Group
@@ -162,9 +164,9 @@
     <TextView
         android:id="@+id/year"
         style="@style/AudioPlayerTextDescriptionRight"
-        app:layout_constraintStart_toEndOf="@+id/textsBarrier"
         app:layout_constraintBaseline_toBaselineOf="@+id/text_year"
-        app:layout_constraintEnd_toStartOf="@+id/right_guideline_16" />
+        app:layout_constraintEnd_toStartOf="@+id/right_guideline_16"
+        app:layout_constraintStart_toEndOf="@+id/textsBarrier" />
 
     <TextView
         android:id="@+id/text_genre"
@@ -176,9 +178,9 @@
     <TextView
         android:id="@+id/genre"
         style="@style/AudioPlayerTextDescriptionRight"
-        app:layout_constraintStart_toEndOf="@+id/textsBarrier"
         app:layout_constraintBaseline_toBaselineOf="@+id/text_genre"
-        app:layout_constraintEnd_toStartOf="@+id/right_guideline_16" />
+        app:layout_constraintEnd_toStartOf="@+id/right_guideline_16"
+        app:layout_constraintStart_toEndOf="@+id/textsBarrier" />
 
     <TextView
         android:id="@+id/text_country"
@@ -191,15 +193,17 @@
     <TextView
         android:id="@+id/country"
         style="@style/AudioPlayerTextDescriptionRight"
-        app:layout_constraintStart_toEndOf="@+id/textsBarrier"
         app:layout_constraintBaseline_toBaselineOf="@+id/text_country"
-        app:layout_constraintEnd_toStartOf="@+id/right_guideline_16" />
+        app:layout_constraintEnd_toStartOf="@+id/right_guideline_16"
+        app:layout_constraintStart_toEndOf="@+id/textsBarrier" />
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/textsBarrier"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:constraint_referenced_ids="text_country, text_genre, text_year, text_album, text_duration"
-        app:barrierDirection="end" />
+        app:barrierDirection="end"
+        app:constraint_referenced_ids="text_country, text_genre, text_year, text_album, text_duration" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+

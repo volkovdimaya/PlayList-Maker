@@ -9,6 +9,6 @@ sealed interface SearchState
     data class Content(val tracks : List<Track>) : SearchState
     data object NoInternet : SearchState
     data class ContentHistory(val history: List<Track>) : SearchState
-    data class BtnClear(val visible : Boolean) : SearchState
+
     data object Empty : SearchState
 }

@@ -1,7 +1,9 @@
 package com.practicum.playlistmaker.ui.search.view_model
 
 
+import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
@@ -17,6 +19,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 
@@ -32,7 +35,9 @@ class TrackSearchViewModel(
 
 
     private val _searchState: MutableStateFlow<SearchState> = MutableStateFlow(SearchState.Empty)
-    val searchState: StateFlow<SearchState> = _searchState
+    val searchState: StateFlow<SearchState> = _searchState.asStateFlow()
+
+
 
     private val _navigateToTrackDetails = SingleLiveEvent<Track>()
     val navigateToTrackDetails: LiveData<Track> = _navigateToTrackDetails
@@ -41,11 +46,10 @@ class TrackSearchViewModel(
         searchJob?.cancel()
         if (query.isEmpty()) {
             textSearch = ""
-            _searchState.value = SearchState.BtnClear(false)
+
             updateHistory()
 
         } else {
-            _searchState.value = SearchState.BtnClear(true)
             searchDebounce(query)
         }
     }

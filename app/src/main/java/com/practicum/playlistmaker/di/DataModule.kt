@@ -44,7 +44,9 @@ val dataModule = module {
             .create(SearchTrackApi::class.java)
     }
     single {
-        Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db").build()
+        Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")
+//            .fallbackToDestructiveMigration()
+            .build()
     }
 
 
@@ -70,3 +72,4 @@ val dataModule = module {
 
 
 }
+

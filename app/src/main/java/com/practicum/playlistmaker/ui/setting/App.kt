@@ -4,6 +4,7 @@ import android.app.Application
 
 import androidx.appcompat.app.AppCompatDelegate
 import android.content.res.Configuration
+import com.markodevcic.peko.PermissionRequester
 import com.practicum.playlistmaker.di.dataModule
 import com.practicum.playlistmaker.di.interactorModule
 import com.practicum.playlistmaker.di.repositoryModule
@@ -17,6 +18,8 @@ import org.koin.core.context.startKoin
 class App : Application() {
     override fun onCreate() {
         super.onCreate()
+
+        PermissionRequester.initialize(applicationContext)
 
         startKoin {
             androidContext(this@App)
