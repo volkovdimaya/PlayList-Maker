@@ -7,6 +7,7 @@
 
     <color name="background_main">#FFFFFFFF</color>
     <color name="color_title">#1A1B22</color>
+    <color name="color_title_dark">#1A1B22</color>
     <color name="color_item">#000000</color>
 
     <color name="switchThumbTint">#AEAFB4</color>
