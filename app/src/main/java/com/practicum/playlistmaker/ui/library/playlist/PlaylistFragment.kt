@@ -1,7 +1,7 @@
 package com.practicum.playlistmaker.ui.library.playlist
 
-import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hannesdorfmann.adapterdelegates4.ListDelegationAdapter
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentPlaylistBinding
+import com.practicum.playlistmaker.ui.library.fragments.MediaLibraryFragmentDirections
+import com.practicum.playlistmaker.ui.library.playlist.adapter.playlistItemAdapterDelegates
 import com.practicum.playlistmaker.ui.library.playlist.models.PlaylistItem
 import com.practicum.playlistmaker.ui.library.playlist.models.PlaylistState
 import com.practicum.playlistmaker.ui.library.playlist.view_model.PlaylistViewModel
@@ -31,7 +33,12 @@ class PlaylistFragment : Fragment(){
     private lateinit var recyclerView: RecyclerView
 
     private val adapter = ListDelegationAdapter(
-        playlistItemAdapterDelegates()
+        playlistItemAdapterDelegates(object : PlaylistItemClickListener {
+            override fun onPlaylistItemClick(item: PlaylistItem) {
+                val action = MediaLibraryFragmentDirections.actionMediaLibraryFragmentToPlaylistInfo(item)
+                findNavController().navigate(action)
+            }
+        })
     )
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -82,5 +89,9 @@ class PlaylistFragment : Fragment(){
         super.onDestroy()
         _binding = null
     }
+}
+
+interface PlaylistItemClickListener {
+    fun onPlaylistItemClick(item: PlaylistItem)
 }
 
