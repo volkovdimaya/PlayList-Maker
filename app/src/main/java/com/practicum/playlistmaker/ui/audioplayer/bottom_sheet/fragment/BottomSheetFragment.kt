@@ -2,7 +2,6 @@ package com.practicum.playlistmaker.ui.audioplayer.bottom_sheet.fragment
 
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -43,7 +42,7 @@ class BottomSheetFragment() : BottomSheetDialogFragment() {
 
 
     private val adapter = ListDelegationAdapter(
-        bottomSheetPlaylistDelegate(object : PlaylistItemClickListener {
+        bottomSheetPlaylistDelegate(object : PlaylistItemClickListenerBottomSheet {
             override fun onPlaylistItemClick(item: PlaylistBottomSheetItem) {
                 viewModel.addTrackToPlaylist(
                     PlayListAndTrack(
@@ -58,7 +57,6 @@ class BottomSheetFragment() : BottomSheetDialogFragment() {
 
     private val viewModel by viewModel<BottomSheetViewModel>()
 
-//    private val event : AudioPlayerEventFromBottomSheet by viewModel()
     private val sharedViewModel: AudioPlayerEventFromBottomSheet by activityViewModel()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -135,6 +133,6 @@ class BottomSheetFragment() : BottomSheetDialogFragment() {
     }
 }
 
-interface PlaylistItemClickListener {
+interface PlaylistItemClickListenerBottomSheet {
     fun onPlaylistItemClick(item: PlaylistBottomSheetItem)
 }
