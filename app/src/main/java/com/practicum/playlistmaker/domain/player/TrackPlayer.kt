@@ -3,7 +3,7 @@ package com.practicum.playlistmaker.domain.player
 
 
 interface TrackPlayer {
-    fun play(statusObserver: StatusObserver)
+    fun play(trackUrl: String, statusObserver: StatusObserver)
     fun pause()
     fun release()
     fun getProgress() : Float

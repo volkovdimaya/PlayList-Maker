@@ -13,6 +13,7 @@ import com.practicum.playlistmaker.domain.db.UseCaseGetFavoritesTracks
 import com.practicum.playlistmaker.domain.db.use_case.InteractorFavoriteImpl
 import com.practicum.playlistmaker.domain.db.use_case.UseCaseGetFavoritesTracksImpl
 import com.practicum.playlistmaker.domain.impl.TracksInteractorImpl
+import com.practicum.playlistmaker.domain.info_playlist.UseCasePlaylistShareImpl
 import com.practicum.playlistmaker.domain.search.interactor.InteractorSearchHistoryImpl
 import com.practicum.playlistmaker.domain.interactor.ThemeInteractor
 import com.practicum.playlistmaker.domain.player.TrackPlayer
@@ -21,6 +22,7 @@ import com.practicum.playlistmaker.domain.search.InteractorSearchHistory
 import com.practicum.playlistmaker.domain.sharing.SharingInteractor
 import com.practicum.playlistmaker.domain.sharing.impl.SharingInteractorImpl
 import com.practicum.playlistmaker.ui.library.add_playlist.api.InteractorSavePic
+import com.practicum.playlistmaker.ui.library.info_playlist.api.UseCasePlaylistShare
 import org.koin.dsl.module
 
 val interactorModule = module {
@@ -31,8 +33,8 @@ val interactorModule = module {
     single<TrackInteractorApi> {
         TracksInteractorImpl(get())
     }
-    factory<TrackPlayer> { (previewUrl: String) ->
-        AudioPlayerInteractor(previewUrl, get())
+    factory<TrackPlayer> {
+        AudioPlayerInteractor(get())
     }
     single {
         ThemeInteractor(get(), get())
@@ -52,5 +54,9 @@ val interactorModule = module {
     single { ValidateDescription() }
     single { ValidateImage() }
     single { ValidateTitle() }
+
+    single<UseCasePlaylistShare> {
+        UseCasePlaylistShareImpl(get(), get())
+    }
 
 }

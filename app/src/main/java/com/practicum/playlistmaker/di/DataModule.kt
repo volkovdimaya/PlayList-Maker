@@ -8,12 +8,14 @@ import com.practicum.playlistmaker.data.audioplayer.ManagerAudioPlayerImpl
 import com.practicum.playlistmaker.data.db.AppDatabase
 import com.practicum.playlistmaker.data.mapper.TrackDtoResponseMapper
 import com.practicum.playlistmaker.data.mapper.TrackResponseMapper
+import com.practicum.playlistmaker.domain.info_playlist.api.PlaylistShareDataSource
+import com.practicum.playlistmaker.data.playlistinfo.impl.PlaylistShareDataSourceImpl
 import com.practicum.playlistmaker.data.repository.PLAYLIST_MAKER
 import com.practicum.playlistmaker.data.search.network.NetworkClient
 import com.practicum.playlistmaker.data.search.network.RetrofitNetworkClient
 import com.practicum.playlistmaker.data.search.network.SearchTrackApi
 import com.practicum.playlistmaker.data.sharing.ExternalNavigator
-import com.practicum.playlistmaker.data.sharing.impl.ExternalNavigatorimpl
+import com.practicum.playlistmaker.data.sharing.impl.ExternalNavigatorImpl
 import com.practicum.playlistmaker.data.sharing.impl.ResourceProviderImpl
 import com.practicum.playlistmaker.domain.player.ManagerAudioPlayer
 import com.practicum.playlistmaker.domain.setting.ThemeSwitcher
@@ -45,7 +47,8 @@ val dataModule = module {
     }
     single {
         Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")
-//            .fallbackToDestructiveMigration()
+            .fallbackToDestructiveMigration()
+//            .addMigrations(Migration_6_7)
             .build()
     }
 
@@ -56,8 +59,15 @@ val dataModule = module {
 
 
     single<ExternalNavigator> {
-        ExternalNavigatorimpl(androidContext())
+        ExternalNavigatorImpl(androidContext())
     }
+
+    single<PlaylistShareDataSource> {
+        PlaylistShareDataSourceImpl(androidContext())
+    }
+
+
+
     single<NetworkClient> {
         RetrofitNetworkClient(androidContext(), get())
     }

@@ -1,6 +1,6 @@
 package com.practicum.playlistmaker.ui.library.add_playlist.fragment
 
-import android.app.AlertDialog
+
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -10,17 +10,15 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
-import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentAddNewPlaylistBinding
 import com.practicum.playlistmaker.ui.library.add_playlist.models.AddPlaylistState
 import com.practicum.playlistmaker.ui.library.add_playlist.models.Playlist
 import com.practicum.playlistmaker.ui.library.add_playlist.view_model.AddPlayListviewModel
+import com.practicum.playlistmaker.util.showConfirmExitDialog
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class AddNewPlayListFragment : Fragment() {
@@ -114,13 +112,19 @@ class AddNewPlayListFragment : Fragment() {
             findNavController().popBackStack()
         } else {
             binding.btnCreatePlaylist.isEnabled = false
-            confirmDialog.show()
+            showConfirmExitDialog {
+                onBackPressedCallback.remove()
+                requireActivity().onBackPressedDispatcher.onBackPressed()
+            }
         }
     }
 
     private fun handleValidField(it: AddPlaylistState.HasValidField) {
         if (it.hasNotEmptyField) {
-            confirmDialog.show()
+            showConfirmExitDialog {
+                onBackPressedCallback.remove()
+                requireActivity().onBackPressedDispatcher.onBackPressed()
+            }
         } else {
             onBackPressedCallback.remove()
             requireActivity().onBackPressedDispatcher.onBackPressed()
@@ -138,36 +142,18 @@ class AddNewPlayListFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-//        requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+    override fun onDestroyView() {
+        super.onDestroyView()
         _binding = null
+        onBackPressedCallback.remove()
+
+        //        requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+
     }
 
-    private val confirmDialog by lazy {
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle(getString(R.string.title_complite_playlist))
-            .setMessage(getString(R.string.message_data_lose))
-            .setNeutralButton(getString(R.string.cancle)) { dialog, which -> }
-            .setPositiveButton(getString(R.string.exit)) { dialog, which ->
-                onBackPressedCallback.remove()
-                requireActivity().onBackPressedDispatcher.onBackPressed()
-            }
-            .create().apply {
-                setOnShowListener {
-                    getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(
-                        ContextCompat.getColor(requireContext(), R.color.search_item_title)
-                    )
-                    getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(
-                        ContextCompat.getColor(requireContext(), R.color.search_item_title)
-                    )
-                }
-            }
-    }
 
     private val onBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-
             viewModel.validationForm(playlistCreate())
         }
     }

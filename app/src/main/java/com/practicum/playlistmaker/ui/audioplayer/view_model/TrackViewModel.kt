@@ -1,7 +1,6 @@
 package com.practicum.playlistmaker.ui.audioplayer.view_model
 
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -17,7 +16,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class TrackViewModel(
-    private val track: Track?,
     private val trackPlayer: TrackPlayer,
     private val InteractorFavorite: InteractorFavorite
 ) : ViewModel() {
@@ -30,6 +28,8 @@ class TrackViewModel(
 
     private var _content: AudioPlayerScreenState.Content? = null
     private val content get() = _content!!
+
+    private var track: Track? = null
 
     fun getPlayStatusLiveData(): LiveData<PlayStatus> = playStatusLiveData
 
@@ -48,7 +48,7 @@ class TrackViewModel(
 
 
     fun play() {
-        trackPlayer.play(
+        trackPlayer.play(track!!.previewUrl,
             statusObserver = object : TrackPlayer.StatusObserver {
                 override fun onStop() {
                     playStatusLiveData.value = getCurrentPlayStatus().copy(isPlaying = false)
@@ -80,7 +80,8 @@ class TrackViewModel(
         }
     }
 
-    init {
+    fun loadContent(track : Track?) {
+        this.track = track
         if (track == null) {
             _screenStateLiveData.postValue(
                 AudioPlayerScreenState.Error
@@ -88,19 +89,13 @@ class TrackViewModel(
         } else {
             _content = AudioPlayerScreenState.Content(track, false)
 
-            _screenStateLiveData.postValue(
-//                AudioPlayerScreenState.Content(track)
-                content
-            )
+            _screenStateLiveData.postValue(content)
             viewModelScope.launch {
                 InteractorFavorite.isFavorite(track).collect { isFavorite ->
                     _content = content.copy(
                         isFavorite = isFavorite
                     )
-                    _screenStateLiveData.postValue(
-//                        AudioPlayerScreenState.IsFavorite(isFavorite)
-                                content
-                    )
+                    _screenStateLiveData.postValue(content)
                 }
             }
         }
@@ -122,17 +117,6 @@ class TrackViewModel(
     companion object {
         private const val SECOND = 300L
 
-//        fun getViewModelFactory(
-//            track: TrackAudioPlayer?,
-//            trackPlayer: TrackPlayer
-//        ): ViewModelProvider.Factory = viewModelFactory {
-//            initializer {
-//                TrackViewModel(
-//                    track,
-//                    trackPlayer,
-//                )
-//            }
-//        }
     }
 
     private fun getCurrentPlayStatus(): PlayStatus {

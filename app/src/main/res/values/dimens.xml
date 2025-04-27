@@ -33,4 +33,10 @@
     <dimen name= "audio_player_text_size_14">14sp</dimen>
     <dimen name="guideline_margin_24">24dp</dimen>
     <dimen name="guideline_margin_16">16dp</dimen>
+
+
+    <dimen name="dialog_padding_start">24dp</dimen>
+    <dimen name="dialog_padding_top">23dp</dimen>
+    <dimen name="dialog_padding_end">8dp</dimen>
+    <dimen name="dialog_padding_bottom">0dp</dimen>
 </resources>

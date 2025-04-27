@@ -2,7 +2,6 @@ package com.practicum.playlistmaker.ui.library.info_playlist
 
 
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -14,33 +13,36 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.bumptech.glide.signature.ObjectKey
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentPlaylistInfoBinding
 import com.practicum.playlistmaker.domain.models.Track
+
 import com.practicum.playlistmaker.ui.library.info_playlist.adapter.TrackInPlaylistAdapter
+import com.practicum.playlistmaker.ui.library.info_playlist.bottom_sheet.BottomSheetMoreFragment
 import com.practicum.playlistmaker.ui.library.info_playlist.models.PlaylistInfoState
+import com.practicum.playlistmaker.ui.library.info_playlist.models.UiEvent
 import com.practicum.playlistmaker.ui.library.info_playlist.view_model.PlaylistInfoViewModel
-//import com.practicum.playlistmaker.ui.share_data.SharedPlaylistViewModel
+import com.practicum.playlistmaker.ui.share_data.SharedPlaylistViewModel
 import com.practicum.playlistmaker.ui.share_data.SharedTrackViewModel
 import com.practicum.playlistmaker.util.TimeFormatter
 import com.practicum.playlistmaker.util.TrackCountFormatter
+import com.practicum.playlistmaker.util.showConfirmDeleteDialog
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.io.File
 
 
 class PlaylistInfoFragment : Fragment() {
     var _binding: FragmentPlaylistInfoBinding? = null
     private val binding get() = _binding!!
 
-//    val viewModel by viewModel<PlaylistInfoViewModel>()
-
-
     private val viewModel: PlaylistInfoViewModel by activityViewModel()
     private val sharedTrackViewModel: SharedTrackViewModel by activityViewModel()
-//    private val sharedPlaylist : SharedPlaylistViewModel by activityViewModel()
+    private val sharedPlaylistViewModel by activityViewModel<SharedPlaylistViewModel>()
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,60 +56,7 @@ class PlaylistInfoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.toolbarPlaylistInfo.setNavigationOnClickListener {
-            requireActivity().onBackPressedDispatcher.onBackPressed()
-        }
 
-        lifecycleScope.launch {
-//                viewModel.setContent(playlist)
-            viewModel.playlistItemFlow.collect { playlistItem ->
-                Log.d("PlaylistInfoViewModel1", "playlistItem: $playlistItem")
-                when (playlistItem) {
-                    is PlaylistInfoState.Content -> renderContent(playlistItem)
-                    PlaylistInfoState.EmptyPlaylist -> {
-                        Snackbar.make(
-                            requireView(),
-                            getString(R.string.empty_playlist),
-                            Snackbar.LENGTH_SHORT
-                        ).show()
-                    }
-
-                    is PlaylistInfoState.ContentTracks -> renderContentTracks(playlistItem.tracks)
-                }
-            }
-
-        }
-//        val playlist = arguments?.let {
-//            PlaylistInfoFragmentArgs.fromBundle(it).item
-//        }
-//
-//        if (playlist != null) {
-//            viewModel.setContent(playlist!!)
-//        }
-
-//        viewModel.state.observe(viewLifecycleOwner) { state ->
-//            when (state) {
-//                is PlaylistInfoState.Content -> renderContent(state)
-//                PlaylistInfoState.EmptyPlaylist -> {
-//                    Snackbar.make(
-//                        requireView(),
-//                        getString(R.string.empty_playlist),
-//                        Snackbar.LENGTH_SHORT
-//                    ).show()
-//                }
-//
-//                is PlaylistInfoState.ContentTracks -> renderContentTracks(state.tracks)
-//            }
-//        }
-
-
-        binding.more.setOnClickListener {
-//            BottomSheetMoreFragment
-//            viewModel.onMoreClick()
-        }
-        binding.share.setOnClickListener {
-            viewModel.onShareClick()
-        }
         binding.recyclerTracks.layoutManager = LinearLayoutManager(requireContext())
         val trakAdapter = TrackInPlaylistAdapter(
             emptyList(),
@@ -118,20 +67,57 @@ class PlaylistInfoFragment : Fragment() {
                 }
 
                 override fun onItemLongClick(track: Track): Boolean {
-                    MaterialAlertDialogBuilder(requireContext(), R.style.MyAlertDialog)
-                        .setView(createMessageView())
-                        .setPositiveButton(R.string.yes) { _, _ ->
+                    showConfirmDeleteDialog(
+                        onConfirm = {
                             viewModel.onDeleteTrackClick(track)
-                        }
-                        .setNegativeButton(R.string.no) { dialog, _ ->
-                            dialog.dismiss()
-                        }
-                        .create()
-                        .show()
+                        },
+                        message = getString(R.string.delete_track)
+                    )
                     return false
                 }
             })
         binding.recyclerTracks.adapter = trakAdapter
+
+
+
+        binding.toolbarPlaylistInfo.setNavigationOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+
+        viewModel.playlistItemFlow.observe(viewLifecycleOwner) { playlistItem ->
+            when (playlistItem) {
+                is PlaylistInfoState.Content -> renderContent(playlistItem)
+            }
+        }
+
+        lifecycleScope.launch {
+            launch {
+                sharedPlaylistViewModel.playlistFlow.collect { playlist ->
+                    viewModel.selectPlaylist(playlist)
+                }
+            }
+            launch {
+                viewModel.eventChannel.collect { event ->
+                    when (event) {
+                        UiEvent.TracksIsEmpty -> renderSnackbarEmptyTracks()
+                    }
+                }
+            }
+        }
+
+
+
+
+        binding.more.setOnClickListener {
+            BottomSheetMoreFragment().show(parentFragmentManager, "MyBottomSheetMore")
+        }
+        binding.share.setOnClickListener {
+            lifecycleScope.launch {
+                viewModel.onShareClick()
+            }
+
+        }
+
 
 
         viewModel.navigateToTrackDetails.observe(viewLifecycleOwner) { track ->
@@ -140,6 +126,14 @@ class PlaylistInfoFragment : Fragment() {
             }
             findNavController().navigate(R.id.action_playlistInfo_to_audioPlayerFragment)
         }
+    }
+
+    private fun renderSnackbarEmptyTracks() {
+        Snackbar.make(
+            requireView(),
+            getString(R.string.empty_playlist),
+            Snackbar.LENGTH_SHORT
+        ).show()
     }
 
     private fun renderContentTracks(tracks: List<Track>) {
@@ -155,7 +149,10 @@ class PlaylistInfoFragment : Fragment() {
             .load(state.playlistInfo.image)
             .centerCrop()
             .placeholder(R.drawable.place_holder_cover)
+            .signature(ObjectKey(File(state.playlistInfo.image!!.path).lastModified()))
             .into(binding.imagePlaylist)
+
+        renderContentTracks(state.tracks)
     }
 
 
@@ -164,20 +161,6 @@ class PlaylistInfoFragment : Fragment() {
         _binding = null
     }
 
-    private fun createMessageView(): View {
-        return TextView(requireContext()).apply {
-            text = "Хотите удалить трек?"
-            setTextColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.message_dialog
-                )
-            )
-            textSize = 14f
-            setPadding(24, 23, 8, 0)
-            gravity = Gravity.START
-        }
-    }
 
 
 }

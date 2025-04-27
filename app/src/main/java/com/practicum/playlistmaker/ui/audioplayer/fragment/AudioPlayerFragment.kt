@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -18,9 +19,10 @@ import com.practicum.playlistmaker.ui.audioplayer.bottom_sheet.view_model.AudioP
 import com.practicum.playlistmaker.ui.audioplayer.models.PlayStatus
 import com.practicum.playlistmaker.ui.audioplayer.models.AudioPlayerScreenState
 import com.practicum.playlistmaker.ui.audioplayer.view_model.TrackViewModel
+import com.practicum.playlistmaker.ui.share_data.SharedTrackViewModel
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
 
 
 class AudioPlayerFragment : Fragment() {
@@ -29,15 +31,9 @@ class AudioPlayerFragment : Fragment() {
     private val binding
         get() = _binding!!
 
-    private lateinit var  trackId: String
+    private val sharedTrackViewModel: SharedTrackViewModel by activityViewModel()
 
-    private val viewModel: TrackViewModel by viewModel {
-        val track = arguments?.let {
-            AudioPlayerFragmentArgs.fromBundle(it).track
-        }
-        trackId = track?.trackId ?: ""
-        parametersOf(track)
-    }
+    private val viewModel: TrackViewModel by viewModel()
 
     private val sharedViewModel: AudioPlayerEventFromBottomSheet by activityViewModel()
     override fun onCreateView(
@@ -51,9 +47,8 @@ class AudioPlayerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (savedInstanceState != null) {
-            trackId = savedInstanceState.getString(TRACK_ID, "")
-        }
+
+
         binding.toolbarAudioPlayer.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
@@ -65,10 +60,10 @@ class AudioPlayerFragment : Fragment() {
 
         sharedViewModel.event.observe(viewLifecycleOwner) { title ->
             Snackbar.make(
-                    binding.root,
-                    "Добавлено в плейлист ${title}",
-                    Snackbar.LENGTH_SHORT
-                ).show()
+                binding.root,
+                "Добавлено в плейлист ${title}",
+                Snackbar.LENGTH_SHORT
+            ).show()
         }
 
         viewModel.screenStateLiveData.observe(viewLifecycleOwner) { screenState ->
@@ -77,11 +72,17 @@ class AudioPlayerFragment : Fragment() {
                     displayTrackData(screenState.trackModel)
                     renderBtnFavorite(screenState.isFavorite)
                 }
+
                 is AudioPlayerScreenState.Error -> {
 
-                    Toast.makeText(requireContext(), getString(R.string.toast_error), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.toast_error),
+                        Toast.LENGTH_SHORT
+                    ).show()
                     findNavController().popBackStack()
                 }
+
                 AudioPlayerScreenState.idle -> {
 
                 }
@@ -96,8 +97,13 @@ class AudioPlayerFragment : Fragment() {
             viewModel.play()
         }
         binding.btnAdd.setOnClickListener {
-           BottomSheetFragment.newInstance(trackId).show(parentFragmentManager, "MyBottomSheet")
+            BottomSheetFragment().show(parentFragmentManager, "MyBottomSheet")
 
+        }
+        lifecycleScope.launch {
+            sharedTrackViewModel.trackFlow.collect { track ->
+                viewModel.loadContent(track)
+            }
         }
     }
 
@@ -152,11 +158,4 @@ class AudioPlayerFragment : Fragment() {
         super.onDestroy()
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString(TRACK_ID, trackId)
-    }
-    companion object {
-        const val TRACK_ID = "track_id"
-    }
 }

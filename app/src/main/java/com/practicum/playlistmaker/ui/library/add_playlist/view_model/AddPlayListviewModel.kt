@@ -10,23 +10,22 @@ import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.domain.add_playlist.DbInteractorPlaylist
 import com.practicum.playlistmaker.domain.add_playlist.use_case.ValidateImage
 import com.practicum.playlistmaker.domain.add_playlist.use_case.ValidateTitle
-import com.practicum.playlistmaker.ui.library.add_playlist.api.InteractorSavePic
 import com.practicum.playlistmaker.ui.library.add_playlist.models.AddPlaylistState
 import com.practicum.playlistmaker.ui.library.add_playlist.models.Playlist
 import kotlinx.coroutines.launch
 
-class AddPlayListviewModel(
+open class AddPlayListviewModel(
     private val vallidateTitle: ValidateTitle,
     private val ValidateDescription: ValidateTitle,
     private val validateImage: ValidateImage,
     private val dbInteractorPlaylist: DbInteractorPlaylist
 
 ) : ViewModel() {
-    private val _state: MutableLiveData<AddPlaylistState> = MutableLiveData()
+    protected val _state: MutableLiveData<AddPlaylistState> = MutableLiveData()
 
     val state: LiveData<AddPlaylistState> = _state
 
-    private var _content: AddPlaylistState.Content? = null
+    protected var _content: AddPlaylistState.Content? = null
     val content: AddPlaylistState.Content
         get() = _content ?: AddPlaylistState.Content()
 
@@ -35,13 +34,16 @@ class AddPlayListviewModel(
     }
 
     fun changeTitle(title: String) {
-        if (title.isNotEmpty()) {
-            _content = content.copy(btnEnabled = true)
-        } else {
-            _content = content.copy(btnEnabled = false)
-        }
-        _state.postValue(content)
+        Log.d("renderContent", "changeTitle: ")
+            if (title.isNotEmpty()) {
+                _content = content.copy(btnEnabled = true)
+            } else {
+                _content = content.copy(btnEnabled = false)
+            }
+            _state.postValue(content)
+
     }
+
 
     fun validationForm(playlist: Playlist) {
 
@@ -62,7 +64,7 @@ class AddPlayListviewModel(
         }
     }
 
-    fun createPlayList(playlist: Playlist) {
+    open fun createPlayList(playlist: Playlist) {
         val titleResult = vallidateTitle.execute(playlist.title)
         if (titleResult.successful) {
             viewModelScope.launch {
@@ -83,7 +85,6 @@ class AddPlayListviewModel(
     fun addImage(uri: Uri) {
         _content = content.copy(uri = uri)
         _state.postValue(content)
-//        _state.value = AddPlaylistState.ShowPic(uri)
     }
 
 

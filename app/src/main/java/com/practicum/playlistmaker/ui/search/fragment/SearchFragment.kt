@@ -24,6 +24,9 @@ import com.practicum.playlistmaker.ui.search.TrackAdapter
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import androidx.navigation.fragment.findNavController
+import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.ui.share_data.SharedTrackViewModel
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
 
 
 class SearchFragment : Fragment() {
@@ -40,6 +43,8 @@ class SearchFragment : Fragment() {
 
     private lateinit var linearLayoutHistory: LinearLayout
     private lateinit var recyclerViewHistoryTrack: RecyclerView
+
+    private val sharedTrackViewModel: SharedTrackViewModel by activityViewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -193,8 +198,10 @@ class SearchFragment : Fragment() {
         }
 
         viewModel.navigateToTrackDetails.observe(viewLifecycleOwner) { track ->
-            val action = SearchFragmentDirections.actionSearchFragmentToAudioPlayerActivity(track)
-            findNavController().navigate(action)
+            lifecycleScope.launch {
+                sharedTrackViewModel.selectTrack(track)
+            }
+            findNavController().navigate(R.id.action_searchFragment_to_audioPlayerActivity)
         }
     }
 

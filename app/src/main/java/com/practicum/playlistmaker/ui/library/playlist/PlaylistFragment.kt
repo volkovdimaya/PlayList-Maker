@@ -1,7 +1,6 @@
 package com.practicum.playlistmaker.ui.library.playlist
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,19 +12,23 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hannesdorfmann.adapterdelegates4.ListDelegationAdapter
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentPlaylistBinding
-import com.practicum.playlistmaker.ui.library.fragments.MediaLibraryFragmentDirections
+import com.practicum.playlistmaker.ui.library.info_playlist.view_model.PlaylistInfoViewModel
 import com.practicum.playlistmaker.ui.library.playlist.adapter.playlistItemAdapterDelegates
 import com.practicum.playlistmaker.ui.library.playlist.models.PlaylistItem
 import com.practicum.playlistmaker.ui.library.playlist.models.PlaylistState
 import com.practicum.playlistmaker.ui.library.playlist.view_model.PlaylistViewModel
+import com.practicum.playlistmaker.ui.share_data.SharedPlaylistViewModel
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class PlaylistFragment : Fragment(){
+class PlaylistFragment : Fragment() {
     companion object {
         fun newInstance() = PlaylistFragment()
     }
 
     private val viewModel by viewModel<PlaylistViewModel>()
+    private val playlistInfoViewModel: PlaylistInfoViewModel by activityViewModel()
+    private val sharedPlaylistViewModel: SharedPlaylistViewModel by activityViewModel()
 
     private var _binding: FragmentPlaylistBinding? = null
     private val binding get() = _binding!!
@@ -35,18 +38,20 @@ class PlaylistFragment : Fragment(){
     private val adapter = ListDelegationAdapter(
         playlistItemAdapterDelegates(object : PlaylistItemClickListener {
             override fun onPlaylistItemClick(item: PlaylistItem) {
-                val action = MediaLibraryFragmentDirections.actionMediaLibraryFragmentToPlaylistInfo(item)
-                findNavController().navigate(action)
+                playlistInfoViewModel.selectPlaylist(item)
+                sharedPlaylistViewModel.selectPlaylist(item)
+                findNavController().navigate(R.id.action_mediaLibraryFragment_to_playlistInfo)
             }
         })
     )
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         _binding = FragmentPlaylistBinding.inflate(inflater, container, false)
         return binding.root
     }
-
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -67,13 +72,13 @@ class PlaylistFragment : Fragment(){
     }
 
     private fun render(it: PlaylistState) {
-        when(it){
+        when (it) {
             PlaylistState.PlaylistEmpty -> showEmpty()
             is PlaylistState.PlaylistContent -> renderContent(it.playlist)
         }
     }
 
-    private fun renderContent(playlist : List<PlaylistItem>) {
+    private fun renderContent(playlist: List<PlaylistItem>) {
         binding.emptyPlaylist.isVisible = false
         binding.recyclerPlaylist.isVisible = true
         adapter.items = playlist
@@ -81,7 +86,7 @@ class PlaylistFragment : Fragment(){
     }
 
     private fun showEmpty() {
-       binding.emptyPlaylist.isVisible = true
+        binding.emptyPlaylist.isVisible = true
         binding.recyclerPlaylist.isVisible = false
     }
 

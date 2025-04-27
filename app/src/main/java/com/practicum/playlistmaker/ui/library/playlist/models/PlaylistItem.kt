@@ -7,6 +7,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class PlaylistItem(
+    val id : Long,
     val image : Uri?,
     val title : String,
     val trackCount : Int,

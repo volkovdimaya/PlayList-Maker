@@ -5,12 +5,11 @@ import com.practicum.playlistmaker.domain.player.TrackPlayer
 import com.practicum.playlistmaker.domain.player.ManagerAudioPlayer
 
 class AudioPlayerInteractor(
-    private val trackUrl: String,
     private val mediaPlayer: ManagerAudioPlayer
 ) : TrackPlayer {
     private var statusObserver: TrackPlayer.StatusObserver? = null
 
-    override fun play(statusObserver: TrackPlayer.StatusObserver) {
+    override fun play(trackUrl: String, statusObserver: TrackPlayer.StatusObserver) {
         this.statusObserver = statusObserver
         mediaPlayer.prepare(
             trackUrl = trackUrl,
