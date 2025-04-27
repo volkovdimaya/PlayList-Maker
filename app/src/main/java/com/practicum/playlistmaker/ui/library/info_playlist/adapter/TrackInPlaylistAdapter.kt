@@ -35,7 +35,7 @@ class TrackInPlaylistAdapter(
     }
 
     fun updateData(newSongs: List<Track>) {
-        tracks = newSongs
+        tracks = newSongs.reversed()
         notifyDataSetChanged()
     }
 }
