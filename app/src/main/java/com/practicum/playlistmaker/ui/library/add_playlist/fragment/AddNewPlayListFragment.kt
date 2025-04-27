@@ -13,19 +13,23 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.signature.ObjectKey
 import com.google.android.material.snackbar.Snackbar
+import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentAddNewPlaylistBinding
 import com.practicum.playlistmaker.ui.library.add_playlist.models.AddPlaylistState
 import com.practicum.playlistmaker.ui.library.add_playlist.models.Playlist
 import com.practicum.playlistmaker.ui.library.add_playlist.view_model.AddPlayListviewModel
 import com.practicum.playlistmaker.util.showConfirmExitDialog
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.io.File
 
-class AddNewPlayListFragment : Fragment() {
+open class AddNewPlayListFragment : Fragment() {
 
-    private var _binding: FragmentAddNewPlaylistBinding? = null
+    protected open var _binding: FragmentAddNewPlaylistBinding? = null
     private val binding get() = _binding!!
-    private val viewModel by viewModel<AddPlayListviewModel>()
+    protected open val viewModel by viewModel<AddPlayListviewModel>()
     private var pic: Uri? = null
 
     override fun onResume() {
@@ -46,8 +50,6 @@ class AddNewPlayListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-
 
         binding.namePlaylist.addTextChangedListener {
             viewModel.changeTitle(it.toString())
@@ -57,18 +59,22 @@ class AddNewPlayListFragment : Fragment() {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
         binding.btnCreatePlaylist.setOnClickListener {
-            val playlist = playlistCreate()
-            viewModel.createPlayList(playlist)
+            btnAction()
         }
 
         binding.toolbar.setNavigationOnClickListener {
-            viewModel.validationForm(playlistCreate())
+            toolbarClickback()
         }
 
         observeViewModel()
     }
 
-    private fun playlistCreate(): Playlist {
+    protected open fun btnAction() {
+        val playlist = playlistCreate()
+        viewModel.createPlayList(playlist)
+    }
+
+    protected fun playlistCreate(): Playlist {
 
         return with(binding) {
             Playlist(
@@ -79,13 +85,13 @@ class AddNewPlayListFragment : Fragment() {
         }
     }
 
-    private fun observeViewModel() {
+    protected open fun observeViewModel() {
         viewModel.state.observe(viewLifecycleOwner) {
             render(it)
         }
     }
 
-    private fun render(it: AddPlaylistState) {
+    protected fun render(it: AddPlaylistState) {
         when (it) {
             is AddPlaylistState.Content -> {
                 renderContent(it)
@@ -102,7 +108,7 @@ class AddNewPlayListFragment : Fragment() {
 
     }
 
-    private fun renderCreatePlaylist(it: AddPlaylistState.CreatePlayList) {
+    protected open fun renderCreatePlaylist(it: AddPlaylistState.CreatePlayList) {
         if (it.successfully) {
             Snackbar.make(
                 binding.root,
@@ -131,13 +137,19 @@ class AddNewPlayListFragment : Fragment() {
         }
     }
 
-    private fun renderContent(it: AddPlaylistState.Content) {
+    protected fun renderContent(it: AddPlaylistState.Content) {
         pic = it.uri
         binding.btnCreatePlaylist.isEnabled = it.btnEnabled
 
         if (it.uri != null) {
             binding.defaultImageAddPlaylist.visibility = View.GONE
-            binding.imageAddPlaylist.setImageURI(it.uri)
+//            binding.imageAddPlaylist.setImageURI(it.uri)
+            Glide
+                .with(requireContext())
+                .load(it.uri)
+                .placeholder(R.drawable.place_holder_cover)
+                .signature(ObjectKey(File(it.uri.path).lastModified()))
+                .into(binding.imageAddPlaylist)
             binding.imageAddPlaylist.visibility = View.VISIBLE
         }
     }
@@ -154,12 +166,16 @@ class AddNewPlayListFragment : Fragment() {
 
     private val onBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            viewModel.validationForm(playlistCreate())
+            toolbarClickback()
         }
     }
 
+    protected open fun toolbarClickback() {
+        viewModel.validationForm(playlistCreate())
+    }
 
-    private val pickMedia =
+
+    protected val pickMedia =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             if (uri != null) {
                 viewModel.addImage(uri)

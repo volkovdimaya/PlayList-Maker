@@ -7,7 +7,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.practicum.playlistmaker.R
 
 fun Fragment.showConfirmExitDialog(onConfirm: () -> Unit) {
-    MaterialAlertDialogBuilder(requireContext())
+    MaterialAlertDialogBuilder(requireContext(),  R.style.MyAlertDialog)
         .setTitle(getString(R.string.title_complite_playlist))
         .setMessage(getString(R.string.message_data_lose))
         .setNeutralButton(getString(R.string.cancle)) { dialog, _ -> dialog.dismiss() }

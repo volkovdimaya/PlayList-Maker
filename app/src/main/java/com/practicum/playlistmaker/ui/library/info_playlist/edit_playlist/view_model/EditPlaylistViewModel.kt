@@ -32,7 +32,7 @@ class EditPlaylistViewModel(
         if (titleResult.successful) {
             viewModelScope.launch {
                 dbInteractorPlaylist.updatePlaylist(playlist.copy(id = playlistId!!))
-                _state.postValue(AddPlaylistState.CreatePlayList(true))
+//                _state.postValue(AddPlaylistState.CreatePlayList(true))
             }
         }
 

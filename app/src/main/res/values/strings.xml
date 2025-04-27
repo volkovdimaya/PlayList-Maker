@@ -48,9 +48,9 @@
     <string name="exit">Завершить</string>
     <string name="image_playlist">изображение плейлиста</string>
     <string name="add_playlist_button_sheet">Добавить в плейлист</string>
-    <string name="delete_track">Хотите удалить трек?</string>
-    <string name="yes">да</string>
-    <string name="no">нет</string>
+    <string name="delete_track">Вы уверены, что хотите удалить трек из плейлиста?</string>
+    <string name="yes">Удалить</string>
+    <string name="no">Отмена</string>
     <string name="share">Поделиться</string>
     <string name="delete_playlist">Удалить плейлист</string>
     <string name="dialog_delete_playlist">Хотите удалить плейлист «%1$s»?</string>

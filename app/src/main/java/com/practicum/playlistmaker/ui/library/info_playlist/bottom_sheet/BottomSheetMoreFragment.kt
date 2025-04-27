@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.bumptech.glide.signature.ObjectKey
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import com.practicum.playlistmaker.R
@@ -20,6 +21,7 @@ import com.practicum.playlistmaker.util.showConfirmDeleteDialog
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.io.File
 
 class BottomSheetMoreFragment : BottomSheetDialogFragment() {
 
@@ -87,6 +89,7 @@ class BottomSheetMoreFragment : BottomSheetDialogFragment() {
             .with(requireContext())
             .load(playlistItem.image)
             .placeholder(R.drawable.place_holder_cover)
+            .signature(ObjectKey(File(playlistItem.image!!.path).lastModified()))
             .into(binding.image)
         binding.title.text = playlistItem.title
         binding.count.text = TrackCountFormatter.formatTrackCount(playlistItem.trackCount)

@@ -10,7 +10,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.practicum.playlistmaker.R
 
 fun Fragment.showConfirmDeleteDialog(onConfirm: () -> Unit, message: String) {
-    MaterialAlertDialogBuilder(requireContext(), R.style.MyAlertDialog)
+    MaterialAlertDialogBuilder(requireContext(), R.style.MyAlertExitDialog)
         .setView(createMessageView(
             requireContext(),
             message = message
