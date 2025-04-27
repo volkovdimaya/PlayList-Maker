@@ -22,7 +22,7 @@ class EditPlaylistFragment : AddNewPlayListFragment() {
     private val sharedPlaylistViewModel by activityViewModel<SharedPlaylistViewModel>()
     private val viewModelEdit by viewModel<EditPlaylistViewModel>()
 
-    private var pic: Uri? = null
+//    private var pic: Uri? = null
 
     private val binding
         get() = _binding!!
