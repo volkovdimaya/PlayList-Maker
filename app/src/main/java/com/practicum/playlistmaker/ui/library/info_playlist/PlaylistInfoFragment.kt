@@ -137,6 +137,13 @@ class PlaylistInfoFragment : Fragment() {
     }
 
     private fun renderContentTracks(tracks: List<Track>) {
+        if (tracks.isEmpty()){
+            Snackbar.make(
+                requireView(),
+                getString(R.string.message_empty_playlist),
+                Snackbar.LENGTH_SHORT
+            ).show()
+        }
         (binding.recyclerTracks.adapter as TrackInPlaylistAdapter).updateData(tracks)
     }
 
