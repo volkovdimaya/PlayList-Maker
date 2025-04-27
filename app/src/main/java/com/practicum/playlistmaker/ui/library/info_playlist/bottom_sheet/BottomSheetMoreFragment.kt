@@ -78,7 +78,8 @@ class BottomSheetMoreFragment : BottomSheetDialogFragment() {
                         dismiss()
                     }
                 },
-                message = getString(R.string.dialog_delete_playlist, "${binding.title.text}"),
+                message = getString(R.string.dialog_delete_playlist_message, "${binding.title.text}"),
+                title = getString(R.string.dialog_delete_playlist),
             )
         }
 

@@ -71,7 +71,8 @@ class PlaylistInfoFragment : Fragment() {
                         onConfirm = {
                             viewModel.onDeleteTrackClick(track)
                         },
-                        message = getString(R.string.delete_track)
+                        message = getString(R.string.delete_track),
+                        title = getString(R.string.title_delete_track_playlist),
                     )
                     return false
                 }

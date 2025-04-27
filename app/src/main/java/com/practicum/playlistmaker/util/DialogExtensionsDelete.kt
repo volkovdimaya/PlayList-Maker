@@ -9,12 +9,16 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.practicum.playlistmaker.R
 
-fun Fragment.showConfirmDeleteDialog(onConfirm: () -> Unit, message: String) {
+fun Fragment.showConfirmDeleteDialog(onConfirm: () -> Unit, message: String, title: String) {
     MaterialAlertDialogBuilder(requireContext(), R.style.MyAlertExitDialog)
-        .setView(createMessageView(
-            requireContext(),
-            message = message
-        ))
+//        .setTitle(R.string.title_delete_track_playlist)
+        .setTitle(title)
+        .setView(
+            createMessageView(
+                requireContext(),
+                message = message
+            )
+        )
         .setPositiveButton(R.string.yes) { _, _ ->
             onConfirm()
         }
@@ -25,7 +29,7 @@ fun Fragment.showConfirmDeleteDialog(onConfirm: () -> Unit, message: String) {
         .show()
 }
 
-fun createMessageView(requireContext: Context, message : String): View {
+fun createMessageView(requireContext: Context, message: String): View {
     return TextView(requireContext).apply {
         text = message
         setTextColor(
