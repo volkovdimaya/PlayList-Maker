@@ -1,6 +1,6 @@
 package com.practicum.playlistmaker.ui.library.info_playlist.edit_playlist
 
-import android.net.Uri
+
 import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -22,7 +22,7 @@ class EditPlaylistFragment : AddNewPlayListFragment() {
     private val sharedPlaylistViewModel by activityViewModel<SharedPlaylistViewModel>()
     private val viewModelEdit by viewModel<EditPlaylistViewModel>()
 
-//    private var pic: Uri? = null
+
 
     private val binding
         get() = _binding!!
@@ -31,13 +31,13 @@ class EditPlaylistFragment : AddNewPlayListFragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putBoolean("isInitialized", isInitialized)
+        outState.putBoolean(ISINITIALIZED, isInitialized)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (savedInstanceState != null) {
-            isInitialized = savedInstanceState.getBoolean("isInitialized")
+            isInitialized = savedInstanceState.getBoolean(ISINITIALIZED)
         }
         if (isInitialized) return
         isInitialized = true
@@ -82,6 +82,9 @@ class EditPlaylistFragment : AddNewPlayListFragment() {
 
     override fun renderCreatePlaylist(it: AddPlaylistState.CreatePlayList) {
         findNavController().popBackStack()
+    }
+    companion object{
+        const val ISINITIALIZED = "isInitialized"
     }
 
 }
