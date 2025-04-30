@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.domain.add_playlist.DbInteractorPlaylist
+import com.practicum.playlistmaker.domain.models.Track
 import com.practicum.playlistmaker.domain.player.models.PlayListAndTrack
 import com.practicum.playlistmaker.ui.audioplayer.bottom_sheet.mapper.tiPlaylistBottomSheetItem
 import com.practicum.playlistmaker.ui.audioplayer.bottom_sheet.models.BottomSheetClickState
@@ -23,10 +24,10 @@ class BottomSheetViewModel(private val interactorPlaylist: DbInteractorPlaylist)
     val state_click: LiveData<BottomSheetClickState>
         get() = _state_click
 
-    fun addTrackToPlaylist(track: PlayListAndTrack, title: String) {
+    fun addTrackToPlaylist(track : Track, playListAndTrack: PlayListAndTrack, title: String) {
 
         viewModelScope.launch {
-            interactorPlaylist.addTrackToPlaylist(track).collect { result ->
+            interactorPlaylist.addTrackToPlaylist(track, playListAndTrack).collect { result ->
                 if (result) {
                     _state_click.value = BottomSheetClickState.TrackAddPlaylist(title)
                 } else {

@@ -2,10 +2,10 @@ package com.practicum.playlistmaker.ui.audioplayer.bottom_sheet.fragment
 
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -13,6 +13,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.hannesdorfmann.adapterdelegates4.ListDelegationAdapter
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.BottomSheetBinding
+import com.practicum.playlistmaker.domain.models.Track
 import com.practicum.playlistmaker.domain.player.models.PlayListAndTrack
 import com.practicum.playlistmaker.ui.audioplayer.bottom_sheet.bottomSheetPlaylistDelegate
 import com.practicum.playlistmaker.ui.audioplayer.bottom_sheet.models.BottomSheetClickState
@@ -20,22 +21,16 @@ import com.practicum.playlistmaker.ui.audioplayer.bottom_sheet.models.BottomShee
 import com.practicum.playlistmaker.ui.audioplayer.bottom_sheet.models.PlaylistBottomSheetItem
 import com.practicum.playlistmaker.ui.audioplayer.bottom_sheet.view_model.AudioPlayerEventFromBottomSheet
 import com.practicum.playlistmaker.ui.audioplayer.bottom_sheet.view_model.BottomSheetViewModel
+import com.practicum.playlistmaker.ui.share_data.SharedTrackViewModel
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class BottomSheetFragment() : BottomSheetDialogFragment() {
 
-    companion object {
-        private const val ARG_TRACK_ID = "ARG_TRACK_ID"
+    private val sharedTrackViewModel: SharedTrackViewModel by activityViewModel()
+    private var track : Track? = null
 
-        fun newInstance(id: String): BottomSheetFragment {
-            val fragment = BottomSheetFragment()
-            val args = Bundle()
-            args.putString(ARG_TRACK_ID, id)
-            fragment.arguments = args
-            return fragment
-        }
-    }
 
     private var _binding: BottomSheetBinding? = null
     private val binding
@@ -43,13 +38,13 @@ class BottomSheetFragment() : BottomSheetDialogFragment() {
 
 
     private val adapter = ListDelegationAdapter(
-        bottomSheetPlaylistDelegate(object : PlaylistItemClickListener {
+        bottomSheetPlaylistDelegate(object : PlaylistItemClickListenerBottomSheet {
             override fun onPlaylistItemClick(item: PlaylistBottomSheetItem) {
-                viewModel.addTrackToPlaylist(
-                    PlayListAndTrack(
-                        trackId = arguments?.getString(ARG_TRACK_ID)!!,
+                viewModel.addTrackToPlaylist( track!!,
+                    playListAndTrack = PlayListAndTrack(
+                        trackId = track!!.trackId,
                         playlistId = item.id,
-                    ), item.title
+                    ), title = item.title
                 )
             }
         })
@@ -58,7 +53,6 @@ class BottomSheetFragment() : BottomSheetDialogFragment() {
 
     private val viewModel by viewModel<BottomSheetViewModel>()
 
-//    private val event : AudioPlayerEventFromBottomSheet by viewModel()
     private val sharedViewModel: AudioPlayerEventFromBottomSheet by activityViewModel()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -89,7 +83,11 @@ class BottomSheetFragment() : BottomSheetDialogFragment() {
         viewModel.state_click.observe(viewLifecycleOwner) {
             clickItem(it)
         }
-
+        lifecycleScope.launch {
+            sharedTrackViewModel.trackFlow.collect { shareTrack ->
+                track = shareTrack
+            }
+        }
 
     }
 
@@ -101,7 +99,7 @@ class BottomSheetFragment() : BottomSheetDialogFragment() {
             }
             is BottomSheetClickState.TrackNotAddPlaylist -> {
                 Snackbar.make(
-                    binding.root,
+                    requireView(),
                     "Трек уже добавлен в плейлист ${item.title}",
                     Snackbar.LENGTH_SHORT
                 ).show()
@@ -135,6 +133,6 @@ class BottomSheetFragment() : BottomSheetDialogFragment() {
     }
 }
 
-interface PlaylistItemClickListener {
+interface PlaylistItemClickListenerBottomSheet {
     fun onPlaylistItemClick(item: PlaylistBottomSheetItem)
 }

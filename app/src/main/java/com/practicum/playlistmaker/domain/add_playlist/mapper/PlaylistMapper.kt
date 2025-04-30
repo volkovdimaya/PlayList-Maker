@@ -8,7 +8,6 @@ object PlaylistMapper {
         return PlaylistEntity(
             title = playlist.title,
             description = playlist.description,
-            image = playlist.image
         )
     }
 
@@ -16,7 +15,6 @@ object PlaylistMapper {
         return Playlist(
             title = playlistEntity.title,
             description = playlistEntity.description,
-            image = playlistEntity.image
         )
     }
 }

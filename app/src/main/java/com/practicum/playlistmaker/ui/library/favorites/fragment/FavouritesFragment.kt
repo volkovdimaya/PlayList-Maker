@@ -6,18 +6,24 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentFavouritesBinding
 import com.practicum.playlistmaker.domain.models.Track
 import com.practicum.playlistmaker.ui.library.favorites.view_model.FavouritesViewModel
-import com.practicum.playlistmaker.ui.library.fragments.MediaLibraryFragmentDirections
 import com.practicum.playlistmaker.ui.library.models.FavouritesState
 import com.practicum.playlistmaker.ui.search.TrackAdapter
+import com.practicum.playlistmaker.ui.share_data.SharedTrackViewModel
+import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FavouritesFragment : Fragment() {
+
+    private val sharedTrackViewModel: SharedTrackViewModel by activityViewModel()
 
     private val viewModel by viewModel<FavouritesViewModel>()
 
@@ -53,11 +59,12 @@ class FavouritesFragment : Fragment() {
         recyclerViewTrak.adapter = trakAdapter
 
         viewModel.navigateToTrackDetails.observe(viewLifecycleOwner) { track ->
-            val action = MediaLibraryFragmentDirections.actionMediaLibraryFragmentToAudioPlayerFragment(track)
-            findNavController().navigate(action)
-//            val intent = Intent(requireContext(), AudioPlayerFragment::class.java)
-//            intent.putExtra(TRACK_DETAILS, track)
-//            startActivity(intent)
+
+            lifecycleScope.launch {
+                sharedTrackViewModel.selectTrack(track)
+            }
+
+            findNavController().navigate(R.id.action_mediaLibraryFragment_to_audioPlayerFragment)
         }
     }
 

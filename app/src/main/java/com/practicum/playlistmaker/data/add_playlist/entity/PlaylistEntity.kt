@@ -15,7 +15,5 @@ data class PlaylistEntity(
     @ColumnInfo(name = "title")
     val title: String,
     @ColumnInfo(name = "description")
-    val description: String = "",
-    @ColumnInfo(name = "image")
-    val image: Uri? = null
+    val description: String = ""
 )

@@ -28,9 +28,7 @@
         <action
             android:id="@+id/action_audioPlayerFragment_to_addNewPlayListFragment"
             app:destination="@id/addNewPlayListFragment" />
-        <argument
-            android:name="track"
-            app:argType="com.practicum.playlistmaker.domain.models.Track" />
+
     </fragment>
     <fragment
         android:id="@+id/mediaLibraryFragment"
@@ -43,12 +41,37 @@
         <action
             android:id="@+id/action_mediaLibraryFragment_to_audioPlayerFragment"
             app:destination="@id/audioPlayerFragment" />
+        <action
+            android:id="@+id/action_mediaLibraryFragment_to_playlistInfo"
+            app:destination="@id/playlistInfo" />
     </fragment>
     <fragment
         android:id="@+id/addNewPlayListFragment"
         android:name="com.practicum.playlistmaker.ui.library.add_playlist.fragment.AddNewPlayListFragment"
         android:label="AddNewPlayListFragment"
         tools:layout="@layout/fragment_add_new_playlist"
+        />
+    <fragment
+        android:id="@+id/playlistInfo"
+        android:name="com.practicum.playlistmaker.ui.library.info_playlist.PlaylistInfoFragment"
+        android:label="fragment_playlist_info"
+        tools:layout="@layout/fragment_playlist_info"
+        >
+        <argument
+            android:name="item"
+            app:argType="com.practicum.playlistmaker.ui.library.playlist.models.PlaylistItem" />
+        <action
+            android:id="@+id/action_playlistInfo_to_audioPlayerFragment"
+            app:destination="@id/audioPlayerFragment" />
+        <action
+            android:id="@+id/action_playlistInfo_to_editPlaylistFragment"
+            app:destination="@id/editPlaylistFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editPlaylistFragment"
+        android:name="com.practicum.playlistmaker.ui.library.info_playlist.edit_playlist.EditPlaylistFragment"
+        android:label="EditPlaylistFragment"
+        tools:layout="@layout/fragment_edit_playlist"
         />
 
 </navigation>
