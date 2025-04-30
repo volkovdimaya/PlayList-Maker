@@ -37,7 +37,7 @@ import java.io.File
 
 class PlaylistInfoFragment : Fragment() {
     var _binding: FragmentPlaylistInfoBinding? = null
-    private val binding get() = _binding!!
+    private val binding get() = _binding ?: throw IllegalStateException("Binding is null")
 
     private val viewModel: PlaylistInfoViewModel by activityViewModel()
     private val sharedTrackViewModel: SharedTrackViewModel by activityViewModel()
